@@ -31,5 +31,8 @@ func SanitizeWilcardString(value string) string {
 	if len(value) == 0 {
 		sanitizedValue = "*"
 	}
+	for strings.Contains(sanitizedValue, "**") {
+		sanitizedValue = strings.ReplaceAll(sanitizedValue, "**", "*")
+	}
 	return sanitizedValue
 }

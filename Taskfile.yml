@@ -62,3 +62,7 @@ tasks:
   proto:
     cmds:
       - make protoc
+  # Depedencies
+  dep-core:
+    desc: get abstraction core dependency
+    cmd: 'go get -u github.com/permguard/permguard-core@{{.CLI_ARGS}}'

@@ -27,13 +27,6 @@ import (
 	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 )
 
-const (
-	// UUR format string: {account}:{tenant}:{domain}:{resource}:{resource-filter}.
-	uurFormatString = "uur:%s:%s:%s:%s:%s"
-	// AR format string: {resource}:{action}.
-	arFormatString = "%s:%s"
-)
-
 // LanguageManager is the manager for policies.
 type LanguageManager struct {
 }

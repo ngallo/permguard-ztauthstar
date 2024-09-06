@@ -47,6 +47,8 @@ func TestSanitizeWilcardString(t *testing.T) {
 		{ Input: "ab c", Output: "ab c" },
 		{ Input: "AB C", Output: "ab c" },
 		{ Input: "", Output: "*" },
+		{ Input: "************", Output: "*" },
+		{ Input: "*****AB*******", Output: "*ab*" },
 	}
 	for _, test := range tests {
 		output := SanitizeWilcardString(test.Input)
