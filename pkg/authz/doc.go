@@ -14,5 +14,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// Package policies implements the authz model for policies.
-package policies
+// Package authz implements the authz.
+package authz
