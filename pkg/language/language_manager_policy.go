@@ -18,6 +18,7 @@ package language
 
 import (
 	"errors"
+	"sort"
 	"strings"
 
 	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
@@ -129,7 +130,8 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 	return true, nil
 }
 
-func removeDuplicates(actions []aztypes.ARString, compare func(a, b aztypes.ARString) bool) []aztypes.ARString {
+// removeDuplicates removes duplicate actions.
+func (pm *LanguageManager) removeARStringsDuplicates(actions []aztypes.ARString, compare func(a, b aztypes.ARString) bool) []aztypes.ARString {
     for i := 0; i < len(actions); i++ {
         for j := 0; j < len(actions); j++ {
             if i != j && compare(actions[i], actions[j]) {
@@ -141,7 +143,16 @@ func removeDuplicates(actions []aztypes.ARString, compare func(a, b aztypes.ARSt
             }
         }
     }
-    return actions
+    stringActions := make([]string, len(actions))
+    for i, action := range actions {
+        stringActions[i] = string(action)
+    }
+    sort.Strings(stringActions)
+    sortedActions := make([]aztypes.ARString, len(stringActions))
+    for i, action := range stringActions {
+        sortedActions[i] = aztypes.ARString(action)
+    }
+    return sortedActions
 }
 
 // optimizePolicy optimizes a policy.
@@ -165,7 +176,7 @@ func (pm *LanguageManager) optimizePolicy(policy *aztypes.Policy) (*aztypes.Poli
             uniqueActions = append(uniqueActions, action)
         }
     }
-	uniqueActions = removeDuplicates(uniqueActions, func(a, b aztypes.ARString) bool {
+	uniqueActions = pm.removeARStringsDuplicates(uniqueActions, func(a, b aztypes.ARString) bool {
 		x := text.WildcardString(a)
 		y := text.WildcardString(b)
 		return x.WildcardInclude(string(y)) && !y.WildcardInclude(string(x))

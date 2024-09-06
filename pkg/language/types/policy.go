@@ -34,7 +34,16 @@ const (
 	arFormatString = "ar:%s:%s"
 	// resourceFilterSeparator is the separator for the resource filter.
 	resourceFilterSeparator = "/"
+	// accountKeyword is the account keyword.
+	accountKeyword = "${account}"
+	// tenantKeyword is the tenant keyword.
+	tenantKeyword = "${tenant}"
 )
+
+// ListKeywords lists the keywords.
+func ListKeywords() []string {
+	return []string{accountKeyword, tenantKeyword}
+}
 
 // UURString is the UUR wildcard string.
 type UURString aztext.WildcardString
