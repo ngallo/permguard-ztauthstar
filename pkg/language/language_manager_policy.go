@@ -81,7 +81,7 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 		return false, err
 	}
 	if !azvalidators.ValidateAccountID(uur.Account) {
-		return false, errors.New("authz: invalid account ID")
+		return false, errors.New("authz: invalid account id")
 	}
 	return true, nil
 }
