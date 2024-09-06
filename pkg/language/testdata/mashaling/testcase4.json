@@ -25,8 +25,8 @@
     "name": "manage-branch-staff",
     "actions": [
       "ar:staff:access",
-      "ar:staff:assignroles",
-      "ar:staff:manage*"
+      "ar:staff:manage*",
+      "ar:staff:assignroles"
     ],
     "resource": "uur:268786704340:*:pharmacy-branch:staff/id/*"
   }

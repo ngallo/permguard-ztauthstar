@@ -22,6 +22,7 @@ import (
 
 	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
+	"github.com/permguard/permguard-core/pkg/extensions/text"
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
 	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
 )
@@ -128,7 +129,47 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 	return true, nil
 }
 
+func removeDuplicates(actions []aztypes.ARString, compare func(a, b aztypes.ARString) bool) []aztypes.ARString {
+    for i := 0; i < len(actions); i++ {
+        for j := 0; j < len(actions); j++ {
+            if i != j && compare(actions[i], actions[j]) {
+                actions = append(actions[:j], actions[j+1:]...)
+                if j < i {
+                    i--
+                }
+                j--
+            }
+        }
+    }
+    return actions
+}
+
 // optimizePolicy optimizes a policy.
 func (pm *LanguageManager) optimizePolicy(policy *aztypes.Policy) (*aztypes.Policy, error) {
+	uur, err := policy.Resource.Prase()
+	if err != nil {
+		return nil, err
+	}
+    seen := make(map[aztypes.ARString]bool)
+    uniqueActions := []aztypes.ARString{}
+    for _, action := range policy.Actions {
+		rn, err := action.Prase()
+		if err != nil {
+			return nil, err
+		}
+		if rn.Resource != uur.Resource {
+			continue
+		}
+        if !seen[action] {
+            seen[action] = true
+            uniqueActions = append(uniqueActions, action)
+        }
+    }
+	uniqueActions = removeDuplicates(uniqueActions, func(a, b aztypes.ARString) bool {
+		x := text.WildcardString(a)
+		y := text.WildcardString(b)
+		return x.WildcardInclude(string(y)) && !y.WildcardInclude(string(x))
+	})
+    policy.Actions = uniqueActions
 	return policy, nil
 }

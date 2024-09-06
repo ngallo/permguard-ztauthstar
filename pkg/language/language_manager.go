@@ -27,6 +27,7 @@ import (
 	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 )
 
+
 // LanguageManager is the manager for policies.
 type LanguageManager struct {
 }
