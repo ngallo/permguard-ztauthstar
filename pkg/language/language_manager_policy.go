@@ -18,9 +18,11 @@ package language
 
 import (
 	"errors"
+	"strings"
 
 	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
+	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
 	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
 )
 
@@ -59,12 +61,25 @@ func (pm *LanguageManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 	policy.Name = azsanitizers.SanitizeString(policy.Name)
 	for i, action := range policy.Actions {
 		policy.Actions[i] = aztypes.ARString(azsanitizers.SanitizeWilcardString(string(action)))
+		ar, err := policy.Actions[i].Prase()
+		if err != nil {
+			return nil, err
+		}
+		ar.Resource = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(ar.Resource)))
+		ar.Action = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(ar.Action)))
+		policy.Actions[i] = aztypes.FormatARString(ar.Resource, ar.Action)
 	}
-	policy.Resource = aztypes.UURString(azsanitizers.SanitizeWilcardString(string(policy.Resource)))
-	_, err := policy.Resource.Prase()
+	resource, err := policy.Resource.Prase()
 	if err != nil {
 		return nil, err
 	}
+	resource.Domain = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.Domain)))
+	resource.Tenant = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.Tenant)))
+	resource.Resource = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.Resource)))
+	for i := range resource.ResourceFilter {
+		resource.ResourceFilter[i] = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.ResourceFilter[i])))
+	}
+	policy.Resource = aztypes.FormatUURString(resource.Account, resource.Tenant, resource.Domain, resource.Resource, resource.ResourceFilter)
 	return policy, nil
 }
 
@@ -74,7 +89,19 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 		return false, nil
 	}
 	if !azvalidators.ValidateName(policy.Name) {
-		return false, nil
+		return false, errors.New("authz: invalid name")
+	}
+	for _, action := range policy.Actions {
+		ar, err := action.Prase()
+		if err != nil {
+			return false, err
+		}
+		if !azvalidators.ValidateWildcardName(string(ar.Resource)) {
+			return false, errors.New("authz: invalid resource")
+		}
+		if !azvalidators.ValidateWildcardName(string(ar.Action)) {
+			return false, errors.New("authz: invalid action")
+		}
 	}
 	uur, err := policy.Resource.Prase()
 	if err != nil {
@@ -82,6 +109,21 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 	}
 	if !azvalidators.ValidateAccountID(uur.Account) {
 		return false, errors.New("authz: invalid account id")
+	}
+	if !azvalidators.ValidateWildcardName(string(uur.Tenant)) {
+		return false, errors.New("authz: invalid tenant")
+	}
+	if !azvalidators.ValidateWildcardName(string(uur.Domain)) {
+		return false, errors.New("authz: invalid domain")
+	}
+	if !azvalidators.ValidateWildcardName(string(uur.Resource)) {
+		return false, errors.New("authz: invalid resource")
+	}
+	for _, filter := range uur.ResourceFilter {
+		filterStr := string(filter)
+		if filterStr == "" || strings.Contains(filterStr, " ") {
+			return false, errors.New("authz: invalid resource filter")
+		}
 	}
 	return true, nil
 }

@@ -9,25 +9,25 @@
     "type": "ACPolicy",
     "name": "Manage-Branch-Staff",
     "actions": [
-      "Staff:Access",
-      "Payment:rea*",
-      "staff:MANAGE*",
-      "payment:read",
-      "staff:assignroles",
-      "staff:manage",
-      "order:manage"
+      "ar:Staff:Access",
+      "ar:Payment:rea*",
+      "ar:staff:MANAGE*",
+      "ar:payment:read",
+      "ar:staff:assignroles",
+      "ar:staff:manage",
+      "ar:order:manage"
     ],
-    "resource": "uur:::pharmacy-branch:staff/*"
+    "resource": "uur:268786704340::pharmacy-branch:staff/id/*"
   },
   "output": {
     "syntax": "permguard1",
     "type": "acpolicy",
     "name": "manage-branch-staff",
     "actions": [
-      "staff:access",
-      "staff:assignroles",
-      "staff:manage*"
+      "ar:staff:access",
+      "ar:staff:assignroles",
+      "ar:staff:manage*"
     ],
-    "resource": "uur:::pharmacy-branch:staff/*"
+    "resource": "uur:268786704340:*:pharmacy-branch:staff/id/*"
   }
 }

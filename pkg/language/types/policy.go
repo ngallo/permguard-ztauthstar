@@ -18,6 +18,7 @@ package types
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -28,13 +29,24 @@ const (
 	// ACPolicyType is the AC policy type.
 	ACPolicyType = "acpolicy"
 	// UUR format string: {account}:{tenant}:{domain}:{resource}:{resource-filter}.
-	uurFormatString = "uur:%s:%s:%s:%s:%s"
+	uurFormatString = "uur:%d:%s:%s:%s%s"
 	// AR format string: {resource}:{action}.
-	arFormatString = "%s:%s"
+	arFormatString = "ar:%s:%s"
+	// resourceFilterSeparator is the separator for the resource filter.
+	resourceFilterSeparator = "/"
 )
 
 // UURString is the UUR wildcard string.
 type UURString aztext.WildcardString
+
+// FormatUURString formats the UUR string.
+func FormatUURString(account int64, tenant, domain, resource aztext.WildcardString, resourceFileter []aztext.WildcardString) UURString {
+	resFilter := ""
+	for _, f := range resourceFileter {
+		resFilter = fmt.Sprintf("%s%s%s", resFilter, resourceFilterSeparator, f)
+	}
+	return UURString(fmt.Sprintf(uurFormatString, account, tenant, domain, resource, resFilter))
+}
 
 // UUR is the Universally Unique Resource.
 type UUR struct {
@@ -42,14 +54,14 @@ type UUR struct {
 	Tenant         aztext.WildcardString
 	Domain         aztext.WildcardString
 	Resource       aztext.WildcardString
-	ResourceFilter aztext.WildcardString
+	ResourceFilter []aztext.WildcardString
 }
 
 // Prase parses the UUR string.
 func (s *UURString) Prase() (*UUR, error) {
     uurStr := string(*s)
     parts := strings.Split(uurStr, ":")
-    if len(parts) != 6 || parts[0] != "uur" {
+    if len(parts) != 5 || parts[0] != "uur" {
         return nil, errors.New("language: invalid uur string")
     }
     account, err := strconv.ParseInt(parts[1], 10, 64)
@@ -58,29 +70,40 @@ func (s *UURString) Prase() (*UUR, error) {
     }
     tenant := parts[2]
     domain := parts[3]
-    resource := parts[4]
-    resourceFilter := parts[5]
+	resParts := strings.Split(parts[4], resourceFilterSeparator)
+    resource := resParts[0]
+	resourceFilter := []aztext.WildcardString{}
+	if len(resParts) > 1 {
+		for _, filter := range resParts[1:] {
+			resourceFilter = append(resourceFilter, aztext.WildcardString(filter))
+		}
+	}
 	return &UUR{
 		Account:        account,
 		Tenant:         aztext.WildcardString(tenant),
 		Domain:         aztext.WildcardString(domain),
 		Resource:       aztext.WildcardString(resource),
-		ResourceFilter: aztext.WildcardString(resourceFilter),
+		ResourceFilter: resourceFilter,
 	}, nil
 }
 
 // ARString is the AR wildcard string.
 type ARString aztext.WildcardString
 
+// FormatARString formats the AR string.
+func FormatARString(resource, action aztext.WildcardString) ARString {
+	return ARString(fmt.Sprintf(arFormatString, resource, action))
+}
+
 // Prase parses the UUR string.
 func (s *ARString) Prase() (*AR, error) {
     uurStr := string(*s)
     parts := strings.Split(uurStr, ":")
-    if len(parts) != 3 || parts[0] != "uur" {
+    if len(parts) != 3 || parts[0] != "ar" {
         return nil, errors.New("language: invalid ar string")
     }
     resource := parts[1]
-	action := parts[1]
+	action := parts[2]
 	return &AR{
 		Resource: aztext.WildcardString(resource),
 		Action:   aztext.WildcardString(action),
