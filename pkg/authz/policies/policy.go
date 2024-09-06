@@ -20,6 +20,13 @@ import (
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
 )
 
+const (
+	// PolicySyntax is the policy syntax.
+	PolicySyntax = "permguard1"
+	// ACPolicyType is the AC policy type.
+	ACPolicyType = "acpolicy"
+)
+
 // UURString is the UUR wildcard string.
 type UURString aztext.WildcardString
 

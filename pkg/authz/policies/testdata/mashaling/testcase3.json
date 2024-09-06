@@ -1,8 +1,8 @@
 {
-  "testcase": "sanitize-input",
-  "description": "This test cases is used to test a sanitized input",
+  "testcase": "sanitize-validate-input",
+  "description": "This test cases is used to test a sanitized and validated input",
   "sanitize": true,
-  "validate": false,
+  "validate": true,
   "optimize": false,
   "input": {
     "syntax": "permguard1",

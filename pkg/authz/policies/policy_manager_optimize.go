@@ -16,17 +16,7 @@
 
 package policies
 
-import (
-	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
-)
-
-// validate validates the input policy.
-func (pm *policyManager) validate(policy *Policy) (bool, error) {
-	if policy.SyntaxVersion != PolicySyntax || policy.Type != ACPolicyType {
-		return false, nil
-	}
-	if ! azvalidators.ValidateName(policy.Name) {
-		return false, nil
-	}
-	return true, nil
+// optimizePolicy optimizes a policy.
+func (pm *policyManager) optimizePolicy(policy *Policy) (*Policy, error) {
+	return policy, nil
 }

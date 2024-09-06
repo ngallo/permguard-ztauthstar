@@ -64,5 +64,4 @@ func TestMashalingOfPolicies(t *testing.T) {
 			})
 		}
 	}
-
 }

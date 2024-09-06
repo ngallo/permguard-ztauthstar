@@ -60,6 +60,12 @@ func (pm *policyManager) sanitizeValidateOptimize(policy *Policy, sanitize bool,
 			return nil, err
 		}
 	}
+	if optimize {
+		targetPolicy, err = pm.optimizePolicy(targetPolicy)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return targetPolicy, nil
 }
 
