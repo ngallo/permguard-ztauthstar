@@ -45,8 +45,8 @@ func NewLanguageManager() *LanguageManager {
 // sanitizeValidateOptimize sanitizes, validates and optimize the input policy.
 func (pm *LanguageManager) sanitizeValidateOptimize(instance any, sanitize bool, validate bool, optimize bool) (*aztypes.Policy, error) {
 	switch v := instance.(type) {
-	case aztypes.Policy:
-		return pm.sanitizeValidateOptimizePolicy(&v, sanitize, validate, optimize)
+	case *aztypes.Policy:
+		return pm.sanitizeValidateOptimizePolicy(v, sanitize, validate, optimize)
 	}
 	return nil, errors.New("authz: not implemented")
 }
@@ -56,21 +56,32 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 	if data == nil {
 		return nil, errors.New("authz: type cannot be unmarshaled from nil data")
 	}
-	var policy aztypes.Policy
-	if err := json.Unmarshal(data, &policy); err != nil {
+	var baseType aztypes.BaseType
+	if err := json.Unmarshal(data, &baseType); err != nil {
 		return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
 	}
-	snzPolicy, err := pm.sanitizeValidateOptimize(&policy, sanitize, validate, optimize)
-	if err != nil {
-		return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
+	if baseType.SyntaxVersion != aztypes.PolicySyntax {
+		return nil, fmt.Errorf("authz: failed to unmarshal type - invalid syntax version %s", baseType.SyntaxVersion)
 	}
-	strfy, err := aztext.Stringify(snzPolicy, nil)
+	var snzType any
+	switch baseType.Type {
+		case aztypes.ACPolicyType:
+			var policy aztypes.Policy
+			snzPolicy, err := pm.sanitizeValidateOptimize(&policy, sanitize, validate, optimize)
+			snzType = snzPolicy
+			if err != nil {
+				return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
+			}
+		default:
+			return nil, fmt.Errorf("authz: failed to unmarshal type - invalid type %s", baseType.Type)
+	}
+	strfy, err := aztext.Stringify(snzType, nil)
 	if err != nil {
 		return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
 	}
 	return &aztypes.TypeInfo{
 		Hash: azcrypto.ComputeStringSHA256(strfy),
-		Type: snzPolicy,
+		Type: snzType,
 	}, nil
 }
 
