@@ -21,12 +21,11 @@ import (
 	"errors"
 	"fmt"
 
+	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
-	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 )
-
 
 // LanguageManager is the manager for policies.
 type LanguageManager struct {
@@ -43,41 +42,41 @@ func (pm *LanguageManager) sanitizeValidateOptimize(instance any, sanitize bool,
 	case *aztypes.Policy:
 		return pm.sanitizeValidateOptimizePolicy(v, sanitize, validate, optimize)
 	}
-	return nil, errors.New("authz: not implemented")
+	return nil, errors.New("language: not implemented")
 }
 
 // UnmarshalType unmarshals a language type from the given data, and optionally sanitized, validates and optimizes it based on the provided parameters.
 func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.TypeInfo, error) {
 	if data == nil {
-		return nil, errors.New("authz: type cannot be unmarshaled from nil data")
+		return nil, errors.New("language: type cannot be unmarshaled from nil data")
 	}
 	var baseType aztypes.BaseType
 	if err := json.Unmarshal(data, &baseType); err != nil {
-		return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
+		return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
 	}
 	baseType.SyntaxVersion = azsanitizers.SanitizeString(baseType.SyntaxVersion)
 	baseType.Type = azsanitizers.SanitizeString(baseType.Type)
 	if baseType.SyntaxVersion != aztypes.PolicySyntax {
-		return nil, fmt.Errorf("authz: failed to unmarshal type - invalid syntax version %s", baseType.SyntaxVersion)
+		return nil, fmt.Errorf("language: failed to unmarshal type - invalid syntax version %s", baseType.SyntaxVersion)
 	}
 	var snzType any
 	switch baseType.Type {
-		case aztypes.ACPolicyType:
-			var policy aztypes.Policy
-			if err := json.Unmarshal(data, &policy); err != nil {
-				return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
-			}
-			snzPolicy, err := pm.sanitizeValidateOptimize(&policy, sanitize, validate, optimize)
-			snzType = snzPolicy
-			if err != nil {
-				return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
-			}
-		default:
-			return nil, fmt.Errorf("authz: failed to unmarshal type - invalid type %s", baseType.Type)
+	case aztypes.ACPolicyType:
+		var policy aztypes.Policy
+		if err := json.Unmarshal(data, &policy); err != nil {
+			return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
+		}
+		snzPolicy, err := pm.sanitizeValidateOptimize(&policy, sanitize, validate, optimize)
+		snzType = snzPolicy
+		if err != nil {
+			return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
+		}
+	default:
+		return nil, fmt.Errorf("language: failed to unmarshal type - invalid type %s", baseType.Type)
 	}
 	strfy, err := aztext.Stringify(snzType, nil)
 	if err != nil {
-		return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
+		return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
 	}
 	return &aztypes.TypeInfo{
 		Hash: azcrypto.ComputeStringSHA256(strfy),
@@ -88,15 +87,15 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 // MarshalType marshals a type to a byte array, and optionally sanitized, validates and optimizes it based on the provided parameters.
 func (pm *LanguageManager) MarshalType(instance any, sanitize bool, validate bool, optimize bool) ([]byte, error) {
 	if instance == nil {
-		return nil, errors.New("authz: type cannot be marshaled from nil instance")
+		return nil, errors.New("language: type cannot be marshaled from nil instance")
 	}
 	snzPolicy, err := pm.sanitizeValidateOptimize(instance, sanitize, validate, optimize)
 	if err != nil {
-		return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
+		return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
 	}
 	data, err := json.Marshal(snzPolicy)
 	if err != nil {
-		return nil, fmt.Errorf("authz: failed to marshal type - %w", err)
+		return nil, fmt.Errorf("language: failed to marshal type - %w", err)
 	}
 	return data, nil
 }

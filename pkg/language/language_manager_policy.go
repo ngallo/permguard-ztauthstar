@@ -19,11 +19,11 @@ package language
 import (
 	"errors"
 	"sort"
+	"strconv"
 	"strings"
 
 	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
-	"github.com/permguard/permguard-core/pkg/extensions/text"
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
 	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
 )
@@ -41,7 +41,7 @@ func (pm *LanguageManager) sanitizeValidateOptimizePolicy(policy *aztypes.Policy
 	if validate {
 		valid, err := pm.validatePolicy(targetPolicy)
 		if !valid {
-			return nil, errors.New("authz: policy is invalid")
+			return nil, errors.New("language: policy is invalid")
 		}
 		if err != nil {
 			return nil, err
@@ -75,8 +75,15 @@ func (pm *LanguageManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 	if err != nil {
 		return nil, err
 	}
+	resource.Account = strings.ReplaceAll(resource.Account, " ", "")
+	if resource.Account == "" {
+		resource.Account = aztypes.KeywordAccount
+	}
+	resource.Tenant = aztext.WildcardString(strings.ReplaceAll(string(resource.Tenant), " ", ""))
+	if resource.Tenant == "" {
+		resource.Tenant = aztypes.KeywordTenant
+	}
 	resource.Domain = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.Domain)))
-	resource.Tenant = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.Tenant)))
 	resource.Resource = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.Resource)))
 	for i := range resource.ResourceFilter {
 		resource.ResourceFilter[i] = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.ResourceFilter[i])))
@@ -91,7 +98,7 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 		return false, nil
 	}
 	if !azvalidators.ValidateName(policy.Name) {
-		return false, errors.New("authz: invalid name")
+		return false, errors.New("language: invalid name")
 	}
 	for _, action := range policy.Actions {
 		ar, err := action.Prase()
@@ -99,32 +106,40 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 			return false, err
 		}
 		if !azvalidators.ValidateWildcardName(string(ar.Resource)) {
-			return false, errors.New("authz: invalid resource")
+			return false, errors.New("language: invalid resource")
 		}
 		if !azvalidators.ValidateWildcardName(string(ar.Action)) {
-			return false, errors.New("authz: invalid action")
+			return false, errors.New("language: invalid action")
 		}
 	}
 	uur, err := policy.Resource.Prase()
 	if err != nil {
 		return false, err
 	}
-	if !azvalidators.ValidateAccountID(uur.Account) {
-		return false, errors.New("authz: invalid account id")
+	if uur.Account != aztypes.KeywordAccount {
+		account, err := strconv.ParseInt(uur.Account, 10, 64)
+		if err != nil {
+			return false, errors.New("language: invalid account number, must be an integer")
+		}
+		if !azvalidators.ValidateAccountID(account) {
+			return false, errors.New("language: invalid account id")
+		}
 	}
-	if !azvalidators.ValidateWildcardName(string(uur.Tenant)) {
-		return false, errors.New("authz: invalid tenant")
+	if uur.Tenant != aztypes.KeywordTenant {
+		if !azvalidators.ValidateWildcardName(string(uur.Tenant)) {
+			return false, errors.New("language: invalid tenant")
+		}
 	}
 	if !azvalidators.ValidateWildcardName(string(uur.Domain)) {
-		return false, errors.New("authz: invalid domain")
+		return false, errors.New("language: invalid domain")
 	}
 	if !azvalidators.ValidateWildcardName(string(uur.Resource)) {
-		return false, errors.New("authz: invalid resource")
+		return false, errors.New("language: invalid resource")
 	}
 	for _, filter := range uur.ResourceFilter {
 		filterStr := string(filter)
 		if filterStr == "" || strings.Contains(filterStr, " ") {
-			return false, errors.New("authz: invalid resource filter")
+			return false, errors.New("language: invalid resource filter")
 		}
 	}
 	return true, nil
@@ -132,27 +147,27 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 
 // removeDuplicates removes duplicate actions.
 func (pm *LanguageManager) removeARStringsDuplicates(actions []aztypes.ARString, compare func(a, b aztypes.ARString) bool) []aztypes.ARString {
-    for i := 0; i < len(actions); i++ {
-        for j := 0; j < len(actions); j++ {
-            if i != j && compare(actions[i], actions[j]) {
-                actions = append(actions[:j], actions[j+1:]...)
-                if j < i {
-                    i--
-                }
-                j--
-            }
-        }
-    }
-    stringActions := make([]string, len(actions))
-    for i, action := range actions {
-        stringActions[i] = string(action)
-    }
-    sort.Strings(stringActions)
-    sortedActions := make([]aztypes.ARString, len(stringActions))
-    for i, action := range stringActions {
-        sortedActions[i] = aztypes.ARString(action)
-    }
-    return sortedActions
+	for i := 0; i < len(actions); i++ {
+		for j := 0; j < len(actions); j++ {
+			if i != j && compare(actions[i], actions[j]) {
+				actions = append(actions[:j], actions[j+1:]...)
+				if j < i {
+					i--
+				}
+				j--
+			}
+		}
+	}
+	stringActions := make([]string, len(actions))
+	for i, action := range actions {
+		stringActions[i] = string(action)
+	}
+	sort.Strings(stringActions)
+	sortedActions := make([]aztypes.ARString, len(stringActions))
+	for i, action := range stringActions {
+		sortedActions[i] = aztypes.ARString(action)
+	}
+	return sortedActions
 }
 
 // optimizePolicy optimizes a policy.
@@ -161,9 +176,9 @@ func (pm *LanguageManager) optimizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 	if err != nil {
 		return nil, err
 	}
-    seen := make(map[aztypes.ARString]bool)
-    uniqueActions := []aztypes.ARString{}
-    for _, action := range policy.Actions {
+	seen := make(map[aztypes.ARString]bool)
+	uniqueActions := []aztypes.ARString{}
+	for _, action := range policy.Actions {
 		rn, err := action.Prase()
 		if err != nil {
 			return nil, err
@@ -171,16 +186,16 @@ func (pm *LanguageManager) optimizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 		if rn.Resource != uur.Resource {
 			continue
 		}
-        if !seen[action] {
-            seen[action] = true
-            uniqueActions = append(uniqueActions, action)
-        }
-    }
+		if !seen[action] {
+			seen[action] = true
+			uniqueActions = append(uniqueActions, action)
+		}
+	}
 	uniqueActions = pm.removeARStringsDuplicates(uniqueActions, func(a, b aztypes.ARString) bool {
-		x := text.WildcardString(a)
-		y := text.WildcardString(b)
+		x := aztext.WildcardString(a)
+		y := aztext.WildcardString(b)
 		return x.WildcardInclude(string(y)) && !y.WildcardInclude(string(x))
 	})
-    policy.Actions = uniqueActions
+	policy.Actions = uniqueActions
 	return policy, nil
 }

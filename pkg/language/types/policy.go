@@ -19,7 +19,6 @@ package types
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
@@ -29,27 +28,27 @@ const (
 	// ACPolicyType is the AC policy type.
 	ACPolicyType = "acpolicy"
 	// UUR format string: {account}:{tenant}:{domain}:{resource}:{resource-filter}.
-	uurFormatString = "uur:%d:%s:%s:%s%s"
+	uurFormatString = "uur:%s:%s:%s:%s%s"
 	// AR format string: {resource}:{action}.
 	arFormatString = "ar:%s:%s"
 	// resourceFilterSeparator is the separator for the resource filter.
 	resourceFilterSeparator = "/"
-	// accountKeyword is the account keyword.
-	accountKeyword = "${account}"
-	// tenantKeyword is the tenant keyword.
-	tenantKeyword = "${tenant}"
+	// KeywordAccount is the account keyword.
+	KeywordAccount = "$account"
+	// KeywordTenant is the tenant keyword.
+	KeywordTenant = "$tenant"
 )
 
 // ListKeywords lists the keywords.
 func ListKeywords() []string {
-	return []string{accountKeyword, tenantKeyword}
+	return []string{KeywordAccount, KeywordTenant}
 }
 
 // UURString is the UUR wildcard string.
 type UURString aztext.WildcardString
 
 // FormatUURString formats the UUR string.
-func FormatUURString(account int64, tenant, domain, resource aztext.WildcardString, resourceFileter []aztext.WildcardString) UURString {
+func FormatUURString(account string, tenant, domain, resource aztext.WildcardString, resourceFileter []aztext.WildcardString) UURString {
 	resFilter := ""
 	for _, f := range resourceFileter {
 		resFilter = fmt.Sprintf("%s%s%s", resFilter, resourceFilterSeparator, f)
@@ -59,7 +58,7 @@ func FormatUURString(account int64, tenant, domain, resource aztext.WildcardStri
 
 // UUR is the Universally Unique Resource.
 type UUR struct {
-	Account        int64
+	Account        string
 	Tenant         aztext.WildcardString
 	Domain         aztext.WildcardString
 	Resource       aztext.WildcardString
@@ -73,10 +72,7 @@ func (s *UURString) Prase() (*UUR, error) {
     if len(parts) != 5 || parts[0] != "uur" {
         return nil, errors.New("language: invalid uur string")
     }
-    account, err := strconv.ParseInt(parts[1], 10, 64)
-    if err != nil {
-        return nil, errors.New("language: invalid account number, must be an integer")
-    }
+	account := parts[1]
     tenant := parts[2]
     domain := parts[3]
 	resParts := strings.Split(parts[4], resourceFilterSeparator)
