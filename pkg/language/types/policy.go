@@ -38,11 +38,11 @@ type UURString aztext.WildcardString
 
 // UUR is the Universally Unique Resource.
 type UUR struct {
-	account        int64
-	tenant         aztext.WildcardString
-	domain         aztext.WildcardString
-	resource       aztext.WildcardString
-	resourceFilter aztext.WildcardString
+	Account        int64
+	Tenant         aztext.WildcardString
+	Domain         aztext.WildcardString
+	Resource       aztext.WildcardString
+	ResourceFilter aztext.WildcardString
 }
 
 // Prase parses the UUR string.
@@ -61,11 +61,11 @@ func (s *UURString) Prase() (*UUR, error) {
     resource := parts[4]
     resourceFilter := parts[5]
 	return &UUR{
-		account:        account,
-		tenant:         aztext.WildcardString(tenant),
-		domain:         aztext.WildcardString(domain),
-		resource:       aztext.WildcardString(resource),
-		resourceFilter: aztext.WildcardString(resourceFilter),
+		Account:        account,
+		Tenant:         aztext.WildcardString(tenant),
+		Domain:         aztext.WildcardString(domain),
+		Resource:       aztext.WildcardString(resource),
+		ResourceFilter: aztext.WildcardString(resourceFilter),
 	}, nil
 }
 

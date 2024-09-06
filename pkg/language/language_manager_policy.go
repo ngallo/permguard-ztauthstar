@@ -57,9 +57,13 @@ func (pm *LanguageManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 	policy.SyntaxVersion = azsanitizers.SanitizeString(policy.SyntaxVersion)
 	policy.Type = azsanitizers.SanitizeString(policy.Type)
 	policy.Name = azsanitizers.SanitizeString(policy.Name)
-	policy.Resource = aztypes.UURString(azsanitizers.SanitizeWilcardString(string(policy.Resource)))
 	for i, action := range policy.Actions {
 		policy.Actions[i] = aztypes.ARString(azsanitizers.SanitizeWilcardString(string(action)))
+	}
+	policy.Resource = aztypes.UURString(azsanitizers.SanitizeWilcardString(string(policy.Resource)))
+	_, err := policy.Resource.Prase()
+	if err != nil {
+		return nil, err
 	}
 	return policy, nil
 }
@@ -71,6 +75,13 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 	}
 	if !azvalidators.ValidateName(policy.Name) {
 		return false, nil
+	}
+	uur, err := policy.Resource.Prase()
+	if err != nil {
+		return false, err
+	}
+	if !azvalidators.ValidateAccountID(uur.Account) {
+		return false, errors.New("authz: invalid account ID")
 	}
 	return true, nil
 }
