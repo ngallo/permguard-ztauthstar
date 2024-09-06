@@ -24,6 +24,7 @@ import (
 	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
+	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 )
 
 const (
@@ -60,6 +61,8 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 	if err := json.Unmarshal(data, &baseType); err != nil {
 		return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
 	}
+	baseType.SyntaxVersion = azsanitizers.SanitizeString(baseType.SyntaxVersion)
+	baseType.Type = azsanitizers.SanitizeString(baseType.Type)
 	if baseType.SyntaxVersion != aztypes.PolicySyntax {
 		return nil, fmt.Errorf("authz: failed to unmarshal type - invalid syntax version %s", baseType.SyntaxVersion)
 	}
@@ -67,6 +70,9 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 	switch baseType.Type {
 		case aztypes.ACPolicyType:
 			var policy aztypes.Policy
+			if err := json.Unmarshal(data, &policy); err != nil {
+				return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
+			}
 			snzPolicy, err := pm.sanitizeValidateOptimize(&policy, sanitize, validate, optimize)
 			snzType = snzPolicy
 			if err != nil {
