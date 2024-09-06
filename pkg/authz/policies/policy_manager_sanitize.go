@@ -17,31 +17,17 @@
 package policies
 
 import (
-	"strings"
+	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
 )
-
-// sanitizeString sanitizes a string.
-func (pm *policyManager) sanitizeString(value string) string {
-	return strings.ToLower(value)
-}
-
-// sanitizeWilcardString sanitizes a wildcard string.
-func (pm *policyManager) sanitizeWilcardString(value string) string {
-	sanitizedValue := pm.sanitizeString(value)
-	if len(value) == 0 {
-		sanitizedValue = "*"
-	}
-	return sanitizedValue
-}
 
 // sanitizePolicy sanitizes a policy.
 func (pm *policyManager) sanitizePolicy(policy *Policy) (*Policy, error) {
-	policy.SyntaxVersion = pm.sanitizeString(policy.SyntaxVersion)
-	policy.Type = pm.sanitizeString(policy.Type)
-	policy.Name = pm.sanitizeString(policy.Name)
-	policy.Resource = UURString(pm.sanitizeWilcardString(string(policy.Resource)))
+	policy.SyntaxVersion = azsanitizers.SanitizeString(policy.SyntaxVersion)
+	policy.Type = azsanitizers.SanitizeString(policy.Type)
+	policy.Name = azsanitizers.SanitizeString(policy.Name)
+	policy.Resource = UURString(azsanitizers.SanitizeWilcardString(string(policy.Resource)))
 	for i, action := range policy.Actions {
-		policy.Actions[i] = ARString(pm.sanitizeWilcardString(string(action)))
+		policy.Actions[i] = ARString(azsanitizers.SanitizeWilcardString(string(action)))
 	}
 	return policy, nil
 }
