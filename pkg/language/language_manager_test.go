@@ -14,7 +14,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package policies
+package language
 
 import (
 	"encoding/json"
@@ -44,21 +44,21 @@ func TestMashalingOfPolicies(t *testing.T) {
 			var data map[string]interface{}
 			json.Unmarshal(testCaseData, &data)
 			t.Run(data["testcase"].(string), func(t *testing.T) {
-				pm := newPolicyManager()
+				pm := NewLanguageManager()
 
 				sanitize := data["sanitize"].(bool)
 				validate := data["validate"].(bool)
 				optimize := data["optimize"].(bool)
 
 				inputData, _ := json.Marshal(data["input"])
-				policyInInfo, _ := pm.UnmarshalPolicy(inputData, sanitize, validate, optimize)
-				policyInData, _ := pm.MarshalPolicy(policyInInfo.Policy, false, false, false)
-				policyInDataSha := azcrypto.ComputeSHA1(policyInData)
+				policyInInfo, _ := pm.UnmarshalType(inputData, sanitize, validate, optimize)
+				policyInData, _ := pm.MarshalType(policyInInfo.Type, false, false, false)
+				policyInDataSha := azcrypto.ComputeSHA256(policyInData)
 
 				outpuData, _ := json.Marshal(data["output"])
-				policyOutInfo, _ := pm.UnmarshalPolicy(outpuData, false, false, false)
-				policyOutData, _ := pm.MarshalPolicy(policyOutInfo.Policy, false, false, false)
-				policyOutDataSha := azcrypto.ComputeSHA1(policyOutData)
+				policyOutInfo, _ := pm.UnmarshalType(outpuData, false, false, false)
+				policyOutData, _ := pm.MarshalType(policyOutInfo.Type, false, false, false)
+				policyOutDataSha := azcrypto.ComputeSHA256(policyOutData)
 
 				assert.Equal(t, policyInDataSha, policyOutDataSha)
 			})

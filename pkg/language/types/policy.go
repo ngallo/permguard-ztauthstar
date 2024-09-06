@@ -14,15 +14,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package policies
+package types
 
 import (
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
 )
 
 const (
-	// PolicySyntax is the policy syntax.
-	PolicySyntax = "permguard1"
 	// ACPolicyType is the AC policy type.
 	ACPolicyType = "acpolicy"
 )
@@ -50,15 +48,8 @@ type AR struct {
 
 // Policy is the policy.
 type Policy struct {
-	SyntaxVersion string     `json:"syntax"`
-	Type          string     `json:"type"`
-	Name          string     `json:"name"`
-	Actions       []ARString `json:"actions"`
-	Resource      UURString  `json:"resource"`
-}
-
-// PolicyInfo is the policy info.
-type PolicyInfo struct {
-	PolicyHash string
-	Policy     *Policy
+	BaseType
+	Name     string     `json:"name"`
+	Actions  []ARString `json:"actions"`
+	Resource UURString  `json:"resource"`
 }

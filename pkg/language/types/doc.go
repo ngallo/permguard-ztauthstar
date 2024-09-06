@@ -14,19 +14,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package policies
-
-import (
-	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
-)
-
-// validate validates the input policy.
-func (pm *policyManager) validate(policy *Policy) (bool, error) {
-	if policy.SyntaxVersion != PolicySyntax || policy.Type != ACPolicyType {
-		return false, nil
-	}
-	if ! azvalidators.ValidateName(policy.Name) {
-		return false, nil
-	}
-	return true, nil
-}
+// Package types implements the language types
+package types

@@ -14,5 +14,21 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// Package authz implements the authz.
-package authz
+package types
+
+const (
+	// PolicySyntax is the policy syntax.
+	PolicySyntax = "permguard1"
+)
+
+// BaseType is the type.
+type BaseType struct {
+	SyntaxVersion string `json:"syntax"`
+	Type          string `json:"type"`
+}
+
+// TypeInfo is the type info.
+type TypeInfo struct {
+	Hash string
+	Type interface{}
+}
