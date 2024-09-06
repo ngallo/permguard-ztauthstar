@@ -69,7 +69,7 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 		return nil, fmt.Errorf("authz: failed to unmarshal type - %w", err)
 	}
 	return &aztypes.TypeInfo{
-		Hash: azcrypto.ComputeStringSHA1(strfy),
+		Hash: azcrypto.ComputeStringSHA256(strfy),
 		Type: snzPolicy,
 	}, nil
 }
