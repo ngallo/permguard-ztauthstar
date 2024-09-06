@@ -1,0 +1,29 @@
+{
+  "testcase": "raw-input-output",
+  "description": "This test cases is used to test two raw input and output",
+  "sanitize": false,
+  "validate": false,
+  "optimize": false,
+  "input": {
+    "syntax": "permguard1.0",
+    "type": "acpolicy",
+    "name": "manage-branch-staff",
+    "actions": [
+      "staff:access",
+      "staff:manage",
+      "staff:assignroles"
+    ],
+    "resource": "uur:::pharmacy-branch:staff/*"
+  },
+  "output": {
+    "syntax": "permguard1.0",
+    "type": "acpolicy",
+    "name": "manage-branch-staff",
+    "actions": [
+      "staff:access",
+      "staff:manage",
+      "staff:assignroles"
+    ],
+    "resource": "uur:::pharmacy-branch:staff/*"
+  }
+}
