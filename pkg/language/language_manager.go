@@ -27,6 +27,13 @@ import (
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
 )
 
+const (
+	// errMessageUnmarshalType is the error message for unmarshaling a type.
+	errMessageUnmarshalType = "language: failed to unmarshal type - %w"
+	// errMessageMarshalType is the error message for marshaling a type.
+	errMessageMarshalType = "language: failed to marshal type - %w"
+)
+
 // LanguageManager is the manager for policies.
 type LanguageManager struct {
 }
@@ -52,7 +59,7 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 	}
 	var baseType aztypes.BaseType
 	if err := json.Unmarshal(data, &baseType); err != nil {
-		return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
+		return nil, fmt.Errorf(errMessageUnmarshalType, err)
 	}
 	baseType.SyntaxVersion = azsanitizers.SanitizeString(baseType.SyntaxVersion)
 	baseType.Type = azsanitizers.SanitizeString(baseType.Type)
@@ -64,19 +71,19 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 	case aztypes.ACPolicyType:
 		var policy aztypes.Policy
 		if err := json.Unmarshal(data, &policy); err != nil {
-			return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
+			return nil, fmt.Errorf(errMessageUnmarshalType, err)
 		}
 		snzPolicy, err := pm.sanitizeValidateOptimize(&policy, sanitize, validate, optimize)
 		snzType = snzPolicy
 		if err != nil {
-			return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
+			return nil, fmt.Errorf(errMessageUnmarshalType, err)
 		}
 	default:
 		return nil, fmt.Errorf("language: failed to unmarshal type - invalid type %s", baseType.Type)
 	}
 	strfy, err := aztext.Stringify(snzType, nil)
 	if err != nil {
-		return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
+		return nil, fmt.Errorf(errMessageUnmarshalType, err)
 	}
 	return &aztypes.TypeInfo{
 		Hash: azcrypto.ComputeStringSHA256(strfy),
@@ -91,7 +98,7 @@ func (pm *LanguageManager) MarshalType(instance any, sanitize bool, validate boo
 	}
 	snzPolicy, err := pm.sanitizeValidateOptimize(instance, sanitize, validate, optimize)
 	if err != nil {
-		return nil, fmt.Errorf("language: failed to unmarshal type - %w", err)
+		return nil, fmt.Errorf(errMessageMarshalType, err)
 	}
 	data, err := json.Marshal(snzPolicy)
 	if err != nil {
