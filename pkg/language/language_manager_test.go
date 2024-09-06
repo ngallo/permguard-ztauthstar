@@ -41,7 +41,7 @@ func TestMashalingOfPolicies(t *testing.T) {
 		for _, testCase := range testCases {
 			testCaseFile := filepath.Join(test.Path, testCase.Name())
 			testCaseData, _ := os.ReadFile(testCaseFile)
-			var data map[string]interface{}
+			var data map[string]any
 			json.Unmarshal(testCaseData, &data)
 			t.Run(data["testcase"].(string), func(t *testing.T) {
 				pm := NewLanguageManager()

@@ -30,5 +30,5 @@ type BaseType struct {
 // TypeInfo is the type info.
 type TypeInfo struct {
 	Hash string
-	Type interface{}
+	Type any
 }
