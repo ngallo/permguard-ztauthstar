@@ -53,12 +53,12 @@ func TestMashalingOfPolicies(t *testing.T) {
 				optimize := data["optimize"].(bool)
 
 				inputData, _ := json.Marshal(data["input"])
-				policyInInfo, _ := pm.UnmarshalType(inputData, sanitize, validate, optimize)
+				policyInInfo, _ := pm.UnmarshalClass(inputData, sanitize, validate, optimize)
 				policyInData, _ := pm.MarshalClass(policyInInfo.Type, false, false, false)
 				policyInDataSha := azcrypto.ComputeSHA256(policyInData)
 
 				outpuData, err := json.Marshal(data["output"])
-				policyOutInfo, _ := pm.UnmarshalType(outpuData, false, false, false)
+				policyOutInfo, _ := pm.UnmarshalClass(outpuData, false, false, false)
 				policyOutData, _ := pm.MarshalClass(policyOutInfo.Type, false, false, false)
 				policyOutDataSha := azcrypto.ComputeSHA256(policyOutData)
 
@@ -103,7 +103,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewPermCodeManager()
 
-		result, err := pm.UnmarshalType(nil, false, false, false)
+		result, err := pm.UnmarshalClass(nil, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
@@ -154,7 +154,7 @@ func TestMashalingOfPoliciesWithErrors(t *testing.T) {
 				optimize := data["optimize"].(bool)
 
 				inputData, _ := json.Marshal(data["input"])
-				policyInInfo, err := pm.UnmarshalType(inputData, sanitize, validate, optimize)
+				policyInInfo, err := pm.UnmarshalClass(inputData, sanitize, validate, optimize)
 
 				assert.NotNil(err)
 				assert.Nil(policyInInfo)

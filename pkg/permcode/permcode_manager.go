@@ -52,8 +52,8 @@ func (pm *PermCodeManager) sanitizeValidateOptimize(instance any, sanitize bool,
 	return nil, errors.New("permcode: not implemented")
 }
 
-// UnmarshalType unmarshals a input byte array to a class instance.
-func (pm *PermCodeManager) UnmarshalType(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.ClassInfo, error) {
+// UnmarshalClass unmarshals a input byte array to a class instance.
+func (pm *PermCodeManager) UnmarshalClass(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.ClassInfo, error) {
 	if data == nil {
 		return nil, errors.New("permcode: type cannot be unmarshaled from nil data")
 	}
