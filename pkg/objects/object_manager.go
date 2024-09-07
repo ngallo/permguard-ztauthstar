@@ -16,6 +16,13 @@
 
 package objects
 
+import (
+	"bytes"
+	"fmt"
+
+	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
+)
+
 // ObjectManager is the manager for policies.
 type ObjectManager struct {
 }
@@ -25,12 +32,36 @@ func NewObjectManager() *ObjectManager {
 	return &ObjectManager{}
 }
 
+// CreateObject creates an object.
+func (m *ObjectManager) createOject(objectType string, content []byte) (Object, error) {
+	length := len(content)
+	var buffer bytes.Buffer
+	buffer.WriteString(objectType)
+	buffer.WriteString(" ")
+	buffer.WriteString(fmt.Sprintf("%d", length))
+	buffer.WriteByte(0)
+	buffer.Write(content)
+	objContent :=  buffer.Bytes()
+	return Object{
+		OID:     azcrypto.ComputeSHA256(content),
+		Content: objContent,
+	}, nil
+}
+
 // CreateCommitObject creates a commit object.
-func (m *ObjectManager) CreateCommitObject(commit Commit) (Object, error) {
-	return Object{}, nil
+func (m *ObjectManager) CreateCommitObject(commit *Commit) (Object, error) {
+	commitBytes, err := m.SerializeCommit(commit)
+	if err != nil {
+		return Object{}, err
+	}
+	return m.createOject(ObjectTypeCommit, commitBytes)
 }
 
 // CreateTreeObject creates a tree object.
-func (m *ObjectManager) CreateTreeObject(tree Tree) (Object, error) {
-	return Object{}, nil
+func (m *ObjectManager) CreateTreeObject(tree *Tree) (Object, error) {
+	treeBytes, err := m.SerializeTree(tree)
+	if err != nil {
+		return Object{}, err
+	}
+	return m.createOject(ObjectTypeTree, treeBytes)
 }

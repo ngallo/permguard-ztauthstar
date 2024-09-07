@@ -20,6 +20,13 @@ import (
 	"time"
 )
 
+const (
+	// ObjectTypeCommit is the object type for a commit.
+	ObjectTypeCommit = "commit"
+	// ObjectTypeTree is the object type for a tree.
+	ObjectTypeTree   = "tree"
+)
+
 // Object represents the object.
 type Object struct {
 	OID   	string
