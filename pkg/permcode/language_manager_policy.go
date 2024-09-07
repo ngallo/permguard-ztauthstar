@@ -14,7 +14,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package language
+package permcode
 
 import (
 	"errors"
@@ -22,8 +22,8 @@ import (
 	"strconv"
 	"strings"
 
-	azsanitizers "github.com/permguard/permguard-abs-language/pkg/language/sanitizers"
-	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
+	azsanitizers "github.com/permguard/permguard-abs-language/pkg/permcode/sanitizers"
+	aztypes "github.com/permguard/permguard-abs-language/pkg/permcode/types"
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
 	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
 )

@@ -14,7 +14,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package language
+package permcode
 
 import (
 	"encoding/json"
@@ -24,8 +24,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	aztypes "github.com/permguard/permguard-abs-language/pkg/permcode/types"
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
-	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
 )
 
 // TestStringify tests the Stringify function.

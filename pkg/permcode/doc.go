@@ -14,5 +14,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// Package language implements the language package.
-package language
+// Package permcode implements the permguard code.
+package permcode
