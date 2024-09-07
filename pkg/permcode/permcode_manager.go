@@ -88,7 +88,7 @@ func (pm *PermCodeManager) UnmarshalClass(data []byte, sanitize bool, validate b
 		return nil, fmt.Errorf(errMessageUnmarshalClass, err)
 	}
 	return &aztypes.ClassInfo{
-		Hash:     azcrypto.ComputeStringSHA256(strfy),
+		SID:      azcrypto.ComputeStringSHA256(strfy),
 		Type:     classType,
 		Instance: classInstance,
 	}, nil

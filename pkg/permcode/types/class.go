@@ -33,7 +33,7 @@ type Class struct {
 
 // ClassInfo is the class info.
 type ClassInfo struct {
-	Hash     string
+	SID      string
 	Type     string
 	Instance any
 }
