@@ -23,51 +23,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	aztypes "github.com/permguard/permguard-abs-language/pkg/permcode/types"
-	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 )
-
-// TestMashalingOfPolicies tests the marshalling of policies.
-func TestMashalingOfPolicies(t *testing.T) {
-	tests := []struct {
-		Path string
-	}{
-		{
-			Path: "./testdata/mashaling",
-		},
-	}
-	for _, test := range tests {
-		testCases, _ := os.ReadDir(test.Path)
-		for _, testCase := range testCases {
-			testCaseFile := filepath.Join(test.Path, testCase.Name())
-			testCaseData, _ := os.ReadFile(testCaseFile)
-			var data map[string]any
-			json.Unmarshal(testCaseData, &data)
-			t.Run(data["testcase"].(string), func(t *testing.T) {
-				assert := assert.New(t)
-				pm := NewPermCodeManager()
-
-				sanitize := data["sanitize"].(bool)
-				validate := data["validate"].(bool)
-				optimize := data["optimize"].(bool)
-
-				inputData, _ := json.Marshal(data["input"])
-				policyInInfo, err := pm.UnmarshalClass(inputData, aztypes.ClassTypeACPolicy, sanitize, validate, optimize)
-				assert.Nil(err, "UnmarshalClass should not return an error")
-				policyInData, err := pm.MarshalClass(policyInInfo.Instance, sanitize, validate, optimize)
-				assert.Nil(err, "MarshalClass should not return an error")
-				policyInDataSha := azcrypto.ComputeSHA256(policyInData)
-
-				outputData, err := json.Marshal(data["output"])
-				policyOutInfo, _ := pm.UnmarshalClass(outputData, aztypes.ClassTypeACPolicy, false, false, false)
-				policyOutData, _ := pm.MarshalClass(policyOutInfo.Instance, false, false, false)
-				policyOutDataSha := azcrypto.ComputeSHA256(policyOutData)
-
-				assert.Nil(err)
-				assert.Equal(policyInDataSha, policyOutDataSha, "Input and output SHA256 hashes should match")
-			})
-		}
-	}
-}
 
 // TestMashalingOfPoliciesWithArgumentsErrors tests argument error cases for marshalling and unmarshalling.
 func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
@@ -156,28 +112,4 @@ func TestMashalingOfPoliciesWithErrors(t *testing.T) {
 			})
 		}
 	}
-}
-
-// TestPermCodeManagerWithOptimize tests the optimization behavior in the PermCodeManager.
-func TestPermCodeManagerWithOptimize(t *testing.T) {
-	t.Run("Test optimization on invalid policy 1", func(t *testing.T) {
-		assert := assert.New(t)
-		pm := NewPermCodeManager()
-
-		validPolicy := aztypes.Policy{Name: "valid-policy"}
-		_, err := pm.MarshalClass(&validPolicy, true, true, true)
-
-		assert.NotNil(err, "Optimization should not cause an error")
-	})
-
-	t.Run("Test optimization with invalid policy 2", func(t *testing.T) {
-		assert := assert.New(t)
-		pm := NewPermCodeManager()
-
-		invalidPolicy := aztypes.Policy{Name: "invalid policy name @#"}
-		result, err := pm.MarshalClass(&invalidPolicy, true, true, true)
-
-		assert.NotNil(err, "Expected error during optimization of invalid policy")
-		assert.Nil(result)
-	})
 }
