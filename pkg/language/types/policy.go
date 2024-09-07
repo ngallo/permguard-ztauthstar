@@ -39,11 +39,6 @@ const (
 	KeywordTenant = "$tenant"
 )
 
-// ListKeywords lists the keywords.
-func ListKeywords() []string {
-	return []string{KeywordAccount, KeywordTenant}
-}
-
 // UURString is the UUR wildcard string.
 type UURString aztext.WildcardString
 

@@ -25,6 +25,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
+	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
 )
 
 // TestStringify tests the Stringify function.
@@ -78,11 +79,41 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
+	t.Run("marshaling with invalid json", func(t *testing.T) {
+		assert := assert.New(t)
+		pm := NewLanguageManager()
+
+		jsonStr := `{"id":"1", "color":"red"}`
+		jsonBytes := []byte(jsonStr)
+		result, err := pm.MarshalType(jsonBytes, false, false, false)
+		assert.NotNil(err)
+		assert.Nil(result)
+	})
 	t.Run("unmarshaling with nil value", func(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewLanguageManager()
 
 		result, err := pm.UnmarshalType(nil, false, false, false)
+		assert.NotNil(err)
+		assert.Nil(result)
+	})
+	t.Run("marshaling with invalid object type", func(t *testing.T) {
+		assert := assert.New(t)
+		pm := NewLanguageManager()
+
+		obj := "sorry"
+		result, err := pm.MarshalType(obj, false, false, false)
+		assert.NotNil(err)
+		assert.Nil(result)
+	})
+	t.Run("marshaling with invalid object", func(t *testing.T) {
+		assert := assert.New(t)
+		pm := NewLanguageManager()
+
+		obj := aztypes.Policy{
+			Name: "this is a wr@ng name",
+		}
+		result, err := pm.MarshalType(obj, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
