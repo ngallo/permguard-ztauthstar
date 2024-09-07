@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//
+// SPDX-License-Identifier: Apache-2.0
 
 package objects
 
@@ -44,7 +46,7 @@ func (m *ObjectManager) createOject(objectType string, content []byte) (*Object,
 	buffer.WriteString(fmt.Sprintf("%d", length))
 	buffer.WriteByte(0)
 	buffer.Write(content)
-	objContent :=  buffer.Bytes()
+	objContent := buffer.Bytes()
 	return &Object{
 		OID:     azcrypto.ComputeSHA256(content),
 		Content: objContent,

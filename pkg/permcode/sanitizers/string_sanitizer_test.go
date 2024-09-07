@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//
+// SPDX-License-Identifier: Apache-2.0
 
 package sanitizers
 
@@ -28,9 +30,9 @@ func TestSanitizeString(t *testing.T) {
 		Input  string
 		Output string
 	}{
-		{ Input: "ab c", Output: "ab c" },
-		{ Input: "AB C", Output: "ab c" },
-		{ Input: "", Output: "" },
+		{Input: "ab c", Output: "ab c"},
+		{Input: "AB C", Output: "ab c"},
+		{Input: "", Output: ""},
 	}
 	for _, test := range tests {
 		output := SanitizeString(test.Input)
@@ -44,11 +46,11 @@ func TestSanitizeWilcardString(t *testing.T) {
 		Input  string
 		Output string
 	}{
-		{ Input: "ab c", Output: "ab c" },
-		{ Input: "AB C", Output: "ab c" },
-		{ Input: "", Output: "*" },
-		{ Input: "************", Output: "*" },
-		{ Input: "*****AB*******", Output: "*ab*" },
+		{Input: "ab c", Output: "ab c"},
+		{Input: "AB C", Output: "ab c"},
+		{Input: "", Output: "*"},
+		{Input: "************", Output: "*"},
+		{Input: "*****AB*******", Output: "*ab*"},
 	}
 	for _, test := range tests {
 		output := SanitizeWilcardString(test.Input)

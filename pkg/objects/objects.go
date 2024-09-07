@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//
+// SPDX-License-Identifier: Apache-2.0
 
 package objects
 
@@ -24,42 +26,42 @@ const (
 	// ObjectTypeCommit is the object type for a commit.
 	ObjectTypeCommit = "commit"
 	// ObjectTypeTree is the object type for a tree.
-	ObjectTypeTree   = "tree"
+	ObjectTypeTree = "tree"
 	// ObjectTypeBlob is the object type for a blob.
-	ObjectTypeBlob   = "blob"
+	ObjectTypeBlob = "blob"
 )
 
 // Object represents the object.
 type Object struct {
-	OID   	string
+	OID     string
 	Content []byte
 }
 
 // ObjectInfo is the object info.
 type ObjectInfo struct {
-	OID			string
-	Type		string
-	Instance	any
+	OID      string
+	Type     string
+	Instance any
 }
 
 // CommitInfo represents the author or committer of the commit.
 type CommitInfo struct {
-	Date  time.Time
+	Date time.Time
 }
 
 // Commit represents a commit object.
 type Commit struct {
-	Tree      string
-	Parents   []string
-	Info CommitInfo
-	Message   string
+	Tree    string
+	Parents []string
+	Info    CommitInfo
+	Message string
 }
 
 // TreeEntry represents a single entry in a tree object.
 type TreeEntry struct {
 	Mode uint32
 	Type string
-	OID string
+	OID  string
 	Name string
 }
 

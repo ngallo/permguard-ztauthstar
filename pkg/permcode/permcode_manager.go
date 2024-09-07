@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//
+// SPDX-License-Identifier: Apache-2.0
 
 package permcode
 
@@ -59,7 +61,7 @@ func (pm *PermCodeManager) UnmarshalPolicy(data []byte, sanitize bool, validate 
 		return nil, err
 	}
 	return &aztypes.PolicyInfo{
-		SID:	clasInfo.SID,
+		SID:    clasInfo.SID,
 		Policy: clasInfo.Instance.(*aztypes.Policy),
 	}, nil
 }

@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//
+// SPDX-License-Identifier: Apache-2.0
 
 package types
 
@@ -124,6 +126,6 @@ type Policy struct {
 
 // PolicyInfo is the policy info.
 type PolicyInfo struct {
-	SID      string
-	Policy   *Policy
+	SID    string
+	Policy *Policy
 }
