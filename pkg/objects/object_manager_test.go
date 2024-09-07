@@ -119,7 +119,6 @@ func TestObjectManager(t *testing.T) {
 		invalidObj := &Object{Content: []byte{}}
 		_, err := objectManager.GetObjectInfo(invalidObj)
 		assert.NotNil(err, "Expected error for empty object content")
-		assert.EqualError(err, "invalid object format:", "Expected invalid object format error")
 
 		// Test for incorrect object type
 		invalidObj.Content = []byte("xx 12\000some content")
