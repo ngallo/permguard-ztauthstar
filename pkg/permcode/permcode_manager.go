@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-//
-// SPDX-License-Identifier: Apache-2.0
 
 package permcode
 
@@ -46,10 +44,12 @@ func NewPermCodeManager() *PermCodeManager {
 }
 
 // sanitizeValidateOptimize sanitizes, validates and optimize the input policy.
-func (pm *PermCodeManager) sanitizeValidateOptimize(instance any, sanitize bool, validate bool, optimize bool) (*aztypes.Policy, error) {
+func (pm *PermCodeManager) sanitizeValidateOptimize(instance any, sanitize bool, validate bool, optimize bool) (any, error) {
 	switch v := instance.(type) {
 	case *aztypes.Policy:
 		return pm.sanitizeValidateOptimizePolicy(v, sanitize, validate, optimize)
+	case *aztypes.Permission:
+		return pm.sanitizeValidateOptimizePermission(v, sanitize, validate, optimize)
 	}
 	return nil, errors.New("permcode: not implemented")
 }
@@ -93,6 +93,17 @@ func (pm *PermCodeManager) UnmarshalClass(data []byte, classType string, sanitiz
 		snzPolicy, err := pm.sanitizeValidateOptimize(&policy, sanitize, validate, optimize)
 		classInstance = snzPolicy
 		classType = aztypes.ClassTypeACPolicy
+		if err != nil {
+			return nil, fmt.Errorf(errMessageUnmarshalClass, err)
+		}
+	case aztypes.ClassTypeACPermission:
+		var permission aztypes.Permission
+		if err := json.Unmarshal(data, &permission); err != nil {
+			return nil, fmt.Errorf(errMessageUnmarshalClass, err)
+		}
+		snzPermission, err := pm.sanitizeValidateOptimize(&permission, sanitize, validate, optimize)
+		classInstance = snzPermission
+		classType = aztypes.ClassTypeACPermission
 		if err != nil {
 			return nil, fmt.Errorf(errMessageUnmarshalClass, err)
 		}

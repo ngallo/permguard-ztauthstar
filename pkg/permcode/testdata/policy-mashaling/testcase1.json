@@ -5,33 +5,33 @@
   "validate": false,
   "optimize": false,
   "input": {
-    "syntax": "permguard1",
-    "type": "acpolicy",
-    "name": "manage-branch-staff",
+    "syntax": "PERMGUARD1",
+    "type": "ACPOLICY",
+    "name": "MANAGE-BRANCH-STAFF",
     "actions": [
-      "ar:staff:access",
-      "ar:payment:rea*",
-      "ar:staff:manage*",
-      "ar:payment:read",
-      "ar:staff:assignroles",
-      "ar:staff:manage",
-      "ar:order:manage"
+      "AR:STAFF:ACCESS",
+      "AR:PAYMENT:REA*",
+      "AR:STAFF:MANAGE*",
+      "AR:PAYMENT:READ",
+      "AR:STAFF:ASSIGNROLES",
+      "AR:STAFF:MANAGE",
+      "AR:ORDER:MANAGE"
     ],
-    "resource": "uur:268786704340:*:pharmacy-branch:staff/id/*"
+    "resource": "UUR:268786704340:*:PHARMACY-BRANCH:STAFF/ID/*"
   },
   "output": {
-    "syntax": "permguard1",
-    "type": "acpolicy",
-    "name": "manage-branch-staff",
+    "syntax": "PERMGUARD1",
+    "type": "ACPOLICY",
+    "name": "MANAGE-BRANCH-STAFF",
     "actions": [
-      "ar:staff:access",
-      "ar:payment:rea*",
-      "ar:staff:manage*",
-      "ar:payment:read",
-      "ar:staff:assignroles",
-      "ar:staff:manage",
-      "ar:order:manage"
+      "AR:STAFF:ACCESS",
+      "AR:PAYMENT:REA*",
+      "AR:STAFF:MANAGE*",
+      "AR:PAYMENT:READ",
+      "AR:STAFF:ASSIGNROLES",
+      "AR:STAFF:MANAGE",
+      "AR:ORDER:MANAGE"
     ],
-    "resource": "uur:268786704340:*:pharmacy-branch:staff/id/*"
+    "resource": "UUR:268786704340:*:PHARMACY-BRANCH:STAFF/ID/*"
   }
 }

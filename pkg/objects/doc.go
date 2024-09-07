@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-//
-// SPDX-License-Identifier: Apache-2.0
 
 // Package objects implements the logic to manage the file objects.
 package objects

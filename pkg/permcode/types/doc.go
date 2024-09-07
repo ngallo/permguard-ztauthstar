@@ -13,8 +13,6 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-//
-// SPDX-License-Identifier: Apache-2.0
 
 // Package types implements the language types
 package types

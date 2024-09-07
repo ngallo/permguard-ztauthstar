@@ -1,0 +1,39 @@
+{
+  "testcase": "sanitize-validate-optimize-input",
+  "description": "This test cases is used to test a sanitized, validated and optimized input",
+  "sanitize": true,
+  "validate": true,
+  "optimize": true,
+  "input": {
+    "syntax": "Permguard1",
+    "type": "ACPermission",
+    "name": "Branch-auditor",
+    "permit": [
+      "AUDIT-branch-staff",
+      "AUDIT-Branch-inventory",
+      "audit-branch-inventory",
+      "AUDIT-branch-orders"
+    ],
+    "forbid": [
+      "MANAGE-branch-staff",
+      "MANAGE-branch-inventory",
+      "MANAGE-branch-orders",
+      "MANAGE-branch-staff"
+    ]
+  },
+  "output": {
+    "syntax": "permguard1",
+    "type": "acpermission",
+    "name": "branch-auditor",
+    "permit": [
+      "audit-branch-inventory",
+      "audit-branch-orders",
+      "audit-branch-staff"
+    ],
+    "forbid": [
+      "manage-branch-inventory",
+      "manage-branch-orders",
+      "manage-branch-staff"
+    ]
+  }
+}

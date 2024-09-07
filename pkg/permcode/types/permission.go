@@ -13,16 +13,15 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-//
-// SPDX-License-Identifier: Apache-2.0
 
 package types
 
 // Permission is the permission.
 type Permission struct {
 	Class
-	Name             string   `json:"name"`
-	PolicyReferences []string `json:"policy_references"`
+	Name	string   `json:"name"`
+	Permit	[]string `json:"permit"`
+	Forbid	[]string `json:"forbid"`
 }
 
 // PermissionInfo is the permission info.

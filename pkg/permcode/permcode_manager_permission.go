@@ -18,6 +18,7 @@ package permcode
 
 import (
 	"errors"
+	"fmt"
 	"sort"
 
 	azsanitizers "github.com/permguard/permguard-abs-language/pkg/permcode/sanitizers"
@@ -58,9 +59,22 @@ func (pm *PermCodeManager) sanitizePermission(permission *aztypes.Permission) (*
 	permission.SyntaxVersion = azsanitizers.SanitizeString(permission.SyntaxVersion)
 	permission.Type = azsanitizers.SanitizeString(permission.Type)
 	permission.Name = azsanitizers.SanitizeString(permission.Name)
-	for i, reference := range permission.PolicyReferences {
-		permission.PolicyReferences[i] = azsanitizers.SanitizeString(reference)
+	sanitizeSlice := func(slice *[]string) {
+		if *slice == nil {
+			*slice = []string{}
+		}
+		for i, policyName := range *slice {
+			(*slice)[i] = azsanitizers.SanitizeString(policyName)
+		}
 	}
+	if permission.Permit == nil {
+		permission.Permit = []string{}
+	}
+	sanitizeSlice(&permission.Permit)
+	if permission.Forbid == nil {
+		permission.Forbid = []string{}
+	}
+	sanitizeSlice(&permission.Forbid)
 	return permission, nil
 }
 
@@ -72,10 +86,25 @@ func (pm *PermCodeManager) validatePermission(permission *aztypes.Permission) (b
 	if !azvalidators.ValidateName(permission.Name) {
 		return false, errors.New("permcode: invalid name")
 	}
-	for _, reference := range permission.PolicyReferences {
-		if !azvalidators.ValidateName(reference) {
-			return false, errors.New("permcode: invalid policy reference name")
+	validateSlice := func(slice []string, sliceType string) error {
+		for _, policyName := range slice {
+			if !azvalidators.ValidateName(policyName) {
+				return fmt.Errorf("permcode: invalid %s policy name", sliceType)
+			}
 		}
+		return nil
+	}
+	if permission.Permit == nil {
+		permission.Permit = []string{}
+	}
+	if err := validateSlice(permission.Permit, "permit"); err != nil {
+		return false, err
+	}
+	if permission.Forbid == nil {
+		permission.Forbid = []string{}
+	}
+	if err := validateSlice(permission.Forbid, "forbid"); err != nil {
+		return false, err
 	}
 	return true, nil
 }
@@ -83,14 +112,24 @@ func (pm *PermCodeManager) validatePermission(permission *aztypes.Permission) (b
 // optimizePermission optimizes a permission.
 func (pm *PermCodeManager) optimizePermission(permission *aztypes.Permission) (*aztypes.Permission, error) {
 	policySet := make(map[string]struct{})
-	uniquePolicies := []string{}
-	for _, policy := range permission.PolicyReferences {
-		if _, exists := policySet[policy]; !exists {
-			policySet[policy] = struct{}{}
-			uniquePolicies = append(uniquePolicies, policy)
+	optimizeSlice := func(slice []string) []string {
+		uniquePolicies := []string{}
+		for _, policy := range slice {
+			if _, exists := policySet[policy]; !exists {
+				policySet[policy] = struct{}{}
+				uniquePolicies = append(uniquePolicies, policy)
+			}
 		}
+		sort.Strings(uniquePolicies)
+		return uniquePolicies
 	}
-	sort.Strings(uniquePolicies)
-	permission.PolicyReferences = uniquePolicies
+	if permission.Permit == nil {
+		permission.Permit = []string{}
+	}
+	permission.Permit = optimizeSlice(permission.Permit)
+	if permission.Forbid == nil {
+		permission.Forbid = []string{}
+	}
+	permission.Forbid = optimizeSlice(permission.Forbid)
 	return permission, nil
 }
