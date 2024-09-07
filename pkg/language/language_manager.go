@@ -21,7 +21,7 @@ import (
 	"errors"
 	"fmt"
 
-	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
+	azsanitizers "github.com/permguard/permguard-abs-language/pkg/language/sanitizers"
 	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"

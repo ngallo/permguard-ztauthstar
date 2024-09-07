@@ -22,7 +22,7 @@ import (
 	"strconv"
 	"strings"
 
-	azsanitizers "github.com/permguard/permguard-abs-language/pkg/extensions/sanitizers"
+	azsanitizers "github.com/permguard/permguard-abs-language/pkg/language/sanitizers"
 	aztypes "github.com/permguard/permguard-abs-language/pkg/language/types"
 	aztext "github.com/permguard/permguard-core/pkg/extensions/text"
 	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
