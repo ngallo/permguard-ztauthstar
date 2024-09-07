@@ -1,0 +1,23 @@
+{
+  "testcase": "errors-in-actions-with-validate",
+  "description": "This test cases is used to test errors in the actions",
+  "sanitize": false,
+  "validate": true,
+  "optimize": false,
+  "input": {
+    "syntax": "permguard1",
+    "type": "acpolicy",
+    "name": "manage-branch-staff",
+    "actions": [
+      "ar:staff:access",
+      "ar:payment:rea*",
+      "staff:manage*",
+      "ar:payment:read",
+      "ar:staff:assignroles",
+      "ar:staff:manage",
+      "ar:order:manage"
+    ],
+    "resource": "uur:268786704340:*:pharmacy-branch:staff/id/*"
+  },
+  "error": ""
+}

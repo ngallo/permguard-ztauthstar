@@ -44,6 +44,7 @@ func TestMashalingOfPolicies(t *testing.T) {
 			var data map[string]any
 			json.Unmarshal(testCaseData, &data)
 			t.Run(data["testcase"].(string), func(t *testing.T) {
+				assert := assert.New(t)
 				pm := NewLanguageManager()
 
 				sanitize := data["sanitize"].(bool)
@@ -55,12 +56,47 @@ func TestMashalingOfPolicies(t *testing.T) {
 				policyInData, _ := pm.MarshalType(policyInInfo.Type, false, false, false)
 				policyInDataSha := azcrypto.ComputeSHA256(policyInData)
 
-				outpuData, _ := json.Marshal(data["output"])
+				outpuData, err := json.Marshal(data["output"])
 				policyOutInfo, _ := pm.UnmarshalType(outpuData, false, false, false)
 				policyOutData, _ := pm.MarshalType(policyOutInfo.Type, false, false, false)
 				policyOutDataSha := azcrypto.ComputeSHA256(policyOutData)
 
-				assert.Equal(t, policyInDataSha, policyOutDataSha)
+				assert.Nil(err)
+				assert.Equal(policyInDataSha, policyOutDataSha)
+			})
+		}
+	}
+}
+
+// TestMashalingOfPoliciesWithErrors tests the Stringify function.
+func TestMashalingOfPoliciesWithErrors(t *testing.T) {
+	tests := []struct {
+		Path string
+	}{
+		{
+			Path: "./testdata/mashaling-with-errors",
+		},
+	}
+	for _, test := range tests {
+		testCases, _ := os.ReadDir(test.Path)
+		for _, testCase := range testCases {
+			testCaseFile := filepath.Join(test.Path, testCase.Name())
+			testCaseData, _ := os.ReadFile(testCaseFile)
+			var data map[string]any
+			json.Unmarshal(testCaseData, &data)
+			t.Run(data["testcase"].(string), func(t *testing.T) {
+				assert := assert.New(t)
+				pm := NewLanguageManager()
+
+				sanitize := data["sanitize"].(bool)
+				validate := data["validate"].(bool)
+				optimize := data["optimize"].(bool)
+
+				inputData, _ := json.Marshal(data["input"])
+				policyInInfo, err := pm.UnmarshalType(inputData, sanitize, validate, optimize)
+
+				assert.NotNil(err)
+				assert.Nil(policyInInfo)
 			})
 		}
 	}
