@@ -62,16 +62,16 @@ type UUR struct {
 
 // Prase parses the UUR string.
 func (s *UURString) Prase() (*UUR, error) {
-    uurStr := string(*s)
-    parts := strings.Split(uurStr, ":")
-    if len(parts) != 5 || parts[0] != "uur" {
-        return nil, errors.New("language: invalid uur string")
-    }
+	uurStr := string(*s)
+	parts := strings.Split(uurStr, ":")
+	if len(parts) != 5 || parts[0] != "uur" {
+		return nil, errors.New("permcode: invalid uur string")
+	}
 	account := parts[1]
-    tenant := parts[2]
-    domain := parts[3]
+	tenant := parts[2]
+	domain := parts[3]
 	resParts := strings.Split(parts[4], resourceFilterSeparator)
-    resource := resParts[0]
+	resource := resParts[0]
 	resourceFilter := []aztext.WildcardString{}
 	if len(resParts) > 1 {
 		for _, filter := range resParts[1:] {
@@ -97,12 +97,12 @@ func FormatARString(resource, action aztext.WildcardString) ARString {
 
 // Prase parses the UUR string.
 func (s *ARString) Prase() (*AR, error) {
-    uurStr := string(*s)
-    parts := strings.Split(uurStr, ":")
-    if len(parts) != 3 || parts[0] != "ar" {
-        return nil, errors.New("language: invalid ar string")
-    }
-    resource := parts[1]
+	uurStr := string(*s)
+	parts := strings.Split(uurStr, ":")
+	if len(parts) != 3 || parts[0] != "ar" {
+		return nil, errors.New("permcode: invalid ar string")
+	}
+	resource := parts[1]
 	action := parts[2]
 	return &AR{
 		Resource: aztext.WildcardString(resource),

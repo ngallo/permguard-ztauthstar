@@ -46,7 +46,7 @@ func TestMashalingOfPolicies(t *testing.T) {
 			json.Unmarshal(testCaseData, &data)
 			t.Run(data["testcase"].(string), func(t *testing.T) {
 				assert := assert.New(t)
-				pm := NewLanguageManager()
+				pm := NewPermCodeManager()
 
 				sanitize := data["sanitize"].(bool)
 				validate := data["validate"].(bool)
@@ -73,7 +73,7 @@ func TestMashalingOfPolicies(t *testing.T) {
 func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 	t.Run("marshaling with nil value", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewLanguageManager()
+		pm := NewPermCodeManager()
 
 		result, err := pm.MarshalType(nil, false, false, false)
 		assert.NotNil(err)
@@ -81,7 +81,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 	})
 	t.Run("marshaling with invalid json 1", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewLanguageManager()
+		pm := NewPermCodeManager()
 
 		jsonStr := `{"id":"1", "color":"red"}`
 		jsonBytes := []byte(jsonStr)
@@ -91,7 +91,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 	})
 	t.Run("marshaling with invalid json 2", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewLanguageManager()
+		pm := NewPermCodeManager()
 
 		jsonStr := `{"syntax":"permguard1", "type":"acpolicy"}`
 		jsonBytes := []byte(jsonStr)
@@ -101,7 +101,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 	})
 	t.Run("unmarshaling with nil value", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewLanguageManager()
+		pm := NewPermCodeManager()
 
 		result, err := pm.UnmarshalType(nil, false, false, false)
 		assert.NotNil(err)
@@ -109,7 +109,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 	})
 	t.Run("marshaling with invalid object type", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewLanguageManager()
+		pm := NewPermCodeManager()
 
 		obj := "sorry"
 		result, err := pm.MarshalType(obj, false, false, false)
@@ -118,7 +118,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 	})
 	t.Run("marshaling with invalid policy", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewLanguageManager()
+		pm := NewPermCodeManager()
 
 		obj := aztypes.Policy{
 			Name: "this is a wr@ng name",
@@ -147,7 +147,7 @@ func TestMashalingOfPoliciesWithErrors(t *testing.T) {
 			json.Unmarshal(testCaseData, &data)
 			t.Run(data["testcase"].(string), func(t *testing.T) {
 				assert := assert.New(t)
-				pm := NewLanguageManager()
+				pm := NewPermCodeManager()
 
 				sanitize := data["sanitize"].(bool)
 				validate := data["validate"].(bool)

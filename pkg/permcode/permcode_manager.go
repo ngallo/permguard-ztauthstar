@@ -29,33 +29,33 @@ import (
 
 const (
 	// errMessageUnmarshalType is the error message for unmarshaling a type.
-	errMessageUnmarshalType = "language: failed to unmarshal type - %w"
+	errMessageUnmarshalType = "permcode: failed to unmarshal type - %w"
 	// errMessageMarshalType is the error message for marshaling a type.
-	errMessageMarshalType = "language: failed to marshal type - %w"
+	errMessageMarshalType = "permcode: failed to marshal type - %w"
 )
 
-// LanguageManager is the manager for policies.
-type LanguageManager struct {
+// PermCodeManager is the manager for policies.
+type PermCodeManager struct {
 }
 
-// NewLanguageManager creates a new LanguageManager.
-func NewLanguageManager() *LanguageManager {
-	return &LanguageManager{}
+// NewPermCodeManager creates a new PermCodeManager.
+func NewPermCodeManager() *PermCodeManager {
+	return &PermCodeManager{}
 }
 
 // sanitizeValidateOptimize sanitizes, validates and optimize the input policy.
-func (pm *LanguageManager) sanitizeValidateOptimize(instance any, sanitize bool, validate bool, optimize bool) (*aztypes.Policy, error) {
+func (pm *PermCodeManager) sanitizeValidateOptimize(instance any, sanitize bool, validate bool, optimize bool) (*aztypes.Policy, error) {
 	switch v := instance.(type) {
 	case *aztypes.Policy:
 		return pm.sanitizeValidateOptimizePolicy(v, sanitize, validate, optimize)
 	}
-	return nil, errors.New("language: not implemented")
+	return nil, errors.New("permcode: not implemented")
 }
 
-// UnmarshalType unmarshals a language type from the given data, and optionally sanitized, validates and optimizes it based on the provided parameters.
-func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.TypeInfo, error) {
+// UnmarshalType unmarshals a permcode type from the given data, and optionally sanitized, validates and optimizes it based on the provided parameters.
+func (pm *PermCodeManager) UnmarshalType(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.TypeInfo, error) {
 	if data == nil {
-		return nil, errors.New("language: type cannot be unmarshaled from nil data")
+		return nil, errors.New("permcode: type cannot be unmarshaled from nil data")
 	}
 	var baseType aztypes.BaseType
 	if err := json.Unmarshal(data, &baseType); err != nil {
@@ -64,7 +64,7 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 	baseType.SyntaxVersion = azsanitizers.SanitizeString(baseType.SyntaxVersion)
 	baseType.Type = azsanitizers.SanitizeString(baseType.Type)
 	if baseType.SyntaxVersion != aztypes.PolicySyntax {
-		return nil, fmt.Errorf("language: failed to unmarshal type - invalid syntax version %s", baseType.SyntaxVersion)
+		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid syntax version %s", baseType.SyntaxVersion)
 	}
 	var snzType any
 	switch baseType.Type {
@@ -79,7 +79,7 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 			return nil, fmt.Errorf(errMessageUnmarshalType, err)
 		}
 	default:
-		return nil, fmt.Errorf("language: failed to unmarshal type - invalid type %s", baseType.Type)
+		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid type %s", baseType.Type)
 	}
 	strfy, err := aztext.Stringify(snzType, nil)
 	if err != nil {
@@ -92,9 +92,9 @@ func (pm *LanguageManager) UnmarshalType(data []byte, sanitize bool, validate bo
 }
 
 // MarshalType marshals a type to a byte array, and optionally sanitized, validates and optimizes it based on the provided parameters.
-func (pm *LanguageManager) MarshalType(instance any, sanitize bool, validate bool, optimize bool) ([]byte, error) {
+func (pm *PermCodeManager) MarshalType(instance any, sanitize bool, validate bool, optimize bool) ([]byte, error) {
 	if instance == nil {
-		return nil, errors.New("language: type cannot be marshaled from nil instance")
+		return nil, errors.New("permcode: type cannot be marshaled from nil instance")
 	}
 	snzPolicy, err := pm.sanitizeValidateOptimize(instance, sanitize, validate, optimize)
 	if err != nil {
@@ -102,7 +102,7 @@ func (pm *LanguageManager) MarshalType(instance any, sanitize bool, validate boo
 	}
 	data, err := json.Marshal(snzPolicy)
 	if err != nil {
-		return nil, fmt.Errorf("language: failed to marshal type - %w", err)
+		return nil, fmt.Errorf("permcode: failed to marshal type - %w", err)
 	}
 	return data, nil
 }

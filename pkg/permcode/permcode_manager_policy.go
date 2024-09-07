@@ -29,7 +29,7 @@ import (
 )
 
 // sanitizeValidateOptimize sanitizes, validates and optimize the input policy.
-func (pm *LanguageManager) sanitizeValidateOptimizePolicy(policy *aztypes.Policy, sanitize bool, validate bool, optimize bool) (*aztypes.Policy, error) {
+func (pm *PermCodeManager) sanitizeValidateOptimizePolicy(policy *aztypes.Policy, sanitize bool, validate bool, optimize bool) (*aztypes.Policy, error) {
 	var err error
 	targetPolicy := policy
 	if sanitize {
@@ -41,7 +41,7 @@ func (pm *LanguageManager) sanitizeValidateOptimizePolicy(policy *aztypes.Policy
 	if validate {
 		valid, err := pm.validatePolicy(targetPolicy)
 		if !valid {
-			return nil, errors.New("language: policy is invalid")
+			return nil, errors.New("permcode: policy is invalid")
 		}
 		if err != nil {
 			return nil, err
@@ -57,7 +57,7 @@ func (pm *LanguageManager) sanitizeValidateOptimizePolicy(policy *aztypes.Policy
 }
 
 // sanitizePolicy sanitizes a policy.
-func (pm *LanguageManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Policy, error) {
+func (pm *PermCodeManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Policy, error) {
 	policy.SyntaxVersion = azsanitizers.SanitizeString(policy.SyntaxVersion)
 	policy.Type = azsanitizers.SanitizeString(policy.Type)
 	policy.Name = azsanitizers.SanitizeString(policy.Name)
@@ -93,12 +93,12 @@ func (pm *LanguageManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 }
 
 // validatePolicy validates the input policy.
-func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) {
+func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) {
 	if policy.SyntaxVersion != aztypes.PolicySyntax || policy.Type != aztypes.ACPolicyType {
 		return false, nil
 	}
 	if !azvalidators.ValidateName(policy.Name) {
-		return false, errors.New("language: invalid name")
+		return false, errors.New("permcode: invalid name")
 	}
 	for _, action := range policy.Actions {
 		ar, err := action.Prase()
@@ -106,10 +106,10 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 			return false, err
 		}
 		if !azvalidators.ValidateWildcardName(string(ar.Resource)) {
-			return false, errors.New("language: invalid resource")
+			return false, errors.New("permcode: invalid resource")
 		}
 		if !azvalidators.ValidateWildcardName(string(ar.Action)) {
-			return false, errors.New("language: invalid action")
+			return false, errors.New("permcode: invalid action")
 		}
 	}
 	uur, err := policy.Resource.Prase()
@@ -119,34 +119,34 @@ func (pm *LanguageManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 	if uur.Account != aztypes.KeywordAccount {
 		account, err := strconv.ParseInt(uur.Account, 10, 64)
 		if err != nil {
-			return false, errors.New("language: invalid account number, must be an integer")
+			return false, errors.New("permcode: invalid account number, must be an integer")
 		}
 		if !azvalidators.ValidateAccountID(account) {
-			return false, errors.New("language: invalid account id")
+			return false, errors.New("permcode: invalid account id")
 		}
 	}
 	if uur.Tenant != aztypes.KeywordTenant {
 		if !azvalidators.ValidateWildcardName(string(uur.Tenant)) {
-			return false, errors.New("language: invalid tenant")
+			return false, errors.New("permcode: invalid tenant")
 		}
 	}
 	if !azvalidators.ValidateWildcardName(string(uur.Domain)) {
-		return false, errors.New("language: invalid domain")
+		return false, errors.New("permcode: invalid domain")
 	}
 	if !azvalidators.ValidateWildcardName(string(uur.Resource)) {
-		return false, errors.New("language: invalid resource")
+		return false, errors.New("permcode: invalid resource")
 	}
 	for _, filter := range uur.ResourceFilter {
 		filterStr := string(filter)
 		if filterStr == "" || strings.Contains(filterStr, " ") {
-			return false, errors.New("language: invalid resource filter")
+			return false, errors.New("permcode: invalid resource filter")
 		}
 	}
 	return true, nil
 }
 
 // removeDuplicates removes duplicate actions.
-func (pm *LanguageManager) removeARStringsDuplicates(actions []aztypes.ARString, compare func(a, b aztypes.ARString) bool) []aztypes.ARString {
+func (pm *PermCodeManager) removeARStringsDuplicates(actions []aztypes.ARString, compare func(a, b aztypes.ARString) bool) []aztypes.ARString {
 	for i := 0; i < len(actions); i++ {
 		for j := 0; j < len(actions); j++ {
 			if i != j && compare(actions[i], actions[j]) {
@@ -171,7 +171,7 @@ func (pm *LanguageManager) removeARStringsDuplicates(actions []aztypes.ARString,
 }
 
 // optimizePolicy optimizes a policy.
-func (pm *LanguageManager) optimizePolicy(policy *aztypes.Policy) (*aztypes.Policy, error) {
+func (pm *PermCodeManager) optimizePolicy(policy *aztypes.Policy) (*aztypes.Policy, error) {
 	uur, err := policy.Resource.Prase()
 	if err != nil {
 		return nil, err
