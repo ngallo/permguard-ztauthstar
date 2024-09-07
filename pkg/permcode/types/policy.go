@@ -25,8 +25,6 @@ import (
 )
 
 const (
-	// ACPolicyType is the AC policy type.
-	ACPolicyType = "acpolicy"
 	// UUR format string: {account}:{tenant}:{domain}:{resource}:{resource-filter}.
 	uurFormatString = "uur:%s:%s:%s:%s%s"
 	// AR format string: {resource}:{action}.
@@ -118,7 +116,7 @@ type AR struct {
 
 // Policy is the policy.
 type Policy struct {
-	BaseType
+	Class
 	Name     string     `json:"name"`
 	Actions  []ARString `json:"actions"`
 	Resource UURString  `json:"resource"`

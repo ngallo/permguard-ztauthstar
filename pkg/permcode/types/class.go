@@ -19,16 +19,21 @@ package types
 const (
 	// PolicySyntax is the policy syntax.
 	PolicySyntax = "permguard1"
+	// ClassTypeACPermission is the class type for an access control permission.
+	ClassTypeACPermission = "acpermission"
+	// ClassTypeACPolicy is the object type for an access control policy.
+	ClassTypeACPolicy = "acpolicy"
 )
 
-// BaseType is the type.
-type BaseType struct {
+// Class is the base class.
+type Class struct {
 	SyntaxVersion string `json:"syntax"`
 	Type          string `json:"type"`
 }
 
-// TypeInfo is the type info.
-type TypeInfo struct {
-	Hash string
-	Type any
+// ClassInfo is the class info.
+type ClassInfo struct {
+	Hash     string
+	Type     string
+	Instance any
 }

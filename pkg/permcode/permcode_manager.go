@@ -28,10 +28,10 @@ import (
 )
 
 const (
-	// errMessageUnmarshalType is the error message for unmarshaling a type.
-	errMessageUnmarshalType = "permcode: failed to unmarshal type - %w"
-	// errMessageMarshalType is the error message for marshaling a type.
-	errMessageMarshalType = "permcode: failed to marshal type - %w"
+	// errMessageUnmarshalClass is the error message for unmarshaling a class.
+	errMessageUnmarshalClass = "permcode: failed to unmarshal class - %w"
+	// errMessageMarshalClass is the error message for marshaling a class.
+	errMessageMarshalClass = "permcode: failed to marshal class - %w"
 )
 
 // PermCodeManager is the manager for policies.
@@ -52,57 +52,60 @@ func (pm *PermCodeManager) sanitizeValidateOptimize(instance any, sanitize bool,
 	return nil, errors.New("permcode: not implemented")
 }
 
-// UnmarshalType unmarshals a permcode type from the given data, and optionally sanitized, validates and optimizes it based on the provided parameters.
-func (pm *PermCodeManager) UnmarshalType(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.TypeInfo, error) {
+// UnmarshalType unmarshals a input byte array to a class instance.
+func (pm *PermCodeManager) UnmarshalType(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.ClassInfo, error) {
 	if data == nil {
 		return nil, errors.New("permcode: type cannot be unmarshaled from nil data")
 	}
-	var baseType aztypes.BaseType
-	if err := json.Unmarshal(data, &baseType); err != nil {
-		return nil, fmt.Errorf(errMessageUnmarshalType, err)
+	var class aztypes.Class
+	if err := json.Unmarshal(data, &class); err != nil {
+		return nil, fmt.Errorf(errMessageUnmarshalClass, err)
 	}
-	baseType.SyntaxVersion = azsanitizers.SanitizeString(baseType.SyntaxVersion)
-	baseType.Type = azsanitizers.SanitizeString(baseType.Type)
-	if baseType.SyntaxVersion != aztypes.PolicySyntax {
-		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid syntax version %s", baseType.SyntaxVersion)
+	class.SyntaxVersion = azsanitizers.SanitizeString(class.SyntaxVersion)
+	class.Type = azsanitizers.SanitizeString(class.Type)
+	if class.SyntaxVersion != aztypes.PolicySyntax {
+		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid syntax version %s", class.SyntaxVersion)
 	}
-	var snzType any
-	switch baseType.Type {
-	case aztypes.ACPolicyType:
+	var classInstance any
+	var classType string
+	switch class.Type {
+	case aztypes.ClassTypeACPolicy:
 		var policy aztypes.Policy
 		if err := json.Unmarshal(data, &policy); err != nil {
-			return nil, fmt.Errorf(errMessageUnmarshalType, err)
+			return nil, fmt.Errorf(errMessageUnmarshalClass, err)
 		}
 		snzPolicy, err := pm.sanitizeValidateOptimize(&policy, sanitize, validate, optimize)
-		snzType = snzPolicy
+		classInstance = snzPolicy
+		classType = aztypes.ClassTypeACPolicy
 		if err != nil {
-			return nil, fmt.Errorf(errMessageUnmarshalType, err)
+			return nil, fmt.Errorf(errMessageUnmarshalClass, err)
 		}
 	default:
-		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid type %s", baseType.Type)
+		return nil, fmt.Errorf("permcode: failed to unmarshal class - invalid type %s", class.Type)
 	}
-	strfy, err := aztext.Stringify(snzType, nil)
+	strfy, err := aztext.Stringify(classInstance, nil)
 	if err != nil {
-		return nil, fmt.Errorf(errMessageUnmarshalType, err)
+		return nil, fmt.Errorf(errMessageUnmarshalClass, err)
 	}
-	return &aztypes.TypeInfo{
-		Hash: azcrypto.ComputeStringSHA256(strfy),
-		Type: snzType,
+	return &aztypes.ClassInfo{
+		Hash:     azcrypto.ComputeStringSHA256(strfy),
+		Type:     classType,
+		Instance: classInstance,
 	}, nil
 }
 
-// MarshalType marshals a type to a byte array, and optionally sanitized, validates and optimizes it based on the provided parameters.
-func (pm *PermCodeManager) MarshalType(instance any, sanitize bool, validate bool, optimize bool) ([]byte, error) {
+// MarshalClass marshals a input class instance to a byte array.
+func (pm *PermCodeManager) MarshalClass(instance any, sanitize bool, validate bool, optimize bool) ([]byte, error) {
 	if instance == nil {
-		return nil, errors.New("permcode: type cannot be marshaled from nil instance")
+		return nil, errors.New("permcode: class cannot be marshaled from nil instance")
 	}
 	snzPolicy, err := pm.sanitizeValidateOptimize(instance, sanitize, validate, optimize)
 	if err != nil {
-		return nil, fmt.Errorf(errMessageMarshalType, err)
+		return nil, fmt.Errorf(errMessageMarshalClass, err)
 	}
 	data, err := json.Marshal(snzPolicy)
 	if err != nil {
-		return nil, fmt.Errorf("permcode: failed to marshal type - %w", err)
+		return nil, fmt.Errorf("permcode: failed to marshal class - %w", err)
 	}
 	return data, nil
 }

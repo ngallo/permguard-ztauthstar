@@ -94,7 +94,7 @@ func (pm *PermCodeManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 
 // validatePolicy validates the input policy.
 func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) {
-	if policy.SyntaxVersion != aztypes.PolicySyntax || policy.Type != aztypes.ACPolicyType {
+	if policy.SyntaxVersion != aztypes.PolicySyntax || policy.Type != aztypes.ClassTypeACPolicy {
 		return false, nil
 	}
 	if !azvalidators.ValidateName(policy.Name) {

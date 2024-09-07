@@ -54,12 +54,12 @@ func TestMashalingOfPolicies(t *testing.T) {
 
 				inputData, _ := json.Marshal(data["input"])
 				policyInInfo, _ := pm.UnmarshalType(inputData, sanitize, validate, optimize)
-				policyInData, _ := pm.MarshalType(policyInInfo.Type, false, false, false)
+				policyInData, _ := pm.MarshalClass(policyInInfo.Type, false, false, false)
 				policyInDataSha := azcrypto.ComputeSHA256(policyInData)
 
 				outpuData, err := json.Marshal(data["output"])
 				policyOutInfo, _ := pm.UnmarshalType(outpuData, false, false, false)
-				policyOutData, _ := pm.MarshalType(policyOutInfo.Type, false, false, false)
+				policyOutData, _ := pm.MarshalClass(policyOutInfo.Type, false, false, false)
 				policyOutDataSha := azcrypto.ComputeSHA256(policyOutData)
 
 				assert.Nil(err)
@@ -75,7 +75,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewPermCodeManager()
 
-		result, err := pm.MarshalType(nil, false, false, false)
+		result, err := pm.MarshalClass(nil, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
@@ -85,7 +85,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 
 		jsonStr := `{"id":"1", "color":"red"}`
 		jsonBytes := []byte(jsonStr)
-		result, err := pm.MarshalType(jsonBytes, false, false, false)
+		result, err := pm.MarshalClass(jsonBytes, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
@@ -95,7 +95,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 
 		jsonStr := `{"syntax":"permguard1", "type":"acpolicy"}`
 		jsonBytes := []byte(jsonStr)
-		result, err := pm.MarshalType(jsonBytes, false, false, false)
+		result, err := pm.MarshalClass(jsonBytes, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
@@ -112,7 +112,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		pm := NewPermCodeManager()
 
 		obj := "sorry"
-		result, err := pm.MarshalType(obj, false, false, false)
+		result, err := pm.MarshalClass(obj, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
@@ -123,7 +123,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		obj := aztypes.Policy{
 			Name: "this is a wr@ng name",
 		}
-		result, err := pm.MarshalType(obj, false, false, false)
+		result, err := pm.MarshalClass(obj, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
