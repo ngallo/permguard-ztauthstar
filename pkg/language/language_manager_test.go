@@ -79,11 +79,21 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
-	t.Run("marshaling with invalid json", func(t *testing.T) {
+	t.Run("marshaling with invalid json 1", func(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewLanguageManager()
 
 		jsonStr := `{"id":"1", "color":"red"}`
+		jsonBytes := []byte(jsonStr)
+		result, err := pm.MarshalType(jsonBytes, false, false, false)
+		assert.NotNil(err)
+		assert.Nil(result)
+	})
+	t.Run("marshaling with invalid json 2", func(t *testing.T) {
+		assert := assert.New(t)
+		pm := NewLanguageManager()
+
+		jsonStr := `{"syntax":"permguard1", "type":"acpolicy"}`
 		jsonBytes := []byte(jsonStr)
 		result, err := pm.MarshalType(jsonBytes, false, false, false)
 		assert.NotNil(err)
@@ -106,7 +116,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
-	t.Run("marshaling with invalid object", func(t *testing.T) {
+	t.Run("marshaling with invalid policy", func(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewLanguageManager()
 
