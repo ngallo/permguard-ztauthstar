@@ -18,7 +18,9 @@ package objects
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"strings"
 
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 )
@@ -64,4 +66,43 @@ func (m *ObjectManager) CreateTreeObject(tree *Tree) (Object, error) {
 		return Object{}, err
 	}
 	return m.createOject(ObjectTypeTree, treeBytes)
+}
+
+// GetObjectInfo gets the object info.
+func (m *ObjectManager) GetObjectInfo(object Object) (*ObjectInfo, error) {
+	if len(object.Content) == 0 {
+		return nil, errors.New("objects: object content is empty")
+	}
+	headerParts := strings.SplitN(string(object.Content), " ", 2)
+	if len(headerParts) < 2 {
+		return nil, errors.New("objects: object is not a commit")
+	}
+	objectType := headerParts[0]
+	contentStartIndex := bytes.Index(object.Content, []byte{0}) + 1
+	if contentStartIndex <= 0 || contentStartIndex >= len(object.Content) {
+		return nil, errors.New("objects: invalid object content")
+	}
+	objContent := object.Content[contentStartIndex:]
+	var instance any
+	switch objectType {
+	case ObjectTypeCommit:
+		commit, err := m.DeserializeCommit(objContent)
+		if err != nil {
+			return nil, err
+		}
+		instance = commit
+	case ObjectTypeTree:
+		tree, err := m.DeserializeTree(objContent)
+		if err != nil {
+			return nil, err
+		}
+		instance = tree
+	default:
+		return nil, fmt.Errorf("objects: unsupported object type %s", objectType)
+	}
+	return &ObjectInfo{
+		OID:      object.OID,
+		Type:     objectType,
+		Instance: instance,
+	}, nil
 }

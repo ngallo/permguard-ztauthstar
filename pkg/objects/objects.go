@@ -33,6 +33,13 @@ type Object struct {
 	Content []byte
 }
 
+// ObjectInfo is the object info.
+type ObjectInfo struct {
+	OID			string
+	Type		string
+	Instance	any
+}
+
 // CommitInfo represents the author or committer of the commit.
 type CommitInfo struct {
 	Date  time.Time
