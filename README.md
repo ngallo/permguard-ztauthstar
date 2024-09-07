@@ -1,7 +1,7 @@
 # PermGuard Abstraction Language
 
 [![Documentation](https://img.shields.io/website?label=Docs&url=https%3A%2F%2Fwww.permguard.com%2F)](https://www.permguard.com/)
-[![Build, test and publish the artifacts](https://github.com/permguard/permguard-abs-language/actions/workflows/permguard-authz-ci.yml/badge.svg)](https://github.com/permguard/permguard-abs-language/actions/workflows/permguard-authz-ci.yml)
+[![Build, test and publish the artifacts](https://github.com/permguard/permguard-abs-language/actions/workflows/permguard-abs-language-ci.yml/badge.svg)](https://github.com/permguard/permguard-abs-language/actions/workflows/permguard-abs-language-ci.yml)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=permguard_permguard-abs-language&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=permguard_permguard-abs-language)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=permguard_permguard-abs-language&metric=bugs)](https://sonarcloud.io/summary/new_code?id=permguard_permguard-abs-language)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=permguard_permguard-abs-language&metric=coverage)](https://sonarcloud.io/summary/new_code?id=permguard_permguard-abs-language)
