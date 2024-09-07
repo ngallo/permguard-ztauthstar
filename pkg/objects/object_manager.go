@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
@@ -35,7 +36,7 @@ func NewObjectManager() *ObjectManager {
 }
 
 // CreateObject creates an object.
-func (m *ObjectManager) createOject(objectType string, content []byte) (Object, error) {
+func (m *ObjectManager) createOject(objectType string, content []byte) (*Object, error) {
 	length := len(content)
 	var buffer bytes.Buffer
 	buffer.WriteString(objectType)
@@ -44,59 +45,78 @@ func (m *ObjectManager) createOject(objectType string, content []byte) (Object, 
 	buffer.WriteByte(0)
 	buffer.Write(content)
 	objContent :=  buffer.Bytes()
-	return Object{
+	return &Object{
 		OID:     azcrypto.ComputeSHA256(content),
 		Content: objContent,
 	}, nil
 }
 
 // CreateCommitObject creates a commit object.
-func (m *ObjectManager) CreateCommitObject(commit *Commit) (Object, error) {
+func (m *ObjectManager) CreateCommitObject(commit *Commit) (*Object, error) {
 	commitBytes, err := m.SerializeCommit(commit)
 	if err != nil {
-		return Object{}, err
+		return nil, err
 	}
 	return m.createOject(ObjectTypeCommit, commitBytes)
 }
 
 // CreateTreeObject creates a tree object.
-func (m *ObjectManager) CreateTreeObject(tree *Tree) (Object, error) {
+func (m *ObjectManager) CreateTreeObject(tree *Tree) (*Object, error) {
 	treeBytes, err := m.SerializeTree(tree)
 	if err != nil {
-		return Object{}, err
+		return nil, err
 	}
 	return m.createOject(ObjectTypeTree, treeBytes)
 }
 
-// GetObjectInfo gets the object info.
-func (m *ObjectManager) GetObjectInfo(object Object) (*ObjectInfo, error) {
-	if len(object.Content) == 0 {
-		return nil, errors.New("objects: object content is empty")
+// CreateBlobObject creates a blob object.
+func (m *ObjectManager) CreateBlobObject(data []byte) (*Object, error) {
+	if len(data) == 0 {
+		return nil, errors.New("objects: data is empty")
 	}
-	headerParts := strings.SplitN(string(object.Content), " ", 2)
-	if len(headerParts) < 2 {
-		return nil, errors.New("objects: object is not a commit")
+	return m.createOject(ObjectTypeBlob, data)
+}
+
+// GetObjectInfo gets the object info.
+func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
+	if object == nil {
+		return nil, errors.New("objects: object is nil")
+	}
+	objContent := object.Content
+	nulIndex := bytes.IndexByte(objContent, 0)
+	if nulIndex == -1 {
+		return nil, fmt.Errorf("invalid object format: no NUL separator found")
+	}
+	header := string(objContent[:nulIndex])
+	headerParts := strings.SplitN(header, " ", 2)
+	if len(headerParts) != 2 {
+		return nil, fmt.Errorf("invalid object header format")
 	}
 	objectType := headerParts[0]
-	contentStartIndex := bytes.Index(object.Content, []byte{0}) + 1
-	if contentStartIndex <= 0 || contentStartIndex >= len(object.Content) {
-		return nil, errors.New("objects: invalid object content")
+	length, err := strconv.Atoi(headerParts[1])
+	if err != nil {
+		return nil, fmt.Errorf("invalid length: %v", err)
 	}
-	objContent := object.Content[contentStartIndex:]
+	content := objContent[nulIndex+1:]
+	if len(content) != length {
+		return nil, fmt.Errorf("content length mismatch: expected %d, got %d", length, len(content))
+	}
 	var instance any
 	switch objectType {
 	case ObjectTypeCommit:
-		commit, err := m.DeserializeCommit(objContent)
+		commit, err := m.DeserializeCommit(content)
 		if err != nil {
 			return nil, err
 		}
 		instance = commit
 	case ObjectTypeTree:
-		tree, err := m.DeserializeTree(objContent)
+		tree, err := m.DeserializeTree(content)
 		if err != nil {
 			return nil, err
 		}
 		instance = tree
+	case ObjectTypeBlob:
+		instance = content
 	default:
 		return nil, fmt.Errorf("objects: unsupported object type %s", objectType)
 	}

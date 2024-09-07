@@ -91,16 +91,38 @@ func TestObjectManager(t *testing.T) {
 		}
 	})
 
+	// Test for CreateBlobObject and GetObjectInfo (new test for blob type)
+	t.Run("Test CreateBlobObject and GetObjectInfo", func(t *testing.T) {
+		assert := assert.New(t)
+		blobData := []byte("This is the content of the blob object")
+
+		// Create blob object
+		blobObj, err := objectManager.CreateBlobObject(blobData)
+		assert.Nil(err)
+		assert.NotEmpty(blobObj.OID, "OID should not be empty")
+		assert.NotEmpty(blobObj.Content, "Blob content should not be empty")
+
+		// Get object info
+		objectInfo, err := objectManager.GetObjectInfo(blobObj)
+		assert.Nil(err)
+		assert.Equal(ObjectTypeBlob, objectInfo.Type, "Expected blob type")
+		assert.NotNil(objectInfo.Instance, "Blob instance should not be nil")
+
+		// Validate the content of the blob
+		retrievedBlob := objectInfo.Instance.([]byte)
+		assert.Equal(blobData, retrievedBlob, "Blob content mismatch")
+	})
+
 	// Test for invalid data
 	t.Run("Test invalid object", func(t *testing.T) {
 		assert := assert.New(t)
-		invalidObj := Object{Content: []byte{}}
+		invalidObj := &Object{Content: []byte{}}
 		_, err := objectManager.GetObjectInfo(invalidObj)
 		assert.NotNil(err, "Expected error for empty object content")
-		assert.EqualError(err, "objects: object content is empty", "Expected specific error message")
+		assert.EqualError(err, "invalid object format:", "Expected invalid object format error")
 
 		// Test for incorrect object type
-		invalidObj.Content = []byte("blob 12\000some content")
+		invalidObj.Content = []byte("xx 12\000some content")
 		_, err = objectManager.GetObjectInfo(invalidObj)
 		assert.NotNil(err, "Expected error for wrong object type")
 		assert.Contains(err.Error(), "objects: unsupported object type ", "Expected objects: unsupported object type ")

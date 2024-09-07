@@ -25,6 +25,8 @@ const (
 	ObjectTypeCommit = "commit"
 	// ObjectTypeTree is the object type for a tree.
 	ObjectTypeTree   = "tree"
+	// ObjectTypeBlob is the object type for a blob.
+	ObjectTypeBlob   = "blob"
 )
 
 // Object represents the object.
