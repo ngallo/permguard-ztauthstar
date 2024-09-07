@@ -54,6 +54,18 @@ func (pm *PermCodeManager) sanitizeValidateOptimize(instance any, sanitize bool,
 	return nil, errors.New("permcode: not implemented")
 }
 
+// UnmarshalPermission unmarshals a input byte array to a permission instance.
+func (pm *PermCodeManager) UnmarshalPermission(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.PermissionInfo, error) {
+	clasInfo, err := pm.UnmarshalClass(data, aztypes.ClassTypeACPermission, sanitize, validate, optimize)
+	if err != nil {
+		return nil, err
+	}
+	return &aztypes.PermissionInfo{
+		SID:		clasInfo.SID,
+		Permission: clasInfo.Instance.(*aztypes.Permission),
+	}, nil
+}
+
 // UnmarshalPolicy unmarshals a input byte array to a policy instance.
 func (pm *PermCodeManager) UnmarshalPolicy(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.PolicyInfo, error) {
 	clasInfo, err := pm.UnmarshalClass(data, aztypes.ClassTypeACPolicy, sanitize, validate, optimize)
