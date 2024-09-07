@@ -11,8 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// SPDX-License-Identifier: Apache-2.0
 
 package permcode
 
@@ -28,7 +26,7 @@ import (
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 )
 
-// TestStringify tests the Stringify function.
+// TestMashalingOfPolicies tests the marshalling of policies.
 func TestMashalingOfPolicies(t *testing.T) {
 	tests := []struct {
 		Path string
@@ -53,25 +51,27 @@ func TestMashalingOfPolicies(t *testing.T) {
 				optimize := data["optimize"].(bool)
 
 				inputData, _ := json.Marshal(data["input"])
-				policyInInfo, _ := pm.UnmarshalClass(inputData, sanitize, validate, optimize)
-				policyInData, _ := pm.MarshalClass(policyInInfo.Type, false, false, false)
+				policyInInfo, err := pm.UnmarshalClass(inputData, aztypes.ClassTypeACPolicy, sanitize, validate, optimize)
+				assert.Nil(err, "UnmarshalClass should not return an error")
+				policyInData, err := pm.MarshalClass(policyInInfo.Instance, sanitize, validate, optimize)
+				assert.Nil(err, "MarshalClass should not return an error")
 				policyInDataSha := azcrypto.ComputeSHA256(policyInData)
 
-				outpuData, err := json.Marshal(data["output"])
-				policyOutInfo, _ := pm.UnmarshalClass(outpuData, false, false, false)
-				policyOutData, _ := pm.MarshalClass(policyOutInfo.Type, false, false, false)
+				outputData, err := json.Marshal(data["output"])
+				policyOutInfo, _ := pm.UnmarshalClass(outputData, aztypes.ClassTypeACPolicy, false, false, false)
+				policyOutData, _ := pm.MarshalClass(policyOutInfo.Instance, false, false, false)
 				policyOutDataSha := azcrypto.ComputeSHA256(policyOutData)
 
 				assert.Nil(err)
-				assert.Equal(policyInDataSha, policyOutDataSha)
+				assert.Equal(policyInDataSha, policyOutDataSha, "Input and output SHA256 hashes should match")
 			})
 		}
 	}
 }
 
-// TestMashalingOfPoliciesWithArgumentsErrors tests marshaling of policies with arguments errors.
+// TestMashalingOfPoliciesWithArgumentsErrors tests argument error cases for marshalling and unmarshalling.
 func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
-	t.Run("marshaling with nil value", func(t *testing.T) {
+	t.Run("nil instance in MarshalClass", func(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewPermCodeManager()
 
@@ -79,57 +79,52 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
-	t.Run("marshaling with invalid json 1", func(t *testing.T) {
+
+	t.Run("invalid JSON structure in UnmarshalClass", func(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewPermCodeManager()
 
 		jsonStr := `{"id":"1", "color":"red"}`
 		jsonBytes := []byte(jsonStr)
-		result, err := pm.MarshalClass(jsonBytes, false, false, false)
+		result, err := pm.UnmarshalClass(jsonBytes, aztypes.ClassTypeACPolicy, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
-	t.Run("marshaling with invalid json 2", func(t *testing.T) {
+
+	t.Run("unmarshal class with incorrect syntax version", func(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewPermCodeManager()
 
-		jsonStr := `{"syntax":"permguard1", "type":"acpolicy"}`
+		jsonStr := `{"syntax":"invalidSyntax", "type":"acpolicy"}`
 		jsonBytes := []byte(jsonStr)
-		result, err := pm.MarshalClass(jsonBytes, false, false, false)
-		assert.NotNil(err)
+		result, err := pm.UnmarshalClass(jsonBytes, aztypes.ClassTypeACPolicy, false, false, false)
+		assert.NotNil(err, "Expected error for invalid syntax version")
 		assert.Nil(result)
 	})
-	t.Run("unmarshaling with nil value", func(t *testing.T) {
+
+	t.Run("unmarshal class with missing class type", func(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewPermCodeManager()
 
-		result, err := pm.UnmarshalClass(nil, false, false, false)
-		assert.NotNil(err)
+		jsonStr := `{"syntax":"permguard1"}`
+		jsonBytes := []byte(jsonStr)
+		result, err := pm.UnmarshalClass(jsonBytes, aztypes.ClassTypeACPolicy, false, false, false)
+		assert.NotNil(err, "Expected error for missing class type")
 		assert.Nil(result)
 	})
-	t.Run("marshaling with invalid object type", func(t *testing.T) {
+
+	t.Run("marshal invalid object type", func(t *testing.T) {
 		assert := assert.New(t)
 		pm := NewPermCodeManager()
 
-		obj := "sorry"
-		result, err := pm.MarshalClass(obj, false, false, false)
-		assert.NotNil(err)
-		assert.Nil(result)
-	})
-	t.Run("marshaling with invalid policy", func(t *testing.T) {
-		assert := assert.New(t)
-		pm := NewPermCodeManager()
-
-		obj := aztypes.Policy{
-			Name: "this is a wr@ng name",
-		}
+		obj := "invalid object"
 		result, err := pm.MarshalClass(obj, false, false, false)
 		assert.NotNil(err)
 		assert.Nil(result)
 	})
 }
 
-// TestMashalingOfPoliciesWithErrors tests the Stringify function.
+// TestMashalingOfPoliciesWithErrors tests the error cases during policy marshaling/unmarshaling.
 func TestMashalingOfPoliciesWithErrors(t *testing.T) {
 	tests := []struct {
 		Path string
@@ -154,11 +149,35 @@ func TestMashalingOfPoliciesWithErrors(t *testing.T) {
 				optimize := data["optimize"].(bool)
 
 				inputData, _ := json.Marshal(data["input"])
-				policyInInfo, err := pm.UnmarshalClass(inputData, sanitize, validate, optimize)
+				policyInInfo, err := pm.UnmarshalClass(inputData, aztypes.ClassTypeACPolicy, sanitize, validate, optimize)
 
-				assert.NotNil(err)
-				assert.Nil(policyInInfo)
+				assert.NotNil(err, "Expected error during unmarshaling")
+				assert.Nil(policyInInfo, "Policy info should be nil on error")
 			})
 		}
 	}
+}
+
+// TestPermCodeManagerWithOptimize tests the optimization behavior in the PermCodeManager.
+func TestPermCodeManagerWithOptimize(t *testing.T) {
+	t.Run("Test optimization on invalid policy 1", func(t *testing.T) {
+		assert := assert.New(t)
+		pm := NewPermCodeManager()
+
+		validPolicy := aztypes.Policy{Name: "valid-policy"}
+		_, err := pm.MarshalClass(&validPolicy, true, true, true)
+
+		assert.NotNil(err, "Optimization should not cause an error")
+	})
+
+	t.Run("Test optimization with invalid policy 2", func(t *testing.T) {
+		assert := assert.New(t)
+		pm := NewPermCodeManager()
+
+		invalidPolicy := aztypes.Policy{Name: "invalid policy name @#"}
+		result, err := pm.MarshalClass(&invalidPolicy, true, true, true)
+
+		assert.NotNil(err, "Expected error during optimization of invalid policy")
+		assert.Nil(result)
+	})
 }

@@ -52,8 +52,20 @@ func (pm *PermCodeManager) sanitizeValidateOptimize(instance any, sanitize bool,
 	return nil, errors.New("permcode: not implemented")
 }
 
+// UnmarshalPolicy unmarshals a input byte array to a policy instance.
+func (pm *PermCodeManager) UnmarshalPolicy(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.PolicyInfo, error) {
+	clasInfo, err := pm.UnmarshalClass(data, aztypes.ClassTypeACPolicy, sanitize, validate, optimize)
+	if err != nil {
+		return nil, err
+	}
+	return &aztypes.PolicyInfo{
+		SID:	clasInfo.SID,
+		Policy: clasInfo.Instance.(*aztypes.Policy),
+	}, nil
+}
+
 // UnmarshalClass unmarshals a input byte array to a class instance.
-func (pm *PermCodeManager) UnmarshalClass(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.ClassInfo, error) {
+func (pm *PermCodeManager) UnmarshalClass(data []byte, classType string, sanitize bool, validate bool, optimize bool) (*aztypes.ClassInfo, error) {
 	if data == nil {
 		return nil, errors.New("permcode: type cannot be unmarshaled from nil data")
 	}
@@ -66,8 +78,10 @@ func (pm *PermCodeManager) UnmarshalClass(data []byte, sanitize bool, validate b
 	if class.SyntaxVersion != aztypes.PolicySyntax {
 		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid syntax version %s", class.SyntaxVersion)
 	}
+	if class.Type != classType {
+		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid type %s", class.Type)
+	}
 	var classInstance any
-	var classType string
 	switch class.Type {
 	case aztypes.ClassTypeACPolicy:
 		var policy aztypes.Policy

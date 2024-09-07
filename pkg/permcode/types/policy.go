@@ -121,3 +121,9 @@ type Policy struct {
 	Actions  []ARString `json:"actions"`
 	Resource UURString  `json:"resource"`
 }
+
+// PolicyInfo is the policy info.
+type PolicyInfo struct {
+	SID      string
+	Policy   *Policy
+}
