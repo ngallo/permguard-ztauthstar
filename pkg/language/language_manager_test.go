@@ -68,6 +68,26 @@ func TestMashalingOfPolicies(t *testing.T) {
 	}
 }
 
+// TestMashalingOfPoliciesWithArgumentsErrors tests marshaling of policies with arguments errors.
+func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
+	t.Run("marshaling with nil value", func(t *testing.T) {
+		assert := assert.New(t)
+		pm := NewLanguageManager()
+
+		result, err := pm.MarshalType(nil, false, false, false)
+		assert.NotNil(err)
+		assert.Nil(result)
+	})
+	t.Run("unmarshaling with nil value", func(t *testing.T) {
+		assert := assert.New(t)
+		pm := NewLanguageManager()
+
+		result, err := pm.UnmarshalType(nil, false, false, false)
+		assert.NotNil(err)
+		assert.Nil(result)
+	})
+}
+
 // TestMashalingOfPoliciesWithErrors tests the Stringify function.
 func TestMashalingOfPoliciesWithErrors(t *testing.T) {
 	tests := []struct {

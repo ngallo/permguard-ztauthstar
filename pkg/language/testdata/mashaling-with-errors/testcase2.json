@@ -18,6 +18,5 @@
       "ar:order:manage"
     ],
     "resource": "uur:268786704340:*:pharmacy-branch:staff/id/*"
-  },
-  "error": ""
+  }
 }
