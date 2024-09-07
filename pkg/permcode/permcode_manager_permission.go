@@ -26,6 +26,18 @@ import (
 	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
 )
 
+// UnmarshalPermission unmarshals a input byte array to a permission instance.
+func (pm *PermCodeManager) UnmarshalPermission(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.PermissionInfo, error) {
+	clasInfo, err := pm.UnmarshalClass(data, aztypes.ClassTypeACPermission, sanitize, validate, optimize)
+	if err != nil {
+		return nil, err
+	}
+	return &aztypes.PermissionInfo{
+		SID:		clasInfo.SID,
+		Permission: clasInfo.Instance.(*aztypes.Permission),
+	}, nil
+}
+
 // sanitizeValidateOptimize sanitizes, validates and optimize the input permission.
 func (pm *PermCodeManager) sanitizeValidateOptimizePermission(permission *aztypes.Permission, sanitize bool, validate bool, optimize bool) (*aztypes.Permission, error) {
 	var err error

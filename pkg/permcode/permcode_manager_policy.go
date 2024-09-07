@@ -28,6 +28,18 @@ import (
 	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
 )
 
+// UnmarshalPolicy unmarshals a input byte array to a policy instance.
+func (pm *PermCodeManager) UnmarshalPolicy(data []byte, sanitize bool, validate bool, optimize bool) (*aztypes.PolicyInfo, error) {
+	clasInfo, err := pm.UnmarshalClass(data, aztypes.ClassTypeACPolicy, sanitize, validate, optimize)
+	if err != nil {
+		return nil, err
+	}
+	return &aztypes.PolicyInfo{
+		SID:    clasInfo.SID,
+		Policy: clasInfo.Instance.(*aztypes.Policy),
+	}, nil
+}
+
 // sanitizeValidateOptimize sanitizes, validates and optimize the input policy.
 func (pm *PermCodeManager) sanitizeValidateOptimizePolicy(policy *aztypes.Policy, sanitize bool, validate bool, optimize bool) (*aztypes.Policy, error) {
 	var err error
