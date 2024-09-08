@@ -46,8 +46,8 @@ func (m *ObjectManager) createOject(objectType string, content []byte) (*Object,
 	buffer.Write(content)
 	objContent := buffer.Bytes()
 	return &Object{
-		OID:     azcrypto.ComputeSHA256(content),
-		Content: objContent,
+		oid:     azcrypto.ComputeSHA256(content),
+		content: objContent,
 	}, nil
 }
 
@@ -82,7 +82,7 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 	if object == nil {
 		return nil, errors.New("objects: object is nil")
 	}
-	objContent := object.Content
+	objContent := object.content
 	nulIndex := bytes.IndexByte(objContent, 0)
 	if nulIndex == -1 {
 		return nil, fmt.Errorf("invalid object format: no NUL separator found")
@@ -121,8 +121,8 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 		return nil, fmt.Errorf("objects: unsupported object type %s", objectType)
 	}
 	return &ObjectInfo{
-		OID:      object.OID,
-		Type:     objectType,
-		Instance: instance,
+		oid:      object.oid,
+		otype:    objectType,
+		instance: instance,
 	}, nil
 }

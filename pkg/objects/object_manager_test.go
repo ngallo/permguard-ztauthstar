@@ -31,65 +31,65 @@ func TestObjectManager(t *testing.T) {
 	t.Run("Test CreateCommitObject and GetObjectInfo", func(t *testing.T) {
 		assert := assert.New(t)
 		commit := &Commit{
-			Tree:    "3b18e17a0e8664d3dffab99ebf6d730ddc6e8649",
-			Parents: []string{"a1b2c3d4e5f678901234567890abcdef12345678"},
-			Info: CommitInfo{
-				Date: time.Unix(1628704800, 0), // Example Unix timestamp
+			tree:    "3b18e17a0e8664d3dffab99ebf6d730ddc6e8649",
+			parents: []string{"a1b2c3d4e5f678901234567890abcdef12345678"},
+			info: CommitInfo{
+				date: time.Unix(1628704800, 0), // Example Unix timestamp
 			},
-			Message: "Initial commit",
+			message: "Initial commit",
 		}
 
 		// Create commit object
 		commitObj, err := objectManager.CreateCommitObject(commit)
 		assert.Nil(err)
-		assert.NotEmpty(commitObj.OID, "OID should not be empty")
-		assert.NotEmpty(commitObj.Content, "Commit content should not be empty")
+		assert.NotEmpty(commitObj.oid, "OID should not be empty")
+		assert.NotEmpty(commitObj.content, "Commit content should not be empty")
 
 		// Get object info
 		objectInfo, err := objectManager.GetObjectInfo(commitObj)
 		assert.Nil(err)
-		assert.Equal(ObjectTypeCommit, objectInfo.Type, "Expected commit type")
-		assert.NotNil(objectInfo.Instance, "Commit instance should not be nil")
+		assert.Equal(ObjectTypeCommit, objectInfo.otype, "Expected commit type")
+		assert.NotNil(objectInfo.instance, "Commit instance should not be nil")
 
 		// Cast to commit and validate fields
-		retrievedCommit := objectInfo.Instance.(*Commit)
-		assert.Equal(commit.Tree, retrievedCommit.Tree, "Tree mismatch")
-		assert.Equal(commit.Parents, retrievedCommit.Parents, "Parents mismatch")
-		assert.Equal(commit.Info.Date.Unix(), retrievedCommit.Info.Date.Unix(), "Commit date mismatch")
-		assert.Equal(commit.Message, retrievedCommit.Message, "Message mismatch")
+		retrievedCommit := objectInfo.instance.(*Commit)
+		assert.Equal(commit.tree, retrievedCommit.tree, "Tree mismatch")
+		assert.Equal(commit.parents, retrievedCommit.parents, "Parents mismatch")
+		assert.Equal(commit.info.date.Unix(), retrievedCommit.info.date.Unix(), "Commit date mismatch")
+		assert.Equal(commit.message, retrievedCommit.message, "Message mismatch")
 	})
 
 	// Test for CreateTreeObject and GetObjectInfo
 	t.Run("Test CreateTreeObject and GetObjectInfo", func(t *testing.T) {
 		assert := assert.New(t)
 		tree := &Tree{
-			Entries: []TreeEntry{
-				{Mode: 0100644, Type: "blob", OID: "6eb715b073c6b28e03715129e03a0d52c8e21b73", Name: "README.md"},
-				{Mode: 0100755, Type: "blob", OID: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", Name: "script.sh"},
-				{Mode: 040000, Type: "tree", OID: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", Name: "src"},
+			entries: []TreeEntry{
+				{mode: 0100644, otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", name: "README.md"},
+				{mode: 0100755, otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", name: "script.sh"},
+				{mode: 040000, otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", name: "src"},
 			},
 		}
 
 		// Create tree object
 		treeObj, err := objectManager.CreateTreeObject(tree)
 		assert.Nil(err)
-		assert.NotEmpty(treeObj.OID, "OID should not be empty")
-		assert.NotEmpty(treeObj.Content, "Tree content should not be empty")
+		assert.NotEmpty(treeObj.oid, "OID should not be empty")
+		assert.NotEmpty(treeObj.content, "Tree content should not be empty")
 
 		// Get object info
 		objectInfo, err := objectManager.GetObjectInfo(treeObj)
 		assert.Nil(err)
-		assert.Equal(ObjectTypeTree, objectInfo.Type, "Expected tree type")
-		assert.NotNil(objectInfo.Instance, "Tree instance should not be nil")
+		assert.Equal(ObjectTypeTree, objectInfo.otype, "Expected tree type")
+		assert.NotNil(objectInfo.instance, "Tree instance should not be nil")
 
 		// Cast to tree and validate fields
-		retrievedTree := objectInfo.Instance.(*Tree)
-		assert.Equal(len(tree.Entries), len(retrievedTree.Entries), "Entries length mismatch")
-		for i, entry := range tree.Entries {
-			assert.Equal(entry.Mode, retrievedTree.Entries[i].Mode, "Mode mismatch for entry %d", i)
-			assert.Equal(entry.Type, retrievedTree.Entries[i].Type, "Type mismatch for entry %d", i)
-			assert.Equal(entry.OID, retrievedTree.Entries[i].OID, "OID mismatch for entry %d", i)
-			assert.Equal(entry.Name, retrievedTree.Entries[i].Name, "Name mismatch for entry %d", i)
+		retrievedTree := objectInfo.instance.(*Tree)
+		assert.Equal(len(tree.entries), len(retrievedTree.entries), "Entries length mismatch")
+		for i, entry := range tree.entries {
+			assert.Equal(entry.mode, retrievedTree.entries[i].mode, "Mode mismatch for entry %d", i)
+			assert.Equal(entry.otype, retrievedTree.entries[i].otype, "Type mismatch for entry %d", i)
+			assert.Equal(entry.oid, retrievedTree.entries[i].oid, "OID mismatch for entry %d", i)
+			assert.Equal(entry.name, retrievedTree.entries[i].name, "Name mismatch for entry %d", i)
 		}
 	})
 
@@ -101,29 +101,29 @@ func TestObjectManager(t *testing.T) {
 		// Create blob object
 		blobObj, err := objectManager.CreateBlobObject(blobData)
 		assert.Nil(err)
-		assert.NotEmpty(blobObj.OID, "OID should not be empty")
-		assert.NotEmpty(blobObj.Content, "Blob content should not be empty")
+		assert.NotEmpty(blobObj.oid, "OID should not be empty")
+		assert.NotEmpty(blobObj.content, "Blob content should not be empty")
 
 		// Get object info
 		objectInfo, err := objectManager.GetObjectInfo(blobObj)
 		assert.Nil(err)
-		assert.Equal(ObjectTypeBlob, objectInfo.Type, "Expected blob type")
-		assert.NotNil(objectInfo.Instance, "Blob instance should not be nil")
+		assert.Equal(ObjectTypeBlob, objectInfo.otype, "Expected blob type")
+		assert.NotNil(objectInfo.instance, "Blob instance should not be nil")
 
 		// Validate the content of the blob
-		retrievedBlob := objectInfo.Instance.([]byte)
+		retrievedBlob := objectInfo.instance.([]byte)
 		assert.Equal(blobData, retrievedBlob, "Blob content mismatch")
 	})
 
 	// Test for invalid data
 	t.Run("Test invalid object", func(t *testing.T) {
 		assert := assert.New(t)
-		invalidObj := &Object{Content: []byte{}}
+		invalidObj := &Object{content: []byte{}}
 		_, err := objectManager.GetObjectInfo(invalidObj)
 		assert.NotNil(err, "Expected error for empty object content")
 
 		// Test for incorrect object type
-		invalidObj.Content = []byte("xx 12\000some content")
+		invalidObj.content = []byte("xx 12\000some content")
 		_, err = objectManager.GetObjectInfo(invalidObj)
 		assert.NotNil(err, "Expected error for wrong object type")
 		assert.Contains(err.Error(), "objects: unsupported object type ", "Expected objects: unsupported object type ")

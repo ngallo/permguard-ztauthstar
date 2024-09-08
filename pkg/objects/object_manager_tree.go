@@ -28,8 +28,8 @@ func (m *ObjectManager) SerializeTree(tree *Tree) ([]byte, error) {
 		return nil, fmt.Errorf("objects: tree is nil")
 	}
 	var sb strings.Builder
-	for _, entry := range tree.Entries {
-		sb.WriteString(fmt.Sprintf("%06o %s %s %s\n", entry.Mode, entry.Type, entry.OID, entry.Name))
+	for _, entry := range tree.entries {
+		sb.WriteString(fmt.Sprintf("%06o %s %s %s\n", entry.mode, entry.otype, entry.oid, entry.name))
 	}
 	return []byte(sb.String()), nil
 }
@@ -52,12 +52,12 @@ func (m *ObjectManager) DeserializeTree(data []byte) (*Tree, error) {
 			return nil, fmt.Errorf("invalid mode: %s", parts[0])
 		}
 		entry := TreeEntry{
-			Mode: uint32(mode),
-			Type: parts[1],
-			OID:  parts[2],
-			Name: parts[3],
+			mode:  uint32(mode),
+			otype: parts[1],
+			oid:   parts[2],
+			name:  parts[3],
 		}
-		tree.Entries = append(tree.Entries, entry)
+		tree.entries = append(tree.entries, entry)
 	}
 	return tree, nil
 }

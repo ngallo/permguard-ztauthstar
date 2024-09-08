@@ -26,10 +26,10 @@ import (
 func TestSerializeDeserializeTree(t *testing.T) {
 	assert := assert.New(t)
 	tree := &Tree{
-		Entries: []TreeEntry{
-			{Mode: 0o100644, Type: "blob", OID: "515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe", Name: "README.md"},
-			{Mode: 0o100755, Type: "blob", OID: "2d8ccd4b8c9331d762c13a0b2824c121baad579f29f9c16d27146ca12d9d6170", Name: "script.sh"},
-			{Mode: 0o040000, Type: "tree", OID: "fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851", Name: "src"},
+		entries: []TreeEntry{
+			{mode: 0o100644, otype: "blob", oid: "515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe", name: "README.md"},
+			{mode: 0o100755, otype: "blob", oid: "2d8ccd4b8c9331d762c13a0b2824c121baad579f29f9c16d27146ca12d9d6170", name: "script.sh"},
+			{mode: 0o040000, otype: "tree", oid: "fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851", name: "src"},
 		},
 	}
 	objectManager := &ObjectManager{}

@@ -30,12 +30,12 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 		return nil, errors.New("objects: commit is nil")
 	}
 	var sb strings.Builder
-	sb.WriteString(fmt.Sprintf("tree %s\n", commit.Tree))
-	if len(commit.Parents) > 0 {
-		sb.WriteString(fmt.Sprintf("parent %s\n", strings.Join(commit.Parents, " ")))
+	sb.WriteString(fmt.Sprintf("tree %s\n", commit.tree))
+	if len(commit.parents) > 0 {
+		sb.WriteString(fmt.Sprintf("parent %s\n", strings.Join(commit.parents, " ")))
 	}
-	sb.WriteString(fmt.Sprintf("info %d %s\n", commit.Info.Date.Unix(), commit.Info.Date.Format("-0700")))
-	sb.WriteString(commit.Message)
+	sb.WriteString(fmt.Sprintf("info %d %s\n", commit.info.date.Unix(), commit.info.date.Format("-0700")))
+	sb.WriteString(commit.message)
 	return []byte(sb.String()), nil
 }
 
@@ -50,17 +50,17 @@ func (m *ObjectManager) DeserializeCommit(data []byte) (*Commit, error) {
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
 		if strings.HasPrefix(line, "tree ") {
-			commit.Tree = strings.TrimPrefix(line, "tree ")
+			commit.tree = strings.TrimPrefix(line, "tree ")
 		} else if strings.HasPrefix(line, "parent ") {
-			commit.Parents = strings.Split(strings.TrimPrefix(line, "parent "), " ")
+			commit.parents = strings.Split(strings.TrimPrefix(line, "parent "), " ")
 		} else if strings.HasPrefix(line, "info ") {
 			parts := strings.Split(line, " ")
 			if len(parts) >= 3 {
 				unixTime, _ := strconv.ParseInt(parts[1], 10, 64)
-				commit.Info.Date = time.Unix(unixTime, 0)
+				commit.info.date = time.Unix(unixTime, 0)
 			}
 		} else if i == len(lines)-1 {
-			commit.Message = line
+			commit.message = line
 		}
 	}
 	return commit, nil
