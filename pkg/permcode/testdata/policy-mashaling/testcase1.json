@@ -17,7 +17,7 @@
       "AR:STAFF:MANAGE",
       "AR:ORDER:MANAGE"
     ],
-    "resource": "UUR:268786704340:*:PHARMACY-BRANCH:STAFF/ID/*"
+    "resource": "uur:central:268786704340:*:PHARMACY-BRANCH:STAFF/ID/*"
   },
   "output": {
     "syntax": "PERMGUARD1",
@@ -32,6 +32,6 @@
       "AR:STAFF:MANAGE",
       "AR:ORDER:MANAGE"
     ],
-    "resource": "UUR:268786704340:*:PHARMACY-BRANCH:STAFF/ID/*"
+    "resource": "uur:central:268786704340:*:PHARMACY-BRANCH:STAFF/ID/*"
   }
 }

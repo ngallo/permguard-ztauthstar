@@ -87,6 +87,10 @@ func (pm *PermCodeManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 	if err != nil {
 		return nil, err
 	}
+	resource.Partition = strings.ReplaceAll(resource.Partition, " ", "")
+	if resource.Partition == "" {
+		resource.Partition = aztypes.KeywordPartition
+	}
 	resource.Account = strings.ReplaceAll(resource.Account, " ", "")
 	if resource.Account == "" {
 		resource.Account = aztypes.KeywordAccount
@@ -100,7 +104,7 @@ func (pm *PermCodeManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 	for i := range resource.ResourceFilter {
 		resource.ResourceFilter[i] = aztext.WildcardString(azsanitizers.SanitizeWilcardString(string(resource.ResourceFilter[i])))
 	}
-	policy.Resource = aztypes.FormatUURString(resource.Account, resource.Tenant, resource.Domain, resource.Resource, resource.ResourceFilter)
+	policy.Resource = aztypes.FormatUURString(resource.Partition, resource.Account, resource.Tenant, resource.Domain, resource.Resource, resource.ResourceFilter)
 	return policy, nil
 }
 
@@ -127,6 +131,11 @@ func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 	uur, err := policy.Resource.Prase()
 	if err != nil {
 		return false, err
+	}
+	if uur.Partition != aztypes.KeywordPartition {
+		if !azvalidators.ValidateName(uur.Partition) {
+			return false, errors.New("permcode: invalid partition")
+		}
 	}
 	if uur.Account != aztypes.KeywordAccount {
 		account, err := strconv.ParseInt(uur.Account, 10, 64)

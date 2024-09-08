@@ -17,6 +17,6 @@
       "ar:staff:manage",
       "ar:order:manage"
     ],
-    "resource": "uur:268786704340:*:pharmacy-branch:staff/id/*"
+    "resource": "uur::268786704340:*:pharmacy-branch:staff/id/*"
   }
 }

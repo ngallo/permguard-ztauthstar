@@ -25,12 +25,14 @@ import (
 )
 
 const (
-	// UUR format string: {account}:{tenant}:{domain}:{resource}:{resource-filter}.
-	uurFormatString = "uur:%s:%s:%s:%s%s"
+	// UUR format string: {parition}:{account}:{tenant}:{domain}:{resource}:{resource-filter}.
+	uurFormatString = "uur:%s:%s:%s:%s:%s%s"
 	// AR format string: {resource}:{action}.
 	arFormatString = "ar:%s:%s"
 	// resourceFilterSeparator is the separator for the resource filter.
 	resourceFilterSeparator = "/"
+	// KeywordPartition is the account keyword.
+	KeywordPartition = "$partition"
 	// KeywordAccount is the account keyword.
 	KeywordAccount = "$account"
 	// KeywordTenant is the tenant keyword.
@@ -41,16 +43,17 @@ const (
 type UURString aztext.WildcardString
 
 // FormatUURString formats the UUR string.
-func FormatUURString(account string, tenant, domain, resource aztext.WildcardString, resourceFileter []aztext.WildcardString) UURString {
+func FormatUURString(partition, account string, tenant, domain, resource aztext.WildcardString, resourceFileter []aztext.WildcardString) UURString {
 	resFilter := ""
 	for _, f := range resourceFileter {
 		resFilter = fmt.Sprintf("%s%s%s", resFilter, resourceFilterSeparator, f)
 	}
-	return UURString(fmt.Sprintf(uurFormatString, account, tenant, domain, resource, resFilter))
+	return UURString(fmt.Sprintf(uurFormatString, partition, account, tenant, domain, resource, resFilter))
 }
 
 // UUR is the Universally Unique Resource.
 type UUR struct {
+	Partition      string
 	Account        string
 	Tenant         aztext.WildcardString
 	Domain         aztext.WildcardString
@@ -62,13 +65,14 @@ type UUR struct {
 func (s *UURString) Prase() (*UUR, error) {
 	uurStr := string(*s)
 	parts := strings.Split(uurStr, ":")
-	if len(parts) != 5 || parts[0] != "uur" {
+	if len(parts) != 6 || parts[0] != "uur" {
 		return nil, errors.New("permcode: invalid uur string")
 	}
-	account := parts[1]
-	tenant := parts[2]
-	domain := parts[3]
-	resParts := strings.Split(parts[4], resourceFilterSeparator)
+	partition := parts[1]
+	account := parts[2]
+	tenant := parts[3]
+	domain := parts[4]
+	resParts := strings.Split(parts[5], resourceFilterSeparator)
 	resource := resParts[0]
 	resourceFilter := []aztext.WildcardString{}
 	if len(resParts) > 1 {
@@ -77,6 +81,7 @@ func (s *UURString) Prase() (*UUR, error) {
 		}
 	}
 	return &UUR{
+		Partition:      partition,
 		Account:        account,
 		Tenant:         aztext.WildcardString(tenant),
 		Domain:         aztext.WildcardString(domain),
