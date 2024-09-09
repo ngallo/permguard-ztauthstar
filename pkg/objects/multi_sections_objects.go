@@ -24,19 +24,19 @@ import (
 
 // SectionObjectInfo represents a child object info.
 type SectionObjectInfo struct {
-	objInfo 	*ObjectInfo
-	numberOfSections 	int
+	obj			*Object
+	numOfSects 	int
 	err 		error
 }
 
-// GetObjectInfo returns the object.
-func (s *SectionObjectInfo) GetObjectInfo() *ObjectInfo {
-	return s.objInfo
+// GetObject returns the object.
+func (s *SectionObjectInfo) GetObject() *Object {
+	return s.obj
 }
 
 // GetNumberOfSections returns the number sections.
 func (s *SectionObjectInfo) GetNumberOfSections() int {
-	return s.numberOfSections
+	return s.numOfSects
 }
 
 // GetError returns the error.
@@ -45,38 +45,38 @@ func (s *SectionObjectInfo) GetError() error {
 }
 
 // NewSectionObjectInfo creates a new SectionObject.
-func NewSectionObjectInfo(objInfo *ObjectInfo, section int, err error) (*SectionObjectInfo, error) {
+func NewSectionObjectInfo(objInfo *Object, section int, err error) (*SectionObjectInfo, error) {
 	return &SectionObjectInfo{
-		objInfo: objInfo,
-		numberOfSections: section,
+		obj: objInfo,
+		numOfSects: section,
 		err: err,
 	}, nil
 }
 
 // MultiSectionsObjectInfo represents an object with multiple sections.
 type MultiSectionsObjectInfo struct {
-	objInfos 	[]*SectionObjectInfo
-	sections  	int
+	objSecInfos 	[]*SectionObjectInfo
+	numOfSects  	int
 	err 		error
 }
 
 // NewMultiSectionsObjectInfo creates a new MultiSectionsObject.
-func NewMultiSectionsObjectInfo(sections int, err error) (*MultiSectionsObjectInfo, error) {
+func NewMultiSectionsObjectInfo(numOfSections int, err error) (*MultiSectionsObjectInfo, error) {
 	return &MultiSectionsObjectInfo{
-		objInfos: make([]*SectionObjectInfo, 0),
-		sections: sections,
+		objSecInfos: make([]*SectionObjectInfo, 0),
+		numOfSects: numOfSections,
 		err: err,
 	}, nil
 }
 
-// GetObjectInfos returns the objects.
-func (m *MultiSectionsObjectInfo) GetObjectInfos() []*SectionObjectInfo {
-	return azcopier.CopySlice(m.objInfos)
+// GetSectionObjectInfos returns the section object infos.
+func (m *MultiSectionsObjectInfo) GetSectionObjectInfos() []*SectionObjectInfo {
+	return azcopier.CopySlice(m.objSecInfos)
 }
 
 // GetSections returns the number of sections.
 func (m *MultiSectionsObjectInfo) GetSections() int {
-	return m.sections
+	return m.numOfSects
 }
 
 // GetError returns the error.
@@ -89,13 +89,13 @@ func (m *MultiSectionsObjectInfo) AddSectionObjectInfo(obj *SectionObjectInfo) e
 	if obj == nil {
 		return errors.New("object is nil")
 	}
-	m.objInfos = append(m.objInfos, obj)
+	m.objSecInfos = append(m.objSecInfos, obj)
 	return nil
 }
 
 // AddSectionObjectInfoWithParams adds a section object info with parameters.
-func (m *MultiSectionsObjectInfo) AddSectionObjectInfoWithParams(objInfo *ObjectInfo, section int, err error) error {
-	objSecInfo, err := NewSectionObjectInfo(objInfo, section, err)
+func (m *MultiSectionsObjectInfo) AddSectionObjectInfoWithParams(obj *Object, section int, err error) error {
+	objSecInfo, err := NewSectionObjectInfo(obj, section, err)
 	if err != nil {
 		return err
 	}
