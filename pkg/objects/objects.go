@@ -150,6 +150,13 @@ type Tree struct {
 	entries []TreeEntry
 }
 
+// NewTree creates a new tree object.
+func NewTree() *Tree {
+	return &Tree{
+		entries: make([]TreeEntry, 0),
+	}
+}
+
 // GetEntries returns the entries of the tree.
 func (t *Tree) GetEntries() []TreeEntry {
 	return azcopier.CopySlice(t.entries)
