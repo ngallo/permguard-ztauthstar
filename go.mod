@@ -2,10 +2,7 @@ module github.com/permguard/permguard-abs-language
 
 go 1.23.0
 
-require (
-	github.com/permguard/permguard-core v0.0.0-20240909000131-9df354328256
-	github.com/stretchr/testify v1.9.0
-)
+require github.com/stretchr/testify v1.9.0
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -14,7 +11,9 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.22.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/permguard/permguard-core v0.0.0-20240909000131-9df354328256 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.27.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
