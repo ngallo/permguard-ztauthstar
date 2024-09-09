@@ -25,7 +25,8 @@ import (
 // SectionObjectInfo represents a child object info.
 type SectionObjectInfo struct {
 	obj			*Object
-	numOfSects 	int
+	otype 		string
+	numOfSect 	int
 	err 		error
 }
 
@@ -34,9 +35,14 @@ func (s *SectionObjectInfo) GetObject() *Object {
 	return s.obj
 }
 
-// GetNumberOfSections returns the number sections.
-func (s *SectionObjectInfo) GetNumberOfSections() int {
-	return s.numOfSects
+// GetObjectType returns the object type.
+func (s *SectionObjectInfo) GetObjectType() string {
+	return s.otype
+}
+
+// GetNumberOfSection returns the number section.
+func (s *SectionObjectInfo) GetNumberOfSection() int {
+	return s.numOfSect
 }
 
 // GetError returns the error.
@@ -45,10 +51,11 @@ func (s *SectionObjectInfo) GetError() error {
 }
 
 // NewSectionObjectInfo creates a new SectionObject.
-func NewSectionObjectInfo(obj *Object, section int, err error) (*SectionObjectInfo, error) {
+func NewSectionObjectInfo(obj *Object, objType string, section int, err error) (*SectionObjectInfo, error) {
 	return &SectionObjectInfo{
 		obj: obj,
-		numOfSects: section,
+		otype: objType,
+		numOfSect: section,
 		err: err,
 	}, nil
 }
@@ -101,8 +108,8 @@ func (m *MultiSectionsObjectInfo) AddSectionObjectInfo(obj *SectionObjectInfo) e
 }
 
 // AddSectionObjectInfoWithParams adds a section object info with parameters.
-func (m *MultiSectionsObjectInfo) AddSectionObjectInfoWithParams(obj *Object, section int, err error) error {
-	objSecInfo, err := NewSectionObjectInfo(obj, section, err)
+func (m *MultiSectionsObjectInfo) AddSectionObjectInfoWithParams(obj *Object, objType string, section int, err error) error {
+	objSecInfo, err := NewSectionObjectInfo(obj, objType, section, err)
 	if err != nil {
 		return err
 	}
