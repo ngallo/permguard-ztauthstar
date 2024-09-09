@@ -3,7 +3,7 @@ module github.com/permguard/permguard-abs-language
 go 1.23.0
 
 require (
-	github.com/permguard/permguard-core v0.0.0-20240909180739-dc8b1c8a4162
+	github.com/permguard/permguard-core v0.0.0-20240909230115-4f480586fa1b
 	github.com/stretchr/testify v1.9.0
 )
 
