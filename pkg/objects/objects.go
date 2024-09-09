@@ -18,6 +18,8 @@ package objects
 
 import (
 	"time"
+
+	azcopier "github.com/permguard/permguard-core/pkg/extensions/copier"
 )
 
 const (
@@ -92,7 +94,7 @@ func (c *Commit) GetTree() string {
 
 // GetParents returns the parents of the commit.
 func (c *Commit) GetParents() []string {
-	return c.parents
+	return azcopier.CopySlice(c.parents)
 }
 
 // GetInfo returns the info of the commit.
@@ -140,5 +142,5 @@ type Tree struct {
 
 // GetEntries returns the entries of the tree.
 func (t *Tree) GetEntries() []TreeEntry {
-	return t.entries
+	return azcopier.CopySlice(t.entries)
 }
