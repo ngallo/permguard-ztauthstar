@@ -121,7 +121,7 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 		return nil, fmt.Errorf("objects: unsupported object type %s", objectType)
 	}
 	return &ObjectInfo{
-		oid:      object.oid,
+		object:   object,
 		otype:    objectType,
 		instance: instance,
 	}, nil

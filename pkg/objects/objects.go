@@ -49,14 +49,22 @@ func (o *Object) GetContent() []byte {
 
 // ObjectInfo is the object info.
 type ObjectInfo struct {
-	oid      string
+	object 	*Object
 	otype    string
 	instance any
 }
 
 // GetOID returns the OID of the object.
 func (o *ObjectInfo) GetOID() string {
-	return o.oid
+	if o.object == nil {
+		return ""
+	}
+	return o.object.oid
+}
+
+// GetObject returns the object.
+func (o *ObjectInfo) GetObject() *Object {
+	return o.object
 }
 
 // GetType returns the type of the object.
