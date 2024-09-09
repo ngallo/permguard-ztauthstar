@@ -64,10 +64,16 @@ type MultiSectionsObjectInfo struct {
 // NewMultiSectionsObjectInfo creates a new MultiSectionsObject.
 func NewMultiSectionsObjectInfo(path string, numOfSections int, err error) (*MultiSectionsObjectInfo, error) {
 	return &MultiSectionsObjectInfo{
+		path: path,
 		objSecInfos: make([]*SectionObjectInfo, 0),
 		numOfSects: numOfSections,
 		err: err,
 	}, nil
+}
+
+// GetPath returns the path.
+func (m *MultiSectionsObjectInfo) GetPath() string {
+	return m.path
 }
 
 // GetSectionObjectInfos returns the section object infos.
