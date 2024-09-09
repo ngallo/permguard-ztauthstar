@@ -115,6 +115,16 @@ type TreeEntry struct {
 	name  string
 }
 
+// NewTreeEntry creates a new tree entry.
+func NewTreeEntry(mode uint32, otype, oid, name string) *TreeEntry {
+	return &TreeEntry{
+		mode:  mode,
+		otype: otype,
+		oid:   oid,
+		name:  name,
+	}
+}
+
 // GetMode returns the mode of the tree entry.
 func (t *TreeEntry) GetMode() uint32 {
 	return t.mode
@@ -143,4 +153,9 @@ type Tree struct {
 // GetEntries returns the entries of the tree.
 func (t *Tree) GetEntries() []TreeEntry {
 	return azcopier.CopySlice(t.entries)
+}
+
+// AddEntry adds an entry to the tree.
+func (t *Tree) AddEntry(entry *TreeEntry) {
+	t.entries = append(t.entries, *entry)
 }
