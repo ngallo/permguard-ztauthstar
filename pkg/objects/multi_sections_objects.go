@@ -17,14 +17,15 @@
 package objects
 
 import (
-
 	"errors"
+
+	azcopier "github.com/permguard/permguard-core/pkg/extensions/copier"
 )
 
 // SectionObjectInfo represents a child object info.
 type SectionObjectInfo struct {
 	objInfo 	*ObjectInfo
-	section 	int
+	numberOfSections 	int
 	err 		error
 }
 
@@ -33,9 +34,9 @@ func (s *SectionObjectInfo) GetObjectInfo() *ObjectInfo {
 	return s.objInfo
 }
 
-// GetSection returns the section.
-func (s *SectionObjectInfo) GetSection() int {
-	return s.section
+// GetNumberOfSections returns the number sections.
+func (s *SectionObjectInfo) GetNumberOfSections() int {
+	return s.numberOfSections
 }
 
 // GetError returns the error.
@@ -47,7 +48,7 @@ func (s *SectionObjectInfo) GetError() error {
 func NewSectionObjectInfo(objInfo *ObjectInfo, section int, err error) (*SectionObjectInfo, error) {
 	return &SectionObjectInfo{
 		objInfo: objInfo,
-		section: section,
+		numberOfSections: section,
 		err: err,
 	}, nil
 }
@@ -70,7 +71,7 @@ func NewMultiSectionsObjectInfo(sections int, err error) (*MultiSectionsObjectIn
 
 // GetObjectInfos returns the objects.
 func (m *MultiSectionsObjectInfo) GetObjectInfos() []*SectionObjectInfo {
-	return m.objInfos
+	return azcopier.CopySlice(m.objInfos)
 }
 
 // GetSections returns the number of sections.
@@ -92,7 +93,7 @@ func (m *MultiSectionsObjectInfo) AddSectionObjectInfo(obj *SectionObjectInfo) e
 	return nil
 }
 
-// AddSectionObjectInfo adds a section object info.
+// AddSectionObjectInfoWithParams adds a section object info with parameters.
 func (m *MultiSectionsObjectInfo) AddSectionObjectInfoWithParams(objInfo *ObjectInfo, section int, err error) error {
 	objSecInfo, err := NewSectionObjectInfo(objInfo, section, err)
 	if err != nil {
