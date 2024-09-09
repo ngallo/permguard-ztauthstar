@@ -61,9 +61,11 @@ type MultiSectionsObjectInfo struct {
 }
 
 // NewMultiSectionsObjectInfo creates a new MultiSectionsObject.
-func NewMultiSectionsObjectInfo() *MultiSectionsObjectInfo {
+func NewMultiSectionsObjectInfo(sections int, err error) *MultiSectionsObjectInfo {
 	return &MultiSectionsObjectInfo{
 		objInfos: make([]*SectionObjectInfo, 0),
+		sections: sections,
+		err: err,
 	}
 }
 
