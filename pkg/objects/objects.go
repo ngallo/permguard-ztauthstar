@@ -112,15 +112,17 @@ type TreeEntry struct {
 	mode  uint32
 	otype string
 	oid   string
+	oname string
 	name  string
 }
 
 // NewTreeEntry creates a new tree entry.
-func NewTreeEntry(mode uint32, otype, oid, name string) *TreeEntry {
+func NewTreeEntry(mode uint32, otype, oid, oname, name string) *TreeEntry {
 	return &TreeEntry{
 		mode:  mode,
 		otype: otype,
 		oid:   oid,
+		oname: oname,
 		name:  name,
 	}
 }
@@ -138,6 +140,11 @@ func (t *TreeEntry) GetType() string {
 // GetOID returns the OID of the tree entry.
 func (t *TreeEntry) GetOID() string {
 	return t.oid
+}
+
+// GetOName returns the object name of the tree entry.
+func (t *TreeEntry) GetOName() string {
+	return t.oname
 }
 
 // GetName returns the name of the tree entry.
