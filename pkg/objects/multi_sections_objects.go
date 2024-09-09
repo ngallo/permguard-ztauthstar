@@ -46,11 +46,11 @@ func (s *SectionObjectInfo) GetError() error {
 }
 
 // NewSectionObjectInfo creates a new SectionObject.
-func NewSectionObjectInfo(objInfo *ObjectInfo, section int) *SectionObjectInfo {
+func NewSectionObjectInfo(objInfo *ObjectInfo, section int) (*SectionObjectInfo, error) {
 	return &SectionObjectInfo{
 		objInfo: objInfo,
 		section: section,
-	}
+	}, nil
 }
 
 // MultiSectionsObjectInfo represents an object with multiple sections.
@@ -61,12 +61,12 @@ type MultiSectionsObjectInfo struct {
 }
 
 // NewMultiSectionsObjectInfo creates a new MultiSectionsObject.
-func NewMultiSectionsObjectInfo(sections int, err error) *MultiSectionsObjectInfo {
+func NewMultiSectionsObjectInfo(sections int, err error) (*MultiSectionsObjectInfo, error) {
 	return &MultiSectionsObjectInfo{
 		objInfos: make([]*SectionObjectInfo, 0),
 		sections: sections,
 		err: err,
-	}
+	}, nil
 }
 
 // GetObjectInfos returns the objects.
