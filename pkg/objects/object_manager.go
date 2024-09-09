@@ -31,8 +31,8 @@ type ObjectManager struct {
 }
 
 // NewObjectManager creates a new ObjectManager.
-func NewObjectManager() *ObjectManager {
-	return &ObjectManager{}
+func NewObjectManager() (*ObjectManager, error) {
+	return &ObjectManager{}, nil
 }
 
 // CreateObject creates an object.

@@ -39,8 +39,8 @@ type PermCodeManager struct {
 }
 
 // NewPermCodeManager creates a new PermCodeManager.
-func NewPermCodeManager() *PermCodeManager {
-	return &PermCodeManager{}
+func NewPermCodeManager() (*PermCodeManager, error) {
+	return &PermCodeManager{}, nil
 }
 
 // sanitizeValidateOptimize sanitizes, validates and optimize the input policy.
