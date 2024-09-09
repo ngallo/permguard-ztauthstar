@@ -55,13 +55,14 @@ func NewSectionObjectInfo(obj *Object, section int, err error) (*SectionObjectIn
 
 // MultiSectionsObjectInfo represents an object with multiple sections.
 type MultiSectionsObjectInfo struct {
+	path 			string
 	objSecInfos 	[]*SectionObjectInfo
 	numOfSects  	int
-	err 		error
+	err 			error
 }
 
 // NewMultiSectionsObjectInfo creates a new MultiSectionsObject.
-func NewMultiSectionsObjectInfo(numOfSections int, err error) (*MultiSectionsObjectInfo, error) {
+func NewMultiSectionsObjectInfo(path string, numOfSections int, err error) (*MultiSectionsObjectInfo, error) {
 	return &MultiSectionsObjectInfo{
 		objSecInfos: make([]*SectionObjectInfo, 0),
 		numOfSects: numOfSections,
