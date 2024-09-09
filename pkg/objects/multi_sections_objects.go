@@ -22,8 +22,8 @@ import (
 	azcopier "github.com/permguard/permguard-core/pkg/extensions/copier"
 )
 
-// SectionObjectInfo represents a child object info.
-type SectionObjectInfo struct {
+// SectionObject represents a section object.
+type SectionObject struct {
 	obj			*Object
 	otype 		string
 	oname 		string
@@ -32,33 +32,33 @@ type SectionObjectInfo struct {
 }
 
 // GetObject returns the object.
-func (s *SectionObjectInfo) GetObject() *Object {
+func (s *SectionObject) GetObject() *Object {
 	return s.obj
 }
 
 // GetObjectType returns the object type.
-func (s *SectionObjectInfo) GetObjectType() string {
+func (s *SectionObject) GetObjectType() string {
 	return s.otype
 }
 
 // GetObjectName returns the object name.
-func (s *SectionObjectInfo) GetObjectName() string {
+func (s *SectionObject) GetObjectName() string {
 	return s.oname
 }
 
 // GetNumberOfSection returns the number section.
-func (s *SectionObjectInfo) GetNumberOfSection() int {
+func (s *SectionObject) GetNumberOfSection() int {
 	return s.numOfSect
 }
 
 // GetError returns the error.
-func (s *SectionObjectInfo) GetError() error {
+func (s *SectionObject) GetError() error {
 	return s.err
 }
 
-// NewSectionObjectInfo creates a new SectionObject.
-func NewSectionObjectInfo(obj *Object, objType, objName string, section int, err error) (*SectionObjectInfo, error) {
-	return &SectionObjectInfo{
+// NewSectionObject creates a new section object.
+func NewSectionObject(obj *Object, objType, objName string, section int, err error) (*SectionObject, error) {
+	return &SectionObject{
 		obj: obj,
 		otype: objType,
 		oname: objName,
@@ -67,58 +67,58 @@ func NewSectionObjectInfo(obj *Object, objType, objName string, section int, err
 	}, nil
 }
 
-// MultiSectionsObjectInfo represents an object with multiple sections.
-type MultiSectionsObjectInfo struct {
+// MultiSectionsObject represents a multi section object.
+type MultiSectionsObject struct {
 	path 			string
-	objSecInfos 	[]*SectionObjectInfo
+	objSections 	[]*SectionObject
 	numOfSects  	int
 	err 			error
 }
 
-// NewMultiSectionsObjectInfo creates a new MultiSectionsObject.
-func NewMultiSectionsObjectInfo(path string, numOfSections int, err error) (*MultiSectionsObjectInfo, error) {
-	return &MultiSectionsObjectInfo{
+// NewMultiSectionsObject creates a new multi section object.
+func NewMultiSectionsObject(path string, numOfSections int, err error) (*MultiSectionsObject, error) {
+	return &MultiSectionsObject{
 		path: path,
-		objSecInfos: make([]*SectionObjectInfo, 0),
+		objSections: make([]*SectionObject, 0),
 		numOfSects: numOfSections,
 		err: err,
 	}, nil
 }
 
 // GetPath returns the path.
-func (m *MultiSectionsObjectInfo) GetPath() string {
+func (m *MultiSectionsObject) GetPath() string {
 	return m.path
 }
 
-// GetSectionObjectInfos returns the section object infos.
-func (m *MultiSectionsObjectInfo) GetSectionObjectInfos() []*SectionObjectInfo {
-	return azcopier.CopySlice(m.objSecInfos)
+// GetSectionObjects returns the section objects.
+func (m *MultiSectionsObject) GetSectionObjects() []*SectionObject {
+	return azcopier.CopySlice(m.objSections)
 }
 
 // GetSections returns the number of sections.
-func (m *MultiSectionsObjectInfo) GetSections() int {
+func (m *MultiSectionsObject) GetSections() int {
 	return m.numOfSects
 }
 
 // GetError returns the error.
-func (m *MultiSectionsObjectInfo) GetError() error {
+func (m *MultiSectionsObject) GetError() error {
 	return m.err
 }
 
-// AddSectionObjectInfo adds a section object info.
-func (m *MultiSectionsObjectInfo) AddSectionObjectInfo(obj *SectionObjectInfo) error {
+// AddSectionObject adds a section object.
+func (m *MultiSectionsObject) AddSectionObject(obj *SectionObject) error {
 	if obj == nil {
 		return errors.New("object is nil")
 	}
-	m.objSecInfos = append(m.objSecInfos, obj)
+	m.objSections = append(m.objSections, obj)
 	return nil
 }
 
-// AddSectionObjectInfoWithParams adds a section object info with parameters.
-func (m *MultiSectionsObjectInfo) AddSectionObjectInfoWithParams(obj *Object, objType, objName string, section int, err error) error {
-	objSecInfo, err := NewSectionObjectInfo(obj, objType, objName, section, err)
+// AddSectionObjectWithParams adds a section object with parameters.
+func (m *MultiSectionsObject) AddSectionObjectWithParams(obj *Object, objType, objName string, section int, err error) error {
+	objSect, err := NewSectionObject(obj, objType, objName, section, err)
 	if err != nil {
 		return err
 	}
-	return m.AddSectionObjectInfo(objSecInfo)
+	return m.AddSectionObject(objSect)
 }
