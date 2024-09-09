@@ -19,8 +19,6 @@ package objects
 import (
 
 	"errors"
-
-	azcopier "github.com/permguard/permguard-core/pkg/extensions/copier"
 )
 
 // SectionObjectInfo represents a child object info.
@@ -72,7 +70,7 @@ func NewMultiSectionsObjectInfo(sections int, err error) (*MultiSectionsObjectIn
 
 // GetObjectInfos returns the objects.
 func (m *MultiSectionsObjectInfo) GetObjectInfos() []*SectionObjectInfo {
-	return azcopier.CopySlice(m.objInfos)
+	return m.objInfos
 }
 
 // GetSections returns the number of sections.
