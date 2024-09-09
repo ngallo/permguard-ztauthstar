@@ -93,3 +93,12 @@ func (m *MultiSectionsObjectInfo) AddSectionObjectInfo(obj *SectionObjectInfo) e
 	m.objInfos = append(m.objInfos, obj)
 	return nil
 }
+
+// AddSectionObjectInfo adds a section object info.
+func (m *MultiSectionsObjectInfo) AddSectionObjectInfoWithParams(objInfo *ObjectInfo, section int, err error) error {
+	objSecInfo, err := NewSectionObjectInfo(objInfo, section, err)
+	if err != nil {
+		return err
+	}
+	return m.AddSectionObjectInfo(objSecInfo)
+}
