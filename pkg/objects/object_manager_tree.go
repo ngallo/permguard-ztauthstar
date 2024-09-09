@@ -29,7 +29,7 @@ func (m *ObjectManager) SerializeTree(tree *Tree) ([]byte, error) {
 	}
 	var sb strings.Builder
 	for _, entry := range tree.entries {
-		sb.WriteString(fmt.Sprintf("%06o %s %s %s\n", entry.mode, entry.otype, entry.oid, entry.name))
+		sb.WriteString(fmt.Sprintf("%06o %s %s %s %s\n", entry.mode, entry.otype, entry.oid, entry.oname, entry.name,))
 	}
 	return []byte(sb.String()), nil
 }
