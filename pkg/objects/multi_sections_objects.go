@@ -46,10 +46,11 @@ func (s *SectionObjectInfo) GetError() error {
 }
 
 // NewSectionObjectInfo creates a new SectionObject.
-func NewSectionObjectInfo(objInfo *ObjectInfo, section int) (*SectionObjectInfo, error) {
+func NewSectionObjectInfo(objInfo *ObjectInfo, section int, err error) (*SectionObjectInfo, error) {
 	return &SectionObjectInfo{
 		objInfo: objInfo,
 		section: section,
+		err: err,
 	}, nil
 }
 
