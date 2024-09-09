@@ -46,7 +46,7 @@ func TestMashalingOfPolicies(t *testing.T) {
 			json.Unmarshal(testCaseData, &data)
 			t.Run(data["testcase"].(string), func(t *testing.T) {
 				assert := assert.New(t)
-				pm := NewPermCodeManager()
+				pm, _ := NewPermCodeManager()
 
 				sanitize := data["sanitize"].(bool)
 				validate := data["validate"].(bool)

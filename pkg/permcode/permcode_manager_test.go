@@ -31,7 +31,7 @@ import (
 func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 	t.Run("nil instance in MarshalClass", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewPermCodeManager()
+		pm, _ := NewPermCodeManager()
 
 		result, err := pm.MarshalClass(nil, false, false, false)
 		assert.NotNil(err)
@@ -40,7 +40,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 
 	t.Run("invalid JSON structure in UnmarshalClass", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewPermCodeManager()
+		pm, _ := NewPermCodeManager()
 
 		jsonStr := `{"id":"1", "color":"red"}`
 		jsonBytes := []byte(jsonStr)
@@ -51,7 +51,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 
 	t.Run("unmarshal class with incorrect syntax version", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewPermCodeManager()
+		pm, _ := NewPermCodeManager()
 
 		jsonStr := `{"syntax":"invalidSyntax", "type":"acpolicy"}`
 		jsonBytes := []byte(jsonStr)
@@ -62,7 +62,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 
 	t.Run("unmarshal class with missing class type", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewPermCodeManager()
+		pm, _ := NewPermCodeManager()
 
 		jsonStr := `{"syntax":"permguard1"}`
 		jsonBytes := []byte(jsonStr)
@@ -73,7 +73,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 
 	t.Run("marshal invalid object type", func(t *testing.T) {
 		assert := assert.New(t)
-		pm := NewPermCodeManager()
+		pm, _ := NewPermCodeManager()
 
 		obj := "invalid object"
 		result, err := pm.MarshalClass(obj, false, false, false)
@@ -100,7 +100,7 @@ func TestMashalingOfPoliciesWithErrors(t *testing.T) {
 			json.Unmarshal(testCaseData, &data)
 			t.Run(data["testcase"].(string), func(t *testing.T) {
 				assert := assert.New(t)
-				pm := NewPermCodeManager()
+				pm, _ := NewPermCodeManager()
 
 				sanitize := data["sanitize"].(bool)
 				validate := data["validate"].(bool)

@@ -25,7 +25,7 @@ import (
 
 // TestObjectManager tests the functions of ObjectManager.
 func TestObjectManager(t *testing.T) {
-	objectManager := NewObjectManager()
+	objectManager, _ := NewObjectManager()
 
 	t.Run("Test CreateCommitObject and GetObjectInfo", func(t *testing.T) {
 		assert := assert.New(t)
