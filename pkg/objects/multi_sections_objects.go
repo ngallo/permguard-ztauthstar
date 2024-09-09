@@ -56,7 +56,8 @@ func NewSectionObjectInfo(objInfo *ObjectInfo, section int) *SectionObjectInfo {
 // MultiSectionsObjectInfo represents an object with multiple sections.
 type MultiSectionsObjectInfo struct {
 	objInfos 	[]*SectionObjectInfo
-	error
+	sections  	int
+	err 		error
 }
 
 // NewMultiSectionsObjectInfo creates a new MultiSectionsObject.
@@ -71,9 +72,14 @@ func (m *MultiSectionsObjectInfo) GetObjectInfos() []*SectionObjectInfo {
 	return azcopier.CopySlice(m.objInfos)
 }
 
+// GetSections returns the number of sections.
+func (m *MultiSectionsObjectInfo) GetSections() int {
+	return m.sections
+}
+
 // GetError returns the error.
 func (m *MultiSectionsObjectInfo) GetError() error {
-	return m.error
+	return m.err
 }
 
 // AddSectionObjectInfo adds a section object info.
