@@ -105,7 +105,7 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("objects: invalid length: %v", err)
 	}
-	content := objContent[nulIndex:]
+	content := objContent[len(objContent)-length:]
 	if len(content) != length {
 		return nil, fmt.Errorf("objects: content length mismatch: expected %d, got %d", length, len(content))
 	}
@@ -134,3 +134,4 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 		instance: instance,
 	}, nil
 }
+

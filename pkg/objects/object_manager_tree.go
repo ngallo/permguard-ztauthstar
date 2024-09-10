@@ -55,7 +55,8 @@ func (m *ObjectManager) DeserializeTree(data []byte) (*Tree, error) {
 			mode:  uint32(mode),
 			otype: parts[1],
 			oid:   parts[2],
-			name:  parts[3],
+			oname: parts[3],
+			name:  parts[4],
 		}
 		tree.entries = append(tree.entries, entry)
 	}
