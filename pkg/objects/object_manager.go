@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gogo/protobuf/test/data"
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 )
 
@@ -66,7 +67,15 @@ func (m *ObjectManager) CreateTreeObject(tree *Tree) (*Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	return m.createOject(ObjectTypeTree, treeBytes)
+	return m.CreateBlogTreeObject(treeBytes)
+}
+
+// CreateBlogTreeObject creates a blog tree object.
+func (m *ObjectManager) CreateBlogTreeObject(data []byte) (*Object, error) {
+	if len(data) == 0 {
+		return nil, errors.New("objects: data is empty")
+	}
+	return m.createOject(ObjectTypeTree, data)
 }
 
 // CreateBlobObject creates a blob object.
