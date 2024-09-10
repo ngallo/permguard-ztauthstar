@@ -23,7 +23,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gogo/protobuf/test/data"
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 )
 
