@@ -66,15 +66,10 @@ func (m *ObjectManager) CreateTreeObject(tree *Tree) (*Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	return m.CreateBlobTreeObject(treeBytes)
-}
-
-// CreateBlobTreeObject creates a blog tree object.
-func (m *ObjectManager) CreateBlobTreeObject(data []byte) (*Object, error) {
-	if len(data) == 0 {
+	if len(treeBytes) == 0 {
 		return nil, errors.New("objects: data is empty")
 	}
-	return m.createOject(ObjectTypeTree, data)
+	return m.createOject(ObjectTypeTree, treeBytes)
 }
 
 // CreateBlobObject creates a blob object.
