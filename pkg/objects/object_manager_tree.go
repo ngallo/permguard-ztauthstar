@@ -45,11 +45,11 @@ func (m *ObjectManager) DeserializeTree(data []byte) (*Tree, error) {
 	for _, line := range lines {
 		parts := strings.SplitN(line, " ", 4)
 		if len(parts) != 4 {
-			return nil, fmt.Errorf("invalid entry format: %s", line)
+			return nil, fmt.Errorf("objects: invalid entry format: %s", line)
 		}
 		mode, err := strconv.ParseUint(parts[0], 8, 32)
 		if err != nil {
-			return nil, fmt.Errorf("invalid mode: %s", parts[0])
+			return nil, fmt.Errorf("objects: invalid mode: %s", parts[0])
 		}
 		entry := TreeEntry{
 			mode:  uint32(mode),
