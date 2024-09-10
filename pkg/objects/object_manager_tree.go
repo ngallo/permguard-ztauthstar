@@ -43,8 +43,8 @@ func (m *ObjectManager) DeserializeTree(data []byte) (*Tree, error) {
 	lines := strings.Split(strings.TrimSpace(inputStr), "\n")
 	tree := &Tree{}
 	for _, line := range lines {
-		parts := strings.SplitN(line, " ", 4)
-		if len(parts) != 4 {
+		parts := strings.SplitN(line, " ", 5)
+		if len(parts) != 5 {
 			return nil, fmt.Errorf("objects: invalid entry format: %s", line)
 		}
 		mode, err := strconv.ParseUint(parts[0], 8, 32)
