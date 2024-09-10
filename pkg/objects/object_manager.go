@@ -93,21 +93,22 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 	objContent := object.content
 	nulIndex := bytes.IndexByte(objContent, 0)
 	if nulIndex == -1 {
-		return nil, fmt.Errorf("objects: invalid object format: no NUL separator found")
+		return nil, fmt.Errorf("invalid object format: no NUL separator found")
 	}
 	header := string(objContent[:nulIndex])
 	headerParts := strings.SplitN(header, " ", 2)
 	if len(headerParts) != 2 {
-		return nil, fmt.Errorf("objects: invalid object header format")
+		return nil, fmt.Errorf("invalid object header format")
 	}
 	objectType := headerParts[0]
 	length, err := strconv.Atoi(headerParts[1])
 	if err != nil {
-		return nil, fmt.Errorf("objects: invalid length: %v", err)
+		return nil, fmt.Errorf("invalid length: %v", err)
 	}
-	content := objContent[len(objContent)-length:]
+
+	content := objContent[nulIndex:length]
 	if len(content) != length {
-		return nil, fmt.Errorf("objects: content length mismatch: expected %d, got %d", length, len(content))
+		return nil, fmt.Errorf("content length mismatch: expected %d, got %d", length, len(content))
 	}
 	var instance any
 	switch objectType {
@@ -134,4 +135,3 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 		instance: instance,
 	}, nil
 }
-
