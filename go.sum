@@ -20,6 +20,8 @@ github.com/permguard/permguard-core v0.0.0-20240910000703-c360634b7e48 h1:+WF1Jx
 github.com/permguard/permguard-core v0.0.0-20240910000703-c360634b7e48/go.mod h1:pkHKLbHxsR496FUZaFPxyXmSAivQdhSl42F0NixZFeY=
 github.com/permguard/permguard-core v0.0.0-20240910001440-b506770bcf33 h1:Nn1eChQVNyFb9AQYH6nWU5TT7n67P/DWDlkfaFIPDl8=
 github.com/permguard/permguard-core v0.0.0-20240910001440-b506770bcf33/go.mod h1:pkHKLbHxsR496FUZaFPxyXmSAivQdhSl42F0NixZFeY=
+github.com/permguard/permguard-core v0.0.0-20240910001917-a1976c4592ac h1:6rXLvaq8M+oxhj98/HXE7Hol+kSZLjEZwjzBTOoLmrU=
+github.com/permguard/permguard-core v0.0.0-20240910001917-a1976c4592ac/go.mod h1:pkHKLbHxsR496FUZaFPxyXmSAivQdhSl42F0NixZFeY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
