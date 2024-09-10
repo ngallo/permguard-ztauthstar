@@ -51,6 +51,14 @@ func (m *ObjectManager) createOject(objectType string, content []byte) (*Object,
 	}, nil
 }
 
+// ReadObjectFormData reads the object form data.
+func (m *ObjectManager) ReadObjectFormData(data []byte) (*Object, error) {
+	return &Object{
+		oid:     azcrypto.ComputeSHA256(data),
+		content: data,
+	}, nil
+}
+
 // CreateCommitObject creates a commit object.
 func (m *ObjectManager) CreateCommitObject(commit *Commit) (*Object, error) {
 	commitBytes, err := m.SerializeCommit(commit)
