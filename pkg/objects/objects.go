@@ -17,6 +17,7 @@
 package objects
 
 import (
+	"errors"
 	"time"
 
 	azcopier "github.com/permguard/permguard-core/pkg/extensions/copier"
@@ -178,6 +179,15 @@ func (t *Tree) GetEntries() []TreeEntry {
 }
 
 // AddEntry adds an entry to the tree.
-func (t *Tree) AddEntry(entry *TreeEntry) {
+func (t *Tree) AddEntry(entry *TreeEntry) (error) {
+	if entry == nil {
+		return errors.New("objects: tree entry is nil")
+	}
+	for _, e := range t.entries {
+		if e.GetOName() == entry.GetOName() {
+			return errors.New("objects: tree entry already exists")
+		}
+	}
 	t.entries = append(t.entries, *entry)
+	return nil
 }
