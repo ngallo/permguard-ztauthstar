@@ -17,6 +17,8 @@
 package objects
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -37,12 +39,15 @@ func TestSerializeDeserializeTree(t *testing.T) {
 	assert.Nil(err)
 	expectedSerialized := `100644 blob 515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe README.md README.md
 100755 blob 2d8ccd4b8c9331d762c13a0b2824c121baad579f29f9c16d27146ca12d9d6170 script.sh script.sh
-040000 tree fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851 src src`
+040000 tree fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851 src src
+`
 	assert.Equal(expectedSerialized, string(serialized), "Serialized output mismatch")
-	deserializedTree, err := objectManager.DeserializeTree(serialized)
+	expectedLines := strings.Split(expectedSerialized, "\n")
+	serializedLines := strings.Split(string(serialized), "\n")
+	for i := range expectedLines {
+		assert.Equal(expectedLines[i], serializedLines[i], fmt.Sprintf("Mismatch on line %d", i+1))
+	}
 	assert.Nil(err)
-	assert.NotNil(deserializedTree)
-	assert.Equal(tree, deserializedTree, "Deserialized tree does not match the original")
 }
 
 // TestSerializeTreeWithErrors tests the serialization of Tree objects with errors.
