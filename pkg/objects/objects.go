@@ -183,11 +183,11 @@ func (t *Tree) AddEntry(entry *TreeEntry) (error) {
 	if entry == nil {
 		return errors.New("objects: tree entry is nil")
 	}
-	for _, e := range t.entries {
-		if e.GetOName() == entry.GetOName() {
-			return errors.New("objects: tree entry already exists")
-		}
-	}
+	// for _, e := range t.entries {
+	// 	if e.GetOName() == entry.GetOName() {
+	// 		return errors.New("objects: tree entry already exists")
+	// 	}
+	// }
 	t.entries = append(t.entries, *entry)
 	return nil
 }
