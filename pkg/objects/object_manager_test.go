@@ -63,9 +63,9 @@ func TestObjectManager(t *testing.T) {
 		assert := assert.New(t)
 		tree := &Tree{
 			entries: []TreeEntry{
-				{mode: 0100644, otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", name: "README.md"},
-				{mode: 0100755, otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", name: "script.sh"},
-				{mode: 040000, otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", name: "src"},
+				{ otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", oname: "README.md"},
+				{ otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", oname: "script.sh"},
+				{ otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", oname: "src"},
 			},
 		}
 
@@ -85,10 +85,9 @@ func TestObjectManager(t *testing.T) {
 		retrievedTree := objectInfo.instance.(*Tree)
 		assert.Equal(len(tree.entries), len(retrievedTree.entries), "Entries length mismatch")
 		for i, entry := range tree.entries {
-			assert.Equal(entry.mode, retrievedTree.entries[i].mode, "Mode mismatch for entry %d", i)
 			assert.Equal(entry.otype, retrievedTree.entries[i].otype, "Type mismatch for entry %d", i)
 			assert.Equal(entry.oid, retrievedTree.entries[i].oid, "OID mismatch for entry %d", i)
-			assert.Equal(entry.name, retrievedTree.entries[i].name, "Name mismatch for entry %d", i)
+			assert.Equal(entry.oname, retrievedTree.entries[i].oname, "Name mismatch for entry %d", i)
 		}
 	})
 

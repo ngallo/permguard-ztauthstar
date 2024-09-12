@@ -118,27 +118,18 @@ func (c *Commit) GetMessage() string {
 
 // TreeEntry represents a single entry in a tree object.
 type TreeEntry struct {
-	mode  uint32
 	otype string
 	oid   string
 	oname string
-	name  string
 }
 
 // NewTreeEntry creates a new tree entry.
-func NewTreeEntry(mode uint32, otype, oid, oname, name string) *TreeEntry {
+func NewTreeEntry(otype, oid, oname string) *TreeEntry {
 	return &TreeEntry{
-		mode:  mode,
 		otype: otype,
 		oid:   oid,
 		oname: oname,
-		name:  name,
 	}
-}
-
-// GetMode returns the mode of the tree entry.
-func (t *TreeEntry) GetMode() uint32 {
-	return t.mode
 }
 
 // GetType returns the type of the tree entry.
@@ -154,11 +145,6 @@ func (t *TreeEntry) GetOID() string {
 // GetOName returns the object name of the tree entry.
 func (t *TreeEntry) GetOName() string {
 	return t.oname
-}
-
-// GetName returns the name of the tree entry.
-func (t *TreeEntry) GetName() string {
-	return t.name
 }
 
 // Tree represents a tree object.

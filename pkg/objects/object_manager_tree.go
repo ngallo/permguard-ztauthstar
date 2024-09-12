@@ -18,7 +18,6 @@ package objects
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -29,7 +28,7 @@ func (m *ObjectManager) SerializeTree(tree *Tree) ([]byte, error) {
 	}
 	var sb strings.Builder
 	for _, entry := range tree.entries {
-		sb.WriteString(fmt.Sprintf("%06o %s %s %s %s\n", entry.mode, entry.otype, entry.oid, entry.oname, entry.name,))
+		sb.WriteString(fmt.Sprintf("%s %s %s\n", entry.otype, entry.oid, entry.oname))
 	}
 	return []byte(sb.String()), nil
 }
@@ -47,16 +46,10 @@ func (m *ObjectManager) DeserializeTree(data []byte) (*Tree, error) {
 		if len(parts) != 5 {
 			return nil, fmt.Errorf("objects: invalid entry format: %s", line)
 		}
-		mode, err := strconv.ParseUint(parts[0], 8, 32)
-		if err != nil {
-			return nil, fmt.Errorf("objects: invalid mode: %s", parts[0])
-		}
 		entry := TreeEntry{
-			mode:  uint32(mode),
 			otype: parts[1],
 			oid:   parts[2],
 			oname: parts[3],
-			name:  parts[4],
 		}
 		tree.entries = append(tree.entries, entry)
 	}

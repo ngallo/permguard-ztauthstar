@@ -29,17 +29,17 @@ func TestSerializeDeserializeTree(t *testing.T) {
 	assert := assert.New(t)
 	tree := &Tree{
 		entries: []TreeEntry{
-			{mode: 0o100644, otype: "blob", oid: "515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe", oname: "README.md", name: "README.md"},
-			{mode: 0o100755, otype: "blob", oid: "2d8ccd4b8c9331d762c13a0b2824c121baad579f29f9c16d27146ca12d9d6170", oname: "script.sh", name: "script.sh"},
-			{mode: 0o040000, otype: "tree", oid: "fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851", oname: "src", name: "src"},
+			{ otype: "blob", oid: "515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe", oname: "name1" },
+			{ otype: "blob", oid: "2d8ccd4b8c9331d762c13a0b2824c121baad579f29f9c16d27146ca12d9d6170", oname: "name2" },
+			{ otype: "tree", oid: "fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851", oname: "name3" },
 		},
 	}
 	objectManager := &ObjectManager{}
 	serialized, err := objectManager.SerializeTree(tree)
 	assert.Nil(err)
-	expectedSerialized := `100644 blob 515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe README.md README.md
-100755 blob 2d8ccd4b8c9331d762c13a0b2824c121baad579f29f9c16d27146ca12d9d6170 script.sh script.sh
-040000 tree fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851 src src
+	expectedSerialized := `blob 515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe name1
+blob 2d8ccd4b8c9331d762c13a0b2824c121baad579f29f9c16d27146ca12d9d6170 name2
+tree fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851 name3
 `
 	assert.Equal(expectedSerialized, string(serialized), "Serialized output mismatch")
 	expectedLines := strings.Split(expectedSerialized, "\n")
