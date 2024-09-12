@@ -29,9 +29,9 @@ import (
 
 const (
 	// errMessageUnmarshalType is the error message for unmarshaling a type.
-	errMessageUnmarshalType = "permcode: failed to unmarshal type - %w"
+	errMessageUnmarshalType = "permcode: failed to unmarshal type"
 	// errMessageMarshalType is the error message for marshaling a type.
-	errMessageMarshalType = "permcode: failed to marshal type - %w"
+	errMessageMarshalType = "permcode: failed to marshal type"
 )
 
 // PermCodeManager is the manager for policies.
