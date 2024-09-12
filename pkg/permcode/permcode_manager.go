@@ -116,7 +116,7 @@ func (pm *PermCodeManager) MarshalClass(instance any, sanitize bool, validate bo
 	}
 	snzPolicy, err := pm.sanitizeValidateOptimize(instance, sanitize, validate, optimize)
 	if err != nil {
-		return nil, errors.New(errMessageMarshalType)
+		return nil, err
 	}
 	data, err := json.Marshal(snzPolicy)
 	if err != nil {
