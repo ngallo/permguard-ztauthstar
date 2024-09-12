@@ -17,7 +17,6 @@
 package types
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
