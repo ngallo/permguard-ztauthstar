@@ -50,11 +50,11 @@ func (pm *PermCodeManager) sanitizeValidateOptimizePermission(permission *aztype
 	}
 	if validate {
 		valid, err := pm.validatePermission(targetPermission)
-		if !valid {
-			return nil, errors.New("permcode: permission is invalid")
-		}
 		if err != nil {
 			return nil, err
+		}
+		if !valid {
+			return nil, errors.New("permcode: permission is invalid")
 		}
 	}
 	if optimize {
@@ -92,16 +92,20 @@ func (pm *PermCodeManager) sanitizePermission(permission *aztypes.Permission) (*
 
 // validatePermission validates the input permission.
 func (pm *PermCodeManager) validatePermission(permission *aztypes.Permission) (bool, error) {
-	if permission.SyntaxVersion != aztypes.PolicySyntax || permission.Type != aztypes.ClassTypeACPermission {
-		return false, nil
+	if permission.SyntaxVersion != aztypes.PolicySyntax {
+		return false, fmt.Errorf("permcode: invalid policy syntax (%s)", permission.SyntaxVersion)
+	}
+	if permission.Type != aztypes.ClassTypeACPermission {
+		return false, fmt.Errorf("permcode: invalid type (%s)", permission.Type)
+
 	}
 	if !azvalidators.ValidateName(permission.Name) {
-		return false, errors.New("permcode: invalid name")
+		return false, fmt.Errorf("permcode: invalid name (%s)", permission.Name)
 	}
 	validateSlice := func(slice []string, sliceType string) error {
 		for _, policyName := range slice {
 			if !azvalidators.ValidateName(policyName) {
-				return fmt.Errorf("permcode: invalid %s policy name", sliceType)
+				return fmt.Errorf("permcode: invalid %s policy name (%s)", sliceType, policyName)
 			}
 		}
 		return nil
