@@ -114,7 +114,7 @@ func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 	if policy.SyntaxVersion != aztypes.PolicySyntax {
 		return false, fmt.Errorf("permcode: invalid policy syntax (%s)", policy.SyntaxVersion)
 	}
-	if policy.Type != aztypes.ClassTypeACPermission {
+	if policy.Type != aztypes.ClassTypeACPolicy {
 		return false, fmt.Errorf("permcode: invalid type (%s)", policy.Type)
 
 	}

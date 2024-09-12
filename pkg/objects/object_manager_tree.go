@@ -42,14 +42,14 @@ func (m *ObjectManager) DeserializeTree(data []byte) (*Tree, error) {
 	lines := strings.Split(strings.TrimSpace(inputStr), "\n")
 	tree := &Tree{}
 	for _, line := range lines {
-		parts := strings.SplitN(line, " ", 5)
-		if len(parts) != 5 {
+		parts := strings.SplitN(line, " ", 3)
+		if len(parts) != 3 {
 			return nil, fmt.Errorf("objects: invalid entry format: %s", line)
 		}
 		entry := TreeEntry{
-			otype: parts[1],
-			oid:   parts[2],
-			oname: parts[3],
+			otype: parts[0],
+			oid:   parts[1],
+			oname: parts[2],
 		}
 		tree.entries = append(tree.entries, entry)
 	}

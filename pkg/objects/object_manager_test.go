@@ -63,9 +63,9 @@ func TestObjectManager(t *testing.T) {
 		assert := assert.New(t)
 		tree := &Tree{
 			entries: []TreeEntry{
-				{ otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", oname: "README.md"},
-				{ otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", oname: "script.sh"},
-				{ otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", oname: "src"},
+				{ otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", oname: "name1" },
+				{ otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", oname: "name2" },
+				{ otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", oname: "name3" },
 			},
 		}
 
