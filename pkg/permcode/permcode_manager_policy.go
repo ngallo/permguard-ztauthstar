@@ -127,10 +127,10 @@ func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 			return false, err
 		}
 		if !azvalidators.ValidateWildcardName(string(ar.Resource)) {
-			return false, fmt.Errorf("permcode: invalid resource (%s)", string(ar.Resource))
+			return false, fmt.Errorf("permcode: invalid resource %s (AR %s)", string(ar.Resource), string(action))
 		}
 		if !azvalidators.ValidateWildcardName(string(ar.Action)) {
-			return false, fmt.Errorf("permcode: invalid action (%s)", string(ar.Action))
+			return false, fmt.Errorf("permcode: invalid action %s (AR %s)", string(ar.Action), string(action))
 		}
 	}
 	uur, err := policy.Resource.Prase()
