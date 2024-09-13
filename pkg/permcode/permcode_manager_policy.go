@@ -112,14 +112,14 @@ func (pm *PermCodeManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 // validatePolicy validates the input policy.
 func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) {
 	if policy.SyntaxVersion != aztypes.PolicySyntax {
-		return false, fmt.Errorf("permcode: invalid policy syntax (%s)", policy.SyntaxVersion)
+		return false, fmt.Errorf(`permcode: invalid policy syntax "%s"`, policy.SyntaxVersion)
 	}
 	if policy.Type != aztypes.ClassTypeACPolicy {
-		return false, fmt.Errorf("permcode: invalid type (%s)", policy.Type)
+		return false, fmt.Errorf(`permcode: invalid type "%s"`, policy.Type)
 
 	}
 	if !azvalidators.ValidateName(policy.Name) {
-		return false, fmt.Errorf("permcode: invalid name (%s)", policy.Name)
+		return false, fmt.Errorf(`permcode: invalid name "%s"`, policy.Name)
 	}
 	for _, action := range policy.Actions {
 		ar, err := action.Prase()
@@ -127,10 +127,10 @@ func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 			return false, err
 		}
 		if !azvalidators.ValidateWildcardName(string(ar.Resource)) {
-			return false, fmt.Errorf("permcode: invalid resource %s (AR %s)", string(ar.Resource), string(action))
+			return false, fmt.Errorf(`permcode: invalid resource "%s"`, string(ar.Resource))
 		}
 		if !azvalidators.ValidateWildcardName(string(ar.Action)) {
-			return false, fmt.Errorf("permcode: invalid action %s (AR %s)", string(ar.Action), string(action))
+			return false, fmt.Errorf(`permcode: invalid action "%s"`, string(ar.Action))
 		}
 	}
 	uur, err := policy.Resource.Prase()
@@ -139,36 +139,36 @@ func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 	}
 	if uur.Partition != aztypes.KeywordPartition {
 		if !azvalidators.ValidateName(uur.Partition) {
-			return false, fmt.Errorf("permcode: invalid partition (%s)", string(uur.Partition))
+			return false, fmt.Errorf(`permcode: invalid partition "%s"`, string(uur.Partition))
 		}
 	}
 	if uur.Account != aztypes.KeywordAccount {
 		account, err := strconv.ParseInt(uur.Account, 10, 64)
 		if err != nil {
-			return false, fmt.Errorf("permcode: invalid account number (%d)", account)
+			return false, fmt.Errorf(`permcode: invalid account number "%d"`, account)
 
 		}
 		if !azvalidators.ValidateAccountID(account) {
-			return false, fmt.Errorf("permcode: invalid account number (%d)", account)
+			return false, fmt.Errorf(`permcode: invalid account number "%d"`, account)
 		}
 	}
 	if uur.Tenant != aztypes.KeywordTenant {
 		if !azvalidators.ValidateWildcardName(string(uur.Tenant)) {
-			return false, fmt.Errorf("permcode: invalid tenant (%s)", string(uur.Tenant))
+			return false, fmt.Errorf(`permcode: invalid tenant "%s"`, string(uur.Tenant))
 		}
 	}
 	if !azvalidators.ValidateWildcardName(string(uur.Domain)) {
-		return false, fmt.Errorf("permcode: invalid domain (%s)", string(uur.Domain))
+		return false, fmt.Errorf(`permcode: invalid domain "%s"`, string(uur.Domain))
 
 	}
 	if !azvalidators.ValidateWildcardName(string(uur.Resource)) {
-		return false, fmt.Errorf("permcode: invalid resource (%s)", string(uur.Resource))
+		return false, fmt.Errorf(`permcode: invalid resource "%s"`, string(uur.Resource))
 
 	}
 	for _, filter := range uur.ResourceFilter {
 		filterStr := string(filter)
-		if filterStr == "" || strings.Contains(filterStr, " ") {
-			return false, fmt.Errorf("permcode: invalid resource filter (%s)", filterStr)
+		if filterStr == `` || strings.Contains(filterStr, ` `) {
+			return false, fmt.Errorf(`permcode: invalid resource filter "%s"`, filterStr)
 		}
 	}
 	return true, nil
