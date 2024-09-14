@@ -65,7 +65,7 @@ func (s *UURString) Prase() (*UUR, error) {
 	uurStr := string(*s)
 	parts := strings.Split(uurStr, ":")
 	if len(parts) != 6 || parts[0] != "uur" {
-		return nil, fmt.Errorf("permcode: invalid uur string (%s)", uurStr)
+		return nil, fmt.Errorf("permcode: invalid uur string %s", uurStr)
 	}
 	partition := parts[1]
 	account := parts[2]
@@ -102,7 +102,7 @@ func (s *ARString) Prase() (*AR, error) {
 	arStr := string(*s)
 	parts := strings.Split(arStr, ":")
 	if len(parts) != 3 || parts[0] != "ar" {
-		return nil, fmt.Errorf(`permcode: invalid ar string "(%s)"`, arStr)
+		return nil, fmt.Errorf(`permcode: invalid ar string "%s"`, arStr)
 	}
 	resource := parts[1]
 	action := parts[2]
