@@ -96,16 +96,16 @@ func (pm *PermCodeManager) validatePermission(permission *aztypes.Permission) (b
 		return false, fmt.Errorf(`permcode: invalid policy syntax "%s"`, permission.SyntaxVersion)
 	}
 	if permission.Type != aztypes.ClassTypeACPermission {
-		return false, fmt.Errorf(`permcode: invalid type %s`, permission.Type)
+		return false, fmt.Errorf(`permcode: invalid type "%s"`, permission.Type)
 
 	}
 	if !azvalidators.ValidateName(permission.Name) {
-		return false, fmt.Errorf(`permcode: invalid name %s`, permission.Name)
+		return false, fmt.Errorf(`permcode: invalid name "%s"`, permission.Name)
 	}
 	validateSlice := func(slice []string, sliceType string) error {
 		for _, policyName := range slice {
 			if !azvalidators.ValidateName(policyName) {
-				return fmt.Errorf(`permcode: invalid %s policy name %s`, sliceType, policyName)
+				return fmt.Errorf(`permcode: invalid %s policy name "%s"`, sliceType, policyName)
 			}
 		}
 		return nil
