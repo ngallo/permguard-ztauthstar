@@ -50,6 +50,8 @@ func (pm *PermCodeManager) sanitizeValidateOptimize(instance any, sanitize bool,
 		return pm.sanitizeValidateOptimizePolicy(v, sanitize, validate, optimize)
 	case *aztypes.Permission:
 		return pm.sanitizeValidateOptimizePermission(v, sanitize, validate, optimize)
+	case *aztypes.Schema:
+		return pm.sanitizeValidateOptimizeSchema(v, sanitize, validate, optimize)
 	}
 	return nil, errors.New("permcode: type not implemented")
 }
