@@ -19,6 +19,8 @@ package types
 const (
 	// PolicySyntax is the policy syntax.
 	PolicySyntax = "permguard1"
+	// ClassTypeSchema is the object type for domain schemas.
+	ClassTypeSchema = "schema"
 	// ClassTypeACPermission is the class type for an access control permission.
 	ClassTypeACPermission = "acpermission"
 	// ClassTypeACPolicy is the object type for an access control policy.
