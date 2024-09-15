@@ -91,36 +91,36 @@ func (pm *PermCodeManager) sanitizeSchema(schema *aztypes.Schema) (*aztypes.Sche
 // validateSchema validates the schema.
 func (pm *PermCodeManager) validateSchema(schema *aztypes.Schema) (bool, error) {
 	if schema.SyntaxVersion != aztypes.PermCodeSyntax {
-		return false, fmt.Errorf(`permcode: unsupported policy syntax version "%s"`, schema.SyntaxVersion)
+		return false, fmt.Errorf(`permcode: unsupported policy syntax version '%s'`, schema.SyntaxVersion)
 	}
 	if schema.Type != aztypes.ClassTypeSchema {
-		return false, fmt.Errorf(`permcode: invalid schema type "%s"`, schema.Type)
+		return false, fmt.Errorf(`permcode: invalid schema type '%s'`, schema.Type)
 	}
 	domainNames := make(map[string]bool)
 	for _, domain := range schema.Domains {
 		if !azvalidators.ValidateName(domain.Name) {
-			return false, fmt.Errorf(`permcode: invalid domain name "%s"`, domain.Name)
+			return false, fmt.Errorf(`permcode: invalid domain name '%s'`, domain.Name)
 		}
 		if _, exists := domainNames[domain.Name]; exists {
-			return false, fmt.Errorf(`permcode: duplicate domain name "%s"`, domain.Name)
+			return false, fmt.Errorf(`permcode: duplicate domain name '%s'`, domain.Name)
 		}
 		domainNames[domain.Name] = true
 		resourceNames := make(map[string]bool)
 		for _, resource := range domain.Resources {
 			if !azvalidators.ValidateName(resource.Name) {
-				return false, fmt.Errorf(`permcode: invalid resource name "%s" in domain "%s"`, resource.Name, domain.Name)
+				return false, fmt.Errorf(`permcode: invalid resource name '%s' in domain '%s'`, resource.Name, domain.Name)
 			}
 			if _, exists := resourceNames[resource.Name]; exists {
-				return false, fmt.Errorf(`permcode: duplicate resource name "%s" in domain "%s"`, resource.Name, domain.Name)
+				return false, fmt.Errorf(`permcode: duplicate resource name '%s' in domain '%s'`, resource.Name, domain.Name)
 			}
 			resourceNames[resource.Name] = true
 			actionNames := make(map[string]bool)
 			for _, action := range resource.Actions {
 				if !azvalidators.ValidateName(action.Name) {
-					return false, fmt.Errorf(`permcode: invalid action name "%s" in resource "%s" of domain "%s"`, action.Name, resource.Name, domain.Name)
+					return false, fmt.Errorf(`permcode: invalid action name '%s' in resource '%s' of domain '%s'`, action.Name, resource.Name, domain.Name)
 				}
 				if _, exists := actionNames[action.Name]; exists {
-					return false, fmt.Errorf(`permcode: duplicate action name "%s" in resource "%s" of domain "%s"`, action.Name, resource.Name, domain.Name)
+					return false, fmt.Errorf(`permcode: duplicate action name '%s' in resource '%s' of domain '%s'`, action.Name, resource.Name, domain.Name)
 				}
 				actionNames[action.Name] = true
 			}
