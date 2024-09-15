@@ -33,7 +33,7 @@ func (pm *PermCodeManager) UnmarshalPermission(data []byte, sanitize bool, valid
 		return nil, err
 	}
 	return &aztypes.PermissionInfo{
-		SID:		clasInfo.SID,
+		SID:        clasInfo.SID,
 		Permission: clasInfo.Instance.(*aztypes.Permission),
 	}, nil
 }
@@ -92,7 +92,7 @@ func (pm *PermCodeManager) sanitizePermission(permission *aztypes.Permission) (*
 
 // validatePermission validates the input permission.
 func (pm *PermCodeManager) validatePermission(permission *aztypes.Permission) (bool, error) {
-	if permission.SyntaxVersion != aztypes.PolicySyntax {
+	if permission.SyntaxVersion != aztypes.PermCodeSyntax {
 		return false, fmt.Errorf(`permcode: invalid policy syntax "%s"`, permission.SyntaxVersion)
 	}
 	if permission.Type != aztypes.ClassTypeACPermission {

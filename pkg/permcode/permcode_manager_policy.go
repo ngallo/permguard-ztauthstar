@@ -111,7 +111,7 @@ func (pm *PermCodeManager) sanitizePolicy(policy *aztypes.Policy) (*aztypes.Poli
 
 // validatePolicy validates the input policy.
 func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) {
-	if policy.SyntaxVersion != aztypes.PolicySyntax {
+	if policy.SyntaxVersion != aztypes.PermCodeSyntax {
 		return false, fmt.Errorf(`permcode: invalid policy syntax "%s"`, policy.SyntaxVersion)
 	}
 	if policy.Type != aztypes.ClassTypeACPolicy {

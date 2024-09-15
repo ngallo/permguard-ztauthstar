@@ -67,7 +67,7 @@ func (pm *PermCodeManager) UnmarshalClass(data []byte, classType string, sanitiz
 	}
 	class.SyntaxVersion = azsanitizers.SanitizeString(class.SyntaxVersion)
 	class.Type = azsanitizers.SanitizeString(class.Type)
-	if class.SyntaxVersion != aztypes.PolicySyntax {
+	if class.SyntaxVersion != aztypes.PermCodeSyntax {
 		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid syntax version %s", class.SyntaxVersion)
 	}
 	if class.Type != classType {

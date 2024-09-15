@@ -33,7 +33,7 @@ func (pm *PermCodeManager) UnmarshalSchema(data []byte, sanitize bool, validate 
 		return nil, err
 	}
 	return &aztypes.SchemaInfo{
-		SID:		clasInfo.SID,
+		SID:    clasInfo.SID,
 		Schema: clasInfo.Instance.(*aztypes.Schema),
 	}, nil
 }
@@ -90,7 +90,7 @@ func (pm *PermCodeManager) sanitizeSchema(schema *aztypes.Schema) (*aztypes.Sche
 
 // validateSchema validates the schema.
 func (pm *PermCodeManager) validateSchema(schema *aztypes.Schema) (bool, error) {
-	if schema.SyntaxVersion != aztypes.PolicySyntax {
+	if schema.SyntaxVersion != aztypes.PermCodeSyntax {
 		return false, fmt.Errorf(`permcode: unsupported policy syntax version "%s"`, schema.SyntaxVersion)
 	}
 	if schema.Type != aztypes.ClassTypeSchema {
