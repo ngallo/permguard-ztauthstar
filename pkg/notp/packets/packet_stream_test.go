@@ -52,20 +52,20 @@ func TestPacketWriterAndReader(t *testing.T) {
 	writer, err := NewPacketWriter(packet)
 	assert.Nil(err)
 
-	inProtocol := &ProtocolPacket{ Version: 10 }
+	inProtocol := &ProtocolPacket{ Version: 10, ClientVersion: 3 }
 	err = writer.WriteProtocol(inProtocol)
 	assert.Nil(err)
 
-	data1 := &SamplePacket{ Text: "fd1d3938-2988-4df3-9b83-cc278b69cab0" }
-	err = writer.AppendDataPacket(data1)
+	inData1 := &SamplePacket{ Text: "fd1d3938-2988-4df3-9b83-cc278b69cab0" }
+	err = writer.AppendDataPacket(inData1)
 	assert.Nil(err)
 
-	data2 := &SamplePacket{ Text: "3ecd7285-8406-4647-8e8f-92d87348636d" }
-	err = writer.AppendDataPacket(data2)
+	inData2 := &SamplePacket{ Text: "3ecd7285-8406-4647-8e8f-92d87348636d" }
+	err = writer.AppendDataPacket(inData2)
 	assert.Nil(err)
 
-	data3 := &SamplePacket{ Text: "83ce2f5b-f5c4-4bd7-85de-69291f1f80d4" }
-	err = writer.AppendDataPacket(data3)
+	inData3 := &SamplePacket{ Text: "83ce2f5b-f5c4-4bd7-85de-69291f1f80d4" }
+	err = writer.AppendDataPacket(inData3)
 	assert.Nil(err)
 
 	reader, err := NewPacketReader(packet)
@@ -73,6 +73,45 @@ func TestPacketWriterAndReader(t *testing.T) {
 
 	outProtocol, err := reader.ReadProtocol()
 	assert.Nil(err)
-
 	assert.Equal(inProtocol.Version, outProtocol.Version)
+	assert.Equal(inProtocol.ClientVersion, outProtocol.ClientVersion)
+
+	data, state, err := reader.ReadNextDataPacket(nil)
+	assert.Nil(err)
+	assert.NotNil(state)
+	assert.Equal(state.packetType, inData1.GetType())
+	assert.Equal(state.packetStream, int32(3))
+	assert.Equal(state.packetNumber, int32(1))
+	outData1 := &SamplePacket{}
+	err = outData1.Deserialize(data)
+	assert.Nil(err)
+	assert.False(state.IsComplete())
+	assert.Equal(inData1.Text, outData1.Text)
+
+	data, state, err = reader.ReadNextDataPacket(state)
+	assert.Nil(err)
+	assert.Equal(state.packetType, inData2.GetType())
+	assert.Equal(state.packetStream, int32(3))
+	assert.Equal(state.packetNumber, int32(2))
+	outData2 := &SamplePacket{}
+	err = outData2.Deserialize(data)
+	assert.Nil(err)
+	assert.False(state.IsComplete())
+	assert.Equal(inData2.Text, outData2.Text)
+
+	data, state, err = reader.ReadNextDataPacket(state)
+	assert.Nil(err)
+	assert.Equal(state.packetType, inData2.GetType())
+	assert.Equal(state.packetStream, int32(3))
+	assert.Equal(state.packetNumber, int32(3))
+	outData3 := &SamplePacket{}
+	err = outData3.Deserialize(data)
+	assert.Nil(err)
+	assert.True(state.IsComplete())
+	assert.Equal(inData3.Text, outData3.Text)
+
+	data, state, err = reader.ReadNextDataPacket(state)
+	assert.Nil(data)
+	assert.NotNil(state)
+	assert.NotNil(err)
 }

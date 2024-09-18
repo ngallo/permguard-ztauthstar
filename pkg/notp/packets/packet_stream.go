@@ -76,7 +76,7 @@ func indexDataStreamPacket(offset int, data []byte) (int, int, int32, int32, err
 	values := []int32{0, 0, 0}
 	for count := range values {
 		start := idSize * count
-		end := (idSize * count)
+		end := (idSize * count) + idSize
 		values[count] = int32(binary.LittleEndian.Uint32(headerData[start:end]))
 	}
 	packetType := values[0]

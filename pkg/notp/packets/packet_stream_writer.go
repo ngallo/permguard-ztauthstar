@@ -83,6 +83,7 @@ func (w *PacketWriter) AppendDataPacket(packet Packetable) error {
 		if w.packet.Data, err = writeStreamDataPacket(w.packet.Data, &dataType, &streamCount, data); err != nil {
 			return err
 		}
+		w.streamType = dataType
 	} else {
 		if dataType != w.streamType {
 			return errors.New("notp: invalid data packet type")

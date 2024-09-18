@@ -44,7 +44,7 @@ func (w *PacketReader) ReadProtocol() (*ProtocolPacket, error) {
 	if len(data) == 0 {
 		return nil, errors.New("notp: missing protocol packet")
 	}
-	payload, _, _, err := readDataPacket(data)
+	payload, _, _, err := readDataPacket(0, data)
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +72,9 @@ func (p *DataPacketState) IsComplete() bool {
 
 // ReadNextDataPacket read next data packet.
 func (w *PacketReader) ReadNextDataPacket(state *DataPacketState) ([]byte, *DataPacketState, error) {
+	if state != nil && state.IsComplete() {
+		return nil, state, errors.New("notp: data packet already complete")
+	}
 	data := w.packet.Data
 	if len(data) == 0 {
 		return nil, state, errors.New("notp: missing protocol packet")
@@ -90,7 +93,7 @@ func (w *PacketReader) ReadNextDataPacket(state *DataPacketState) ([]byte, *Data
 			size: size,
 			packetType: packetType,
 			packetStream: packetStream,
-			packetNumber: int32(0),
+			packetNumber: int32(1),
 		}
 		return data, state, nil
 	}
