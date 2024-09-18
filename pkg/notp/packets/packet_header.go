@@ -16,34 +16,7 @@
 
 package packets
 
-const (
-	PacketNullByte = 0x01
-)
-
-// Packet represents a packet.
-type Packet struct {
-	Data []byte
-}
-
-// Packetable represents a packet that can be serialized and deserialized.
-type Packetable interface {
-	GetType() int32
-	GetData() []byte
-	Serialize() error
-	Deserialize() error
-}
-
-// DataPacket represents the packet data section.
-type DataPacket struct {
-	data []byte
-}
-
-// GetType returns the type of the packet.
-func (p *DataPacket) GetType() int32 {
-	return 1
-}
-
-// GetData returns the data of the packet.
-func (p *DataPacket) GetData() []byte {
-	return p.data
+// PacketHeader represents the packet header section.
+type PacketHeader struct {
+	Size int32
 }

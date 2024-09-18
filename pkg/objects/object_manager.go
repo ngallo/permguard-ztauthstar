@@ -42,7 +42,7 @@ func (m *ObjectManager) createOject(objectType string, content []byte) (*Object,
 	buffer.WriteString(objectType)
 	buffer.WriteString(" ")
 	buffer.WriteString(fmt.Sprintf("%d", length))
-	buffer.WriteByte(0)
+	buffer.WriteByte(0x01)
 	buffer.Write(content)
 	objContent := buffer.Bytes()
 	return &Object{
@@ -94,7 +94,7 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 		return nil, errors.New("objects: object is nil")
 	}
 	objContent := object.content
-	nulIndex := bytes.IndexByte(objContent, 0)
+	nulIndex := bytes.IndexByte(objContent, 0x01)
 	if nulIndex == -1 {
 		return nil, fmt.Errorf("objects: invalid object format: no NUL separator found")
 	}

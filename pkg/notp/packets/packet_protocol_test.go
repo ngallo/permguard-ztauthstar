@@ -22,29 +22,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestPacketWriterAndReader tests the packet writer and reader
-func TestPacketWriterAndReader(t *testing.T) {
+// TestProtocolPacket tests the protocol packet
+func TestProtocolPacket(t *testing.T) {
 	assert := assert.New(t)
 
-	packet := &Packet{}
+	inPacket := &ProtocolPacket{}
+	inPacket.Version = 10
+	err := inPacket.Serialize()
+	assert.Nil(err)
 
-	for i :=  range 3 {
-		writer, err := NewPacketWriter(packet)
-		assert.Nil(err)
-		inputProtocol := &Protocol{
-			Version:   int16(2 * i),
-			Operation: int16(10 * i),
-		}
-		err = writer.WriteProtocolSection(inputProtocol)
-		assert.Nil(err)
-
-		reader, err := NewPacketReader(packet)
-		assert.Nil(err)
-		var outputProtocol Protocol
-		err = reader.ReadProtocolSection(&outputProtocol)
-		assert.Nil(err)
-
-		assert.Equal(inputProtocol.Version, outputProtocol.Version)
-		assert.Equal(inputProtocol.Operation, outputProtocol.Operation)
+	outPacket := &ProtocolPacket{
+		DataPacket: DataPacket{
+			data: inPacket.data,
+		},
 	}
+	err = outPacket.Deserialize()
+	assert.Nil(err)
+
+	assert.Equal(inPacket.Version, outPacket.Version)
 }

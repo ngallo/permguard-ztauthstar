@@ -17,10 +17,7 @@
 package packets
 
 import (
-	"bytes"
-	"encoding/binary"
 	"errors"
-	"fmt"
 )
 
 // PacketReader is a reader of packets from the NOTP protocol.
@@ -33,34 +30,10 @@ func NewPacketReader(packet *Packet) (*PacketReader, error) {
 	if packet == nil {
 		return nil, errors.New("notp: nil packet")
 	}
+	if packet.Data == nil {
+		packet.Data = []byte{}
+	}
 	return &PacketReader{
 		packet: packet,
 	}, nil
 }
-
-// ReadProtocolSection reads the protocol section.
-func (r *PacketReader) ReadProtocolSection(protocol *Protocol) error {
-	blockNumber := 0
-	data, exist := seekBlock(r.packet.Data, blockNumber)
-	if !exist {
-		return fmt.Errorf("notp: block %d not found", blockNumber)
-	}
-	buf := bytes.NewBuffer(data)
-
-	numbers := []int16{0, 0}
-	for i := range numbers {
-		var numberSize int16
-		if err := binary.Read(buf, binary.LittleEndian, &numberSize); err != nil {
-			return err
-		}
-		if err := binary.Read(buf, binary.LittleEndian, &numbers[i]); err != nil {
-			return err
-		}
-	}
-
-	protocol.Version = numbers[0]
-	protocol.Operation = numbers[1]
-
-	return nil
-}
-
