@@ -46,7 +46,7 @@ func NewPacketWriter(packet *Packet) (*PacketWriter, error) {
 }
 
 // WriteProtocol write a protocol packet.
-func (w *PacketWriter) 	WriteProtocol(protocol *ProtocolPacket) error {
+func (w *PacketWriter) WriteProtocol(protocol *ProtocolPacket) error {
 	if protocol == nil {
 		return errors.New("notp: nil protocol packet")
 	}
