@@ -16,11 +16,6 @@
 
 package refsobjects
 
-import (
-	azpackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
-)
-
-// RefsObjPacket represents a packet used for the exchange of refs objects.
-type RefsObjPacket struct {
-	azpackets.Packet
+// RefsObjServerStateMachine represents the state machine responsible for transmitting reference object packets from the server to the client.
+type RefsObjServerStateMachine struct {
 }

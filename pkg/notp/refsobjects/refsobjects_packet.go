@@ -17,20 +17,29 @@
 package refsobjects
 
 import (
-	"errors"
+	"bytes"
+
+	azpackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
 )
 
-// RefsObjPacketWriter is a writer of refs objects packet from the NOTP protocol.
-type RefsObjPacketWriter struct {
-	packet *RefsObjPacket
+// RefsObjPacket represents a reference object packet.
+type RefsObjPacket struct {
+	azpackets.Packet
 }
 
-// NewRefsObjPacketWriter creates a new refs objects packet writer.
-func NewRefsObjPacketWriter(packet *RefsObjPacket) (*RefsObjPacketWriter, error) {
-	if packet == nil {
-		return nil, errors.New("notp: nil packet")
-	}
-	return &RefsObjPacketWriter{
-		packet: packet,
-	}, nil
+// GetType returns the type of the packet.
+func (p *RefsObjPacket) GetType() int32 {
+	return 0
+}
+
+// Serialize serializes the packet.
+func (p *RefsObjPacket) Serialize() ([]byte, error) {
+	buffer := bytes.NewBuffer([]byte{})
+	return buffer.Bytes(), nil
+}
+
+// Deserialize deserializes the packet.
+func (p *RefsObjPacket) Deserialize(data []byte) error {
+	// buffer := bytes.NewBuffer(data)
+	return nil
 }

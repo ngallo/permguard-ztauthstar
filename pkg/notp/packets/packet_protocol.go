@@ -37,7 +37,6 @@ func (p *ProtocolPacket) Serialize() ([]byte, error) {
 	if err := binary.Write(buffer, binary.LittleEndian, p.Version); err != nil {
 		return nil, err
 	}
-	buffer.WriteByte(PacketNullByte)
 	return buffer.Bytes(), nil
 }
 
