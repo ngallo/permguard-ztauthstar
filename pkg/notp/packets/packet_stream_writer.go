@@ -19,6 +19,7 @@ package packets
 import (
 	"encoding/binary"
 	"errors"
+	"unsafe"
 )
 
 // PacketWriter is a writer of packets from the NOTP protocol.
@@ -89,8 +90,9 @@ func (w *PacketWriter) AppendDataPacket(packet Packetable) error {
 		if w.packet.Data, err = writeDataPacket(w.packet.Data, data); err != nil {
 			return err
 		}
-		start := w.protocolEndIndex + 1 + 4
-		end := start + 4
+		idSize := int(unsafe.Sizeof(int32(0)))
+		start := w.protocolEndIndex + 1 + idSize
+		end := start + idSize
 		counter := binary.LittleEndian.Uint32(w.packet.Data[start:end])
 		counter++
 		binary.LittleEndian.PutUint32(w.packet.Data[start:],counter)

@@ -17,8 +17,6 @@
 package packets
 
 import (
-	"bytes"
-	"encoding/binary"
 	"errors"
 )
 
@@ -45,7 +43,16 @@ func (w *PacketReader) ReadProtocol() (*ProtocolPacket, error) {
 	if len(w.packet.Data) == 0 {
 		return nil, errors.New("notp: missing protocol packet")
 	}
-	return nil, nil
+	payload, _, _, err := readDataPacket(w.packet.Data)
+	if err != nil {
+		return nil, err
+	}
+	protocol := &ProtocolPacket{}
+	err = protocol.Deserialize(payload)
+	if err != nil {
+		return nil, err
+	}
+	return protocol, nil
 }
 
 // DataPacketState is the state of a data packet.
@@ -56,40 +63,5 @@ type DataPacketState struct {
 
 // ReadNextDataPacket read next data packet.
 func (w *PacketReader) ReadNextDataPacket(state *DataPacketState) ([]byte, *DataPacketState, error) {
-	if state == nil {
-		state = &DataPacketState{
-			CurrentOffset: -1,
-			IsComplete:    false,
-		}
-	}
-	if len(w.packet.Data) == 0 {
-		return nil, nil, errors.New("notp: missing protocol packet")
-	}
-
-	nilIndex := bytes.IndexByte(w.packet.Data, PacketNullByte)
-	if nilIndex == -1 {
-		return nil, nil, errors.New("notp: missing protocol packet")
-	}
-
-	start := state.CurrentOffset
-	if start == -1 {
-		size := binary.LittleEndian.Uint32(w.packet.Data[0:4])
-		start = nilIndex + 1 + int(size) + 4 + 4
-	}
-
-	
-	packetSize = 5
-	if start+packetSize > len(w.packet.Data) {
-		state.IsComplete = true
-		return nil, state, nil
-	}
-
-	nextChunk := w.packet.Data[state.CurrentOffset : state.CurrentOffset+packetSize]
-	state.CurrentOffset += packetSize
-
-	if state.CurrentOffset >= len(w.packet.Data) {
-		state.IsComplete = true
-	}
-
-	return nextChunk, state, nil
+	return nil, nil, nil
 }

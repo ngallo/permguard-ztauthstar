@@ -52,8 +52,8 @@ func TestPacketWriterAndReader(t *testing.T) {
 	writer, err := NewPacketWriter(packet)
 	assert.Nil(err)
 
-	protocol := &ProtocolPacket{ Version: 10 }
-	err = writer.WriteProtocol(protocol)
+	inProtocol := &ProtocolPacket{ Version: 10 }
+	err = writer.WriteProtocol(inProtocol)
 	assert.Nil(err)
 
 	data1 := &SamplePacket{ Text: "fd1d3938-2988-4df3-9b83-cc278b69cab0" }
@@ -67,4 +67,12 @@ func TestPacketWriterAndReader(t *testing.T) {
 	data3 := &SamplePacket{ Text: "83ce2f5b-f5c4-4bd7-85de-69291f1f80d4" }
 	err = writer.AppendDataPacket(data3)
 	assert.Nil(err)
+
+	reader, err := NewPacketReader(packet)
+	assert.Nil(err)
+
+	outProtocol, err := reader.ReadProtocol()
+	assert.Nil(err)
+
+	assert.Equal(inProtocol.Version, outProtocol.Version)
 }

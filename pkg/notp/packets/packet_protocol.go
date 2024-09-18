@@ -42,8 +42,8 @@ func (p *ProtocolPacket) Serialize() ([]byte, error) {
 }
 
 // Deserialize deserializes the packet.
-func (p *ProtocolPacket) Deserialize([]byte) error {
-	buffer := bytes.NewBuffer([]byte{})
+func (p *ProtocolPacket) Deserialize(data []byte) error {
+	buffer := bytes.NewBuffer(data)
 	if err := binary.Read(buffer, binary.LittleEndian, &p.Version); err != nil {
 		return err
 	}
