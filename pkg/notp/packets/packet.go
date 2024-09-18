@@ -16,7 +16,13 @@
 
 package packets
 
+import (
+	"bytes"
+	"encoding/binary"
+)
+
 const (
+	// PacketNullByte is the null byte used to separate data in the packet.
 	PacketNullByte = 0x01
 )
 
@@ -28,22 +34,38 @@ type Packet struct {
 // Packetable represents a packet that can be serialized and deserialized.
 type Packetable interface {
 	GetType() int32
-	GetData() []byte
-	Serialize() error
-	Deserialize() error
+	Serialize() ([]byte, error)
+	Deserialize([]byte) error
 }
 
-// DataPacket represents the packet data section.
-type DataPacket struct {
-	data []byte
+// writeStreamDataPacket writes a stream data packet to the buffer.
+func writeStreamDataPacket(data []byte, packetType *int32, packetStream *int32, payload []byte) ([]byte, error) {
+	size := int32(len(payload))
+	if packetType != nil {
+		buf := new(bytes.Buffer)
+		if err := binary.Write(buf, binary.LittleEndian, *packetType); err != nil {
+			return nil, err
+		}
+		data = append(data, buf.Bytes()...)
+	}
+	if packetStream != nil {
+		buf := new(bytes.Buffer)
+		if err := binary.Write(buf, binary.LittleEndian, *packetStream); err != nil {
+			return nil, err
+		}
+		data = append(data, buf.Bytes()...)
+	}
+	buf := new(bytes.Buffer)
+	if err := binary.Write(buf, binary.LittleEndian, size); err != nil {
+		return nil, err
+	}
+	data = append(data, buf.Bytes()...)
+	data = append(data, PacketNullByte)
+	data = append(data, payload...)
+	return data, nil
 }
 
-// GetType returns the type of the packet.
-func (p *DataPacket) GetType() int32 {
-	return 1
-}
-
-// GetData returns the data of the packet.
-func (p *DataPacket) GetData() []byte {
-	return p.data
+// writeDataPacket writes a data packet to the buffer.
+func writeDataPacket(data []byte, payload []byte) ([]byte, error) {
+	return writeStreamDataPacket(data, nil, nil, payload)
 }

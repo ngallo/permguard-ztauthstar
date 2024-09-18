@@ -23,7 +23,6 @@ import (
 
 // ProtocolPacket represents a protocol packet.
 type ProtocolPacket struct {
-	DataPacket
 	Version int32
 }
 
@@ -33,20 +32,18 @@ func (p *ProtocolPacket) GetType() int32 {
 }
 
 // Serialize serializes the packet.
-func (p *ProtocolPacket) Serialize() error {
+func (p *ProtocolPacket) Serialize() ([]byte, error) {
 	buffer := bytes.NewBuffer([]byte{})
 	if err := binary.Write(buffer, binary.LittleEndian, p.Version); err != nil {
-		return err
+		return nil, err
 	}
 	buffer.WriteByte(PacketNullByte)
-	newData := buffer.Bytes()
-	p.data = newData
-	return nil
+	return buffer.Bytes(), nil
 }
 
 // Deserialize deserializes the packet.
-func (p *ProtocolPacket) Deserialize() error {
-	buffer := bytes.NewBuffer(p.data)
+func (p *ProtocolPacket) Deserialize([]byte) error {
+	buffer := bytes.NewBuffer([]byte{})
 	if err := binary.Read(buffer, binary.LittleEndian, &p.Version); err != nil {
 		return err
 	}

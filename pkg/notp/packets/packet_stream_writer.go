@@ -17,15 +17,16 @@
 package packets
 
 import (
+	"encoding/binary"
 	"errors"
 )
 
 // PacketWriter is a writer of packets from the NOTP protocol.
 type PacketWriter struct {
 	packet           *Packet
-	protocolPosition int
+	protocolEndIndex int
 	streamType	   	 int32
-	streamPosition   int
+	streamEndIndex   int
 }
 
 // NewPacketWriter creates a new packet writer.
@@ -38,26 +39,28 @@ func NewPacketWriter(packet *Packet) (*PacketWriter, error) {
 	}
 	return &PacketWriter{
 		packet:           packet,
-		protocolPosition: -1,
+		protocolEndIndex: -1,
 		streamType: 	  -1,
-		streamPosition:   -1,
+		streamEndIndex:   -1,
 	}, nil
 }
 
 // WriteProtocol write a protocol packet.
-func (w *PacketWriter) WriteProtocol(protocol *ProtocolPacket) error {
+func (w *PacketWriter) 	WriteProtocol(protocol *ProtocolPacket) error {
 	if protocol == nil {
 		return errors.New("notp: nil protocol packet")
 	}
-	if w.protocolPosition > -1 || len(w.packet.Data) > 0 {
+	if w.protocolEndIndex > -1 || len(w.packet.Data) > 0 {
 		return errors.New("notp: protocol packet already written")
 	}
-	var err error
-	protocol.Serialize()
-	if w.packet.Data, err = writeDataPacket(w.packet.Data, protocol.data); err != nil {
+	data, err := protocol.Serialize()
+	if err != nil {
 		return err
 	}
-	w.protocolPosition = len(w.packet.Data) - 1
+	if w.packet.Data, err = writeDataPacket(w.packet.Data, data); err != nil {
+		return err
+	}
+	w.protocolEndIndex = len(w.packet.Data) - 1
 	return nil
 }
 
@@ -66,23 +69,32 @@ func (w *PacketWriter) AppendDataPacket(packet Packetable) error {
 	if packet == nil {
 		return errors.New("notp: nil data packet")
 	}
-	if w.protocolPosition == -1 || len(w.packet.Data) > 0 {
+	if w.protocolEndIndex == -1 || len(w.packet.Data) == 0 {
 		return errors.New("notp: missing protocol packet")
 	}
-	var err error
 	dataType := packet.GetType()
-	if w.streamPosition == -1 {
+	data, err := packet.Serialize()
+	if err != nil {
+		return err
+	}
+	if w.streamEndIndex == -1 {
 		streamCount := int32(1)
-		if w.packet.Data, err = writeStreamDataPacket(w.packet.Data, &dataType, &streamCount, packet.GetData()); err != nil {
+		if w.packet.Data, err = writeStreamDataPacket(w.packet.Data, &dataType, &streamCount, data); err != nil {
 			return err
 		}
 	} else {
 		if dataType != w.streamType {
 			return errors.New("notp: invalid data packet type")
 		}
-		if w.packet.Data, err = writeDataPacket(w.packet.Data, packet.GetData()); err != nil {
+		if w.packet.Data, err = writeDataPacket(w.packet.Data, data); err != nil {
 			return err
 		}
+		start := w.protocolEndIndex + 1 + 4
+		end := start + 4
+		counter := binary.LittleEndian.Uint32(w.packet.Data[start:end])
+		counter++
+		binary.LittleEndian.PutUint32(w.packet.Data[start:],counter)
 	}
+	w.streamEndIndex = len(w.packet.Data) - 1
 	return nil
 }
