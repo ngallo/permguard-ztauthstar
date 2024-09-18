@@ -40,10 +40,11 @@ func NewPacketReader(packet *Packet) (*PacketReader, error) {
 
 // ReadProtocol read a protocol packet.
 func (w *PacketReader) ReadProtocol() (*ProtocolPacket, error) {
-	if len(w.packet.Data) == 0 {
+	data := w.packet.Data
+	if len(data) == 0 {
 		return nil, errors.New("notp: missing protocol packet")
 	}
-	payload, _, _, err := readDataPacket(w.packet.Data)
+	payload, _, _, err := readDataPacket(data)
 	if err != nil {
 		return nil, err
 	}
@@ -57,11 +58,49 @@ func (w *PacketReader) ReadProtocol() (*ProtocolPacket, error) {
 
 // DataPacketState is the state of a data packet.
 type DataPacketState struct {
-	CurrentOffset int
-	IsComplete    bool
+	offeset int
+	size	int
+	packetType	 int32
+	packetStream int32
+	packetNumber int32
+}
+
+// IsComplete returns true if the data packet is complete.
+func (p *DataPacketState) IsComplete() bool {
+	return p.packetStream == p.packetNumber
 }
 
 // ReadNextDataPacket read next data packet.
 func (w *PacketReader) ReadNextDataPacket(state *DataPacketState) ([]byte, *DataPacketState, error) {
-	return nil, nil, nil
+	data := w.packet.Data
+	if len(data) == 0 {
+		return nil, state, errors.New("notp: missing protocol packet")
+	}
+	if state == nil {
+		offset, size, err := indexDataPacket(0, data)
+		if err != nil {
+			return nil, state, err
+		}
+		data, offset, size, packetType, packetStream, err := readStreamDataPacket(offset + size, data)
+		if err != nil {
+			return nil, state, err
+		}
+		state = &DataPacketState{
+			offeset: offset,
+			size: size,
+			packetType: packetType,
+			packetStream: packetStream,
+			packetNumber: int32(0),
+		}
+		return data, state, nil
+	}
+	offset := state.offeset + state.size
+	payload, offset, size, err := readDataPacket(offset, data)
+	if err != nil {
+		return nil, state, err
+	}
+	state.offeset = offset
+	state.size = size
+	state.packetNumber++
+	return payload, state, nil
 }
