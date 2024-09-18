@@ -14,5 +14,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// Package packets implements the state machines of the NOTP protocol.
+// Package statemachines implements the state machines of the NOTP protocol.
 package statemachines
