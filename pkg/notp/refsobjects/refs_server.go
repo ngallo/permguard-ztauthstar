@@ -17,20 +17,37 @@
 package refsobjects
 
 import (
+	notptransport "github.com/permguard/permguard-abs-language/pkg/notp/transport"
 	notpsmachine "github.com/permguard/permguard-abs-language/pkg/notp/statemachines"
 )
 
+// ServerStateMachine represents the server's state machine.
+type ServerStateMachine struct {
+	notpsmachine.StateMachine
+}
+
+// NewServerStateMachine creates and initializes a new state machine with the given initial state and transport layer.
+func NewServerStateMachine(transportLayer *notptransport.TransportLayer) (*ServerStateMachine, error) {
+	serverStateMachine := &ServerStateMachine{}
+	stateMachine, err := notpsmachine.NewStateMachine(serverStateMachine.ServerAdvertisingState, transportLayer)
+	if err != nil {
+		return nil, err
+	}
+	serverStateMachine.StateMachine = *stateMachine
+	return serverStateMachine, nil
+}
+
 // ServerAdvertisingState handles the server's actions during the advertising phase.
-func ServerAdvertisingState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
-	return false, ServerNegotiatingState, nil
+func (s *ServerStateMachine) ServerAdvertisingState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
+	return false, s.ServerNegotiatingState, nil
 }
 
 // ServerNegotiatingState handles the server's actions during the negotiation phase.
-func ServerNegotiatingState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
-	return false, ServerObjectExchangeState, nil
+func (s *ServerStateMachine) ServerNegotiatingState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
+	return false, s.ServerObjectExchangeState, nil
 }
 
 // ServerObjectExchangeState handles the server's actions during the object exchange phase.
-func ServerObjectExchangeState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
+func (s *ServerStateMachine) ServerObjectExchangeState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
 	return false, notpsmachine.FinalState, nil
 }

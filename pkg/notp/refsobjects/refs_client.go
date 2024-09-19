@@ -17,42 +17,37 @@
 package refsobjects
 
 import (
-	notppackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
+	notptransport "github.com/permguard/permguard-abs-language/pkg/notp/transport"
 	notpsmachine "github.com/permguard/permguard-abs-language/pkg/notp/statemachines"
 )
 
-// ClientAdvertisingState handles the client's actions during the advertising phase.
-func ClientAdvertisingState(runtime *notpsmachine.StateMachineRuntimeContext) (isFinal bool, nextState notpsmachine.StateTransitionFunc, err error) {
-	str := "ADVERTISING"
-	packet := &RefsObjPacket{
-		Packet: notppackets.Packet{
-			Data: []byte(str),
-		},
+// ClientStateMachine represents the client's state machine.
+type ClientStateMachine struct {
+	notpsmachine.StateMachine
+}
+
+// NewClientStateMachine creates and initializes a new state machine with the given initial state and transport layer.
+func NewClientStateMachine(transportLayer *notptransport.TransportLayer) (*ClientStateMachine, error) {
+	clientStateMachine := &ClientStateMachine{}
+	stateMachine, err := notpsmachine.NewStateMachine(clientStateMachine.ClientAdvertisingState, transportLayer)
+	if err != nil {
+		return nil, err
 	}
-	runtime.TransmitPacket(&packet.Packet)
-	return false, ClientNegotiatingState, nil
+	clientStateMachine.StateMachine = *stateMachine
+	return clientStateMachine, nil
+}
+
+// ClientAdvertisingState handles the client's actions during the advertising phase.
+func (s *ClientStateMachine) ClientAdvertisingState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
+	return false, s.ClientNegotiatingState, nil
 }
 
 // ClientNegotiatingState handles the client's actions during the negotiation phase.
-func ClientNegotiatingState(runtime *notpsmachine.StateMachineRuntimeContext) (isFinal bool, nextState notpsmachine.StateTransitionFunc, err error) {
-	str := "NEGOTIATING"
-	packet := &RefsObjPacket{
-		Packet: notppackets.Packet{
-			Data: []byte(str),
-		},
-	}
-	runtime.TransmitPacket(&packet.Packet)
-	return false, ClientObjectExchangeState, nil
+func (s *ClientStateMachine) ClientNegotiatingState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
+	return false, s.ClientObjectExchangeState, nil
 }
 
 // ClientObjectExchangeState handles the client's actions during the object exchange phase.
-func ClientObjectExchangeState(runtime *notpsmachine.StateMachineRuntimeContext) (isFinal bool, nextState notpsmachine.StateTransitionFunc, err error) {
-	str := "OBJECT_EXCHANGE"
-	packet := &RefsObjPacket{
-		Packet: notppackets.Packet{
-			Data: []byte(str),
-		},
-	}
-	runtime.TransmitPacket(&packet.Packet)
+func (s *ClientStateMachine) ClientObjectExchangeState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
 	return false, notpsmachine.FinalState, nil
 }

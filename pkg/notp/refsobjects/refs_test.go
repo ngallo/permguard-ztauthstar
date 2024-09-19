@@ -23,7 +23,6 @@ import (
 
 	notppackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
 	notptransport "github.com/permguard/permguard-abs-language/pkg/notp/transport"
-	notpsmachine "github.com/permguard/permguard-abs-language/pkg/notp/statemachines"
 )
 
 type statesMachinesInfo struct {
@@ -31,8 +30,8 @@ type statesMachinesInfo struct {
 	clientReceived	[]notppackets.Packet
 	serverSent 		[]notppackets.Packet
 	serverReceived 	[]notppackets.Packet
-	clientSMachine *notpsmachine.StateMachine
-	serverSMachine *notpsmachine.StateMachine
+	clientSMachine 	*ClientStateMachine
+	serverSMachine 	*ServerStateMachine
 
 }
 
@@ -70,10 +69,10 @@ func buildRefsObjectsStateMachines(assert *assert.Assertions) (*statesMachinesIn
 	serverTransport, err := notptransport.NewTransportLayer(clientStream.TransmitPacket, serverStream.ReceivePacket, serverPacketLogger)
 	assert.Nil(err, "Failed to initialize the server transport layer")
 
-	clientSMachine, err := notpsmachine.NewStateMachine(ClientAdvertisingState, clientTransport)
+	clientSMachine, err := NewClientStateMachine(clientTransport)
 	assert.Nil(err, "Failed to initialize the client state machine")
 	sMInfo.clientSMachine = clientSMachine
-	serverSMachine, err := notpsmachine.NewStateMachine(ServerAdvertisingState, serverTransport)
+	serverSMachine, err := NewServerStateMachine(serverTransport)
 	assert.Nil(err, "Failed to initialize the server state machine")
 	sMInfo.serverSMachine = serverSMachine
 	return sMInfo
