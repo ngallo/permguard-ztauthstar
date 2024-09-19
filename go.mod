@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/permguard/permguard-core v0.0.0-20240916223822-3e4d9e332b3a
-	github.com/permguard/permguard-notp-protocol v0.0.0-20240919215738-50107762a463
+	github.com/permguard/permguard-notp-protocol v0.0.0-20240919220042-1bf3c6271790
 	github.com/stretchr/testify v1.9.0
 )
 
