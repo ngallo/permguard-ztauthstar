@@ -26,52 +26,65 @@ import (
 	notpsmachine "github.com/permguard/permguard-abs-language/pkg/notp/statemachines"
 )
 
-// TestClientServerStateMachineExecution verifies the state machine execution for both client and server.
-func TestClientServerStateMachineExecution(t *testing.T) {
-    assert := assert.New(t)
+type statesMachinesInfo struct {
+	clientSent 		[]notppackets.Packet
+	clientReceived	[]notppackets.Packet
+	serverSent 		[]notppackets.Packet
+	serverReceived 	[]notppackets.Packet
+	clientSMachine *notpsmachine.StateMachine
+	serverSMachine *notpsmachine.StateMachine
 
-    // Initialize in-memory streams for client and server communication
-    clientStream, err := notptransport.NewInMemoryStream()
-    assert.Nil(err, "Failed to initialize the client transport stream")
-    serverStream, err := notptransport.NewInMemoryStream()
-    assert.Nil(err, "Failed to initialize the server transport stream")
+}
 
-    // Create transport layers for both client and server
-	clientSent := []notppackets.Packet{}
+// buildRefsObjectsStateMachines initializes the client and server state machines.
+func buildRefsObjectsStateMachines(assert *assert.Assertions) (*statesMachinesInfo) {
+	sMInfo := &statesMachinesInfo{
+		clientSent:     []notppackets.Packet{},
+		clientReceived: []notppackets.Packet{},
+		serverSent:     []notppackets.Packet{},
+		serverReceived: []notppackets.Packet{},
+	}
 	onClientSent := func(packet *notppackets.Packet) {
-		clientSent = append(clientSent, *packet)
+		sMInfo.clientSent = append(sMInfo.clientSent, *packet)
 	}
-	clientReceived := []notppackets.Packet{}
 	onClientReceived := func(packet *notppackets.Packet) {
-		clientReceived = append(clientReceived, *packet)
+		sMInfo.clientReceived = append(sMInfo.clientReceived, *packet)
 	}
+	clientStream, err := notptransport.NewInMemoryStream()
+	assert.Nil(err, "Failed to initialize the client transport stream")
+	serverStream, err := notptransport.NewInMemoryStream()
+	assert.Nil(err, "Failed to initialize the server transport stream")
+
 	clientPacketLogger, err := notptransport.NewPacketLogger(onClientSent, onClientReceived)
 	assert.Nil(err, "Failed to initialize the packet logger")
-    clientTransport, err := notptransport.NewTransportLayer(serverStream.TransmitPacket, clientStream.ReceivePacket, clientPacketLogger)
-    assert.Nil(err, "Failed to initialize the client transport layer")
-	serverSent := []notppackets.Packet{}
+	clientTransport, err := notptransport.NewTransportLayer(serverStream.TransmitPacket, clientStream.ReceivePacket, clientPacketLogger)
+	assert.Nil(err, "Failed to initialize the client transport layer")
 	onServerSent := func(packet *notppackets.Packet) {
-		serverSent = append(serverSent, *packet)
+		sMInfo.serverSent = append(sMInfo.serverSent, *packet)
 	}
-	serverReceived := []notppackets.Packet{}
 	onServerReceived := func(packet *notppackets.Packet) {
-		serverReceived = append(serverReceived, *packet)
+		sMInfo.serverReceived = append(sMInfo.serverReceived, *packet)
 	}
 	serverPacketLogger, err := notptransport.NewPacketLogger(onServerSent, onServerReceived)
 	assert.Nil(err, "Failed to initialize the packet logger")
-    serverTransport, err := notptransport.NewTransportLayer(clientStream.TransmitPacket, serverStream.ReceivePacket, serverPacketLogger)
-    assert.Nil(err, "Failed to initialize the server transport layer")
+	serverTransport, err := notptransport.NewTransportLayer(clientStream.TransmitPacket, serverStream.ReceivePacket, serverPacketLogger)
+	assert.Nil(err, "Failed to initialize the server transport layer")
 
-    // Initialize and run client state machine
-    clientSMachine, err := notpsmachine.NewStateMachine(ClientAdvertisingState, clientTransport)
-    assert.Nil(err, "Failed to initialize the client state machine")
-    err = clientSMachine.Run()
-    assert.Nil(err, "Failed to run the client state machine")
-
-    // Initialize and run server state machine
-    serverSMachine, err := notpsmachine.NewStateMachine(ServerAdvertisingState, serverTransport)
-    assert.Nil(err, "Failed to initialize the server state machine")
-    err = serverSMachine.Run()
-    assert.Nil(err, "Failed to run the server state machine")
+	clientSMachine, err := notpsmachine.NewStateMachine(ClientAdvertisingState, clientTransport)
+	assert.Nil(err, "Failed to initialize the client state machine")
+	sMInfo.clientSMachine = clientSMachine
+	serverSMachine, err := notpsmachine.NewStateMachine(ServerAdvertisingState, serverTransport)
+	assert.Nil(err, "Failed to initialize the server state machine")
+	sMInfo.serverSMachine = serverSMachine
+	return sMInfo
 }
 
+// TestClientServerStateMachineExecution verifies the state machine execution for both client and server.
+func TestClientServerStateMachineExecution(t *testing.T) {
+    assert := assert.New(t)
+    sMInfo := buildRefsObjectsStateMachines(assert)
+	err := sMInfo.clientSMachine.Run()
+	assert.Nil(err, "Failed to run the client state machine")
+	sMInfo.serverSMachine.Run()
+	assert.Nil(err, "Failed to run the server state machine")
+}
