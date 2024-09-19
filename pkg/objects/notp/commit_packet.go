@@ -14,37 +14,32 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package packets
+package notp
 
 import (
 	"bytes"
-	"encoding/binary"
+
+	notppackets "github.com/permguard/permguard-notp-protocol/pkg/notp/packets"
 )
 
-// ProtocolPacket represents a protocol packet.
-type ProtocolPacket struct {
-	Version int32
+// CommitPacket represents a reference object packet.
+type CommitPacket struct {
+	notppackets.Packet
 }
 
 // GetType returns the type of the packet.
-func (p *ProtocolPacket) GetType() int32 {
+func (p *CommitPacket) GetType() int32 {
 	return 0
 }
 
 // Serialize serializes the packet.
-func (p *ProtocolPacket) Serialize() ([]byte, error) {
+func (p *CommitPacket) Serialize() ([]byte, error) {
 	buffer := bytes.NewBuffer([]byte{})
-	if err := binary.Write(buffer, binary.LittleEndian, p.Version); err != nil {
-		return nil, err
-	}
 	return buffer.Bytes(), nil
 }
 
 // Deserialize deserializes the packet.
-func (p *ProtocolPacket) Deserialize(data []byte) error {
-	buffer := bytes.NewBuffer(data)
-	if err := binary.Read(buffer, binary.LittleEndian, &p.Version); err != nil {
-		return err
-	}
+func (p *CommitPacket) Deserialize(data []byte) error {
+	// buffer := bytes.NewBuffer(data)
 	return nil
 }

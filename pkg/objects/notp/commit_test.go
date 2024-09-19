@@ -14,29 +14,28 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package refsobjects
+package notp
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	notppackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
-	notptransport "github.com/permguard/permguard-abs-language/pkg/notp/transport"
+	notppackets "github.com/permguard/permguard-notp-protocol/pkg/notp/packets"
+	notptransport "github.com/permguard/permguard-notp-protocol/pkg/notp/transport"
 )
 
 type statesMachinesInfo struct {
-	clientSent 		[]notppackets.Packet
-	clientReceived	[]notppackets.Packet
-	serverSent 		[]notppackets.Packet
-	serverReceived 	[]notppackets.Packet
-	clientSMachine 	*ClientStateMachine
-	serverSMachine 	*ServerStateMachine
-
+	clientSent     []notppackets.Packet
+	clientReceived []notppackets.Packet
+	serverSent     []notppackets.Packet
+	serverReceived []notppackets.Packet
+	clientSMachine *ClientStateMachine
+	serverSMachine *ServerStateMachine
 }
 
-// buildRefsObjectsStateMachines initializes the client and server state machines.
-func buildRefsObjectsStateMachines(assert *assert.Assertions) (*statesMachinesInfo) {
+// buildCommitStateMachines initializes the client and server state machines.
+func buildCommitStateMachines(assert *assert.Assertions) *statesMachinesInfo {
 	sMInfo := &statesMachinesInfo{
 		clientSent:     []notppackets.Packet{},
 		clientReceived: []notppackets.Packet{},
@@ -80,8 +79,8 @@ func buildRefsObjectsStateMachines(assert *assert.Assertions) (*statesMachinesIn
 
 // TestClientServerStateMachineExecution verifies the state machine execution for both client and server.
 func TestClientServerStateMachineExecution(t *testing.T) {
-    assert := assert.New(t)
-    sMInfo := buildRefsObjectsStateMachines(assert)
+	assert := assert.New(t)
+	sMInfo := buildCommitStateMachines(assert)
 	err := sMInfo.clientSMachine.Run()
 	assert.Nil(err, "Failed to run the client state machine")
 	sMInfo.serverSMachine.Run()

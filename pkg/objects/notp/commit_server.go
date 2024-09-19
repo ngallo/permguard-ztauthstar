@@ -14,11 +14,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package refsobjects
+package notp
 
 import (
-	notptransport "github.com/permguard/permguard-abs-language/pkg/notp/transport"
-	notpsmachine "github.com/permguard/permguard-abs-language/pkg/notp/statemachines"
+	notpsmachine "github.com/permguard/permguard-notp-protocol/pkg/notp/statemachines"
+	notptransport "github.com/permguard/permguard-notp-protocol/pkg/notp/transport"
 )
 
 // ServerStateMachine represents the server's state machine.
