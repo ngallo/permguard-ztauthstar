@@ -58,16 +58,16 @@ func (w *PacketReader) ReadProtocol() (*ProtocolPacket, error) {
 
 // DataPacketState is the state of a data packet.
 type DataPacketState struct {
-	offeset int
-	size	int
-	packetType	 int32
-	packetStream int32
-	packetNumber int32
+	offeset           int
+	size              int
+	packetType        int32
+	packetStreamSize  int32
+	packetStreamIndex int32
 }
 
 // IsComplete returns true if the data packet is complete.
 func (p *DataPacketState) IsComplete() bool {
-	return p.packetStream == p.packetNumber
+	return p.packetStreamSize - 1 == p.packetStreamIndex
 }
 
 // ReadNextDataPacket read next data packet.
@@ -84,16 +84,16 @@ func (w *PacketReader) ReadNextDataPacket(state *DataPacketState) ([]byte, *Data
 		if err != nil {
 			return nil, state, err
 		}
-		data, offset, size, packetType, packetStream, err := readStreamDataPacket(offset + size, data)
+		data, offset, size, packetType, packetStreamSize, err := readStreamDataPacket(offset+size, data)
 		if err != nil {
 			return nil, state, err
 		}
 		state = &DataPacketState{
-			offeset: offset,
-			size: size,
-			packetType: packetType,
-			packetStream: packetStream,
-			packetNumber: int32(1),
+			offeset:           offset,
+			size:              size,
+			packetType:        packetType,
+			packetStreamSize:  packetStreamSize,
+			packetStreamIndex: int32(0),
 		}
 		return data, state, nil
 	}
@@ -104,6 +104,6 @@ func (w *PacketReader) ReadNextDataPacket(state *DataPacketState) ([]byte, *Data
 	}
 	state.offeset = offset
 	state.size = size
-	state.packetNumber++
+	state.packetStreamIndex++
 	return payload, state, nil
 }

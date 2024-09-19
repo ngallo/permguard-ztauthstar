@@ -52,19 +52,19 @@ func TestPacketWriterAndReader(t *testing.T) {
 	writer, err := NewPacketWriter(packet)
 	assert.Nil(err)
 
-	inProtocol := &ProtocolPacket{ Version: 10 }
+	inProtocol := &ProtocolPacket{Version: 10}
 	err = writer.WriteProtocol(inProtocol)
 	assert.Nil(err)
 
-	inData1 := &SamplePacket{ Text: "fd1d3938-2988-4df3-9b83-cc278b69cab0" }
+	inData1 := &SamplePacket{Text: "fd1d3938-2988-4df3-9b83-cc278b69cab0"}
 	err = writer.AppendDataPacket(inData1)
 	assert.Nil(err)
 
-	inData2 := &SamplePacket{ Text: "3ecd7285-8406-4647-8e8f-92d87348636d" }
+	inData2 := &SamplePacket{Text: "3ecd7285-8406-4647-8e8f-92d87348636d"}
 	err = writer.AppendDataPacket(inData2)
 	assert.Nil(err)
 
-	inData3 := &SamplePacket{ Text: "83ce2f5b-f5c4-4bd7-85de-69291f1f80d4" }
+	inData3 := &SamplePacket{Text: "83ce2f5b-f5c4-4bd7-85de-69291f1f80d4"}
 	err = writer.AppendDataPacket(inData3)
 	assert.Nil(err)
 
@@ -79,8 +79,8 @@ func TestPacketWriterAndReader(t *testing.T) {
 	assert.Nil(err)
 	assert.NotNil(state)
 	assert.Equal(state.packetType, inData1.GetType())
-	assert.Equal(state.packetStream, int32(3))
-	assert.Equal(state.packetNumber, int32(1))
+	assert.Equal(state.packetStreamSize, int32(3))
+	assert.Equal(state.packetStreamIndex, int32(0))
 	outData1 := &SamplePacket{}
 	err = outData1.Deserialize(data)
 	assert.Nil(err)
@@ -90,8 +90,8 @@ func TestPacketWriterAndReader(t *testing.T) {
 	data, state, err = reader.ReadNextDataPacket(state)
 	assert.Nil(err)
 	assert.Equal(state.packetType, inData2.GetType())
-	assert.Equal(state.packetStream, int32(3))
-	assert.Equal(state.packetNumber, int32(2))
+	assert.Equal(state.packetStreamSize, int32(3))
+	assert.Equal(state.packetStreamIndex, int32(1))
 	outData2 := &SamplePacket{}
 	err = outData2.Deserialize(data)
 	assert.Nil(err)
@@ -101,8 +101,8 @@ func TestPacketWriterAndReader(t *testing.T) {
 	data, state, err = reader.ReadNextDataPacket(state)
 	assert.Nil(err)
 	assert.Equal(state.packetType, inData2.GetType())
-	assert.Equal(state.packetStream, int32(3))
-	assert.Equal(state.packetNumber, int32(3))
+	assert.Equal(state.packetStreamSize, int32(3))
+	assert.Equal(state.packetStreamIndex, int32(2))
 	outData3 := &SamplePacket{}
 	err = outData3.Deserialize(data)
 	assert.Nil(err)

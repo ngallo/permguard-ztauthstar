@@ -79,8 +79,8 @@ func (w *PacketWriter) AppendDataPacket(packet Packetable) error {
 		return err
 	}
 	if w.streamEndIndex == -1 {
-		streamCount := int32(1)
-		if w.packet.Data, err = writeStreamDataPacket(w.packet.Data, &dataType, &streamCount, data); err != nil {
+		streamSize := int32(1)
+		if w.packet.Data, err = writeStreamDataPacket(w.packet.Data, &dataType, &streamSize, data); err != nil {
 			return err
 		}
 		w.streamType = dataType
