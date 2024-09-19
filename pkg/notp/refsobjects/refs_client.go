@@ -17,21 +17,42 @@
 package refsobjects
 
 import (
+	notppackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
 	notpsmachine "github.com/permguard/permguard-abs-language/pkg/notp/statemachines"
 )
 
 // ClientAdvertisingState handles the client's actions during the advertising phase.
 func ClientAdvertisingState(runtime *notpsmachine.StateMachineRuntimeContext) (isFinal bool, nextState notpsmachine.StateTransitionFunc, err error) {
-	runtime.TransmitPacket(&RefsObjPacket{})
+	str := "ADVERTISING"
+	packet := &RefsObjPacket{
+		Packet: notppackets.Packet{
+			Data: []byte(str),
+		},
+	}
+	runtime.TransmitPacket(&packet.Packet)
 	return false, ClientNegotiatingState, nil
 }
 
 // ClientNegotiatingState handles the client's actions during the negotiation phase.
 func ClientNegotiatingState(runtime *notpsmachine.StateMachineRuntimeContext) (isFinal bool, nextState notpsmachine.StateTransitionFunc, err error) {
+	str := "NEGOTIATING"
+	packet := &RefsObjPacket{
+		Packet: notppackets.Packet{
+			Data: []byte(str),
+		},
+	}
+	runtime.TransmitPacket(&packet.Packet)
 	return false, ClientObjectExchangeState, nil
 }
 
 // ClientObjectExchangeState handles the client's actions during the object exchange phase.
 func ClientObjectExchangeState(runtime *notpsmachine.StateMachineRuntimeContext) (isFinal bool, nextState notpsmachine.StateTransitionFunc, err error) {
+	str := "OBJECT_EXCHANGE"
+	packet := &RefsObjPacket{
+		Packet: notppackets.Packet{
+			Data: []byte(str),
+		},
+	}
+	runtime.TransmitPacket(&packet.Packet)
 	return false, notpsmachine.FinalState, nil
 }
