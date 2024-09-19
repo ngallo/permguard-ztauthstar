@@ -16,17 +16,17 @@
 
 package statemachines
 
-// stateClientAdvertising represents the state of the client during the advertising phase.
-func stateClientAdvertising(runtime *StateMachineRuntime) (bool, StateFunc, error) {
-	return false, stateClientNegotiating, nil
+// ClientAdvertisingState handles the client's actions during the advertising phase.
+func ClientAdvertisingState(runtime *StateMachineExecutionContext) (isFinal bool, nextState StateTransitionFunc, err error) {
+    return false, ClientNegotiatingState, nil
 }
 
-// stateClientNegotiating represents the state of the client during the negotiation phase.
-func stateClientNegotiating(runtime *StateMachineRuntime) (bool, StateFunc, error) {
-	return false, stateClientObjectExchange, nil
+// ClientNegotiatingState handles the client's actions during the negotiation phase.
+func ClientNegotiatingState(runtime *StateMachineExecutionContext) (isFinal bool, nextState StateTransitionFunc, err error) {
+    return false, ClientObjectExchangeState, nil
 }
 
-// stateClientObjectExchange represents the state of the client during the object exchange phase.
-func stateClientObjectExchange(runtime *StateMachineRuntime) (bool, StateFunc, error) {
-	return false, stateFinal, nil
+// ClientObjectExchangeState handles the client's actions during the object exchange phase.
+func ClientObjectExchangeState(runtime *StateMachineExecutionContext) (isFinal bool, nextState StateTransitionFunc, err error) {
+    return false, FinalState, nil
 }

@@ -20,53 +20,53 @@ import (
 	"errors"
 )
 
-// StateFunc represents a function that returns the next state function.
-type StateFunc func(*StateMachineRuntime) (bool, StateFunc, error)
+// StateTransitionFunc defines a function responsible for transitioning to the next state in the state machine.
+type StateTransitionFunc func(runtime *StateMachineExecutionContext) (isFinal bool, nextState StateTransitionFunc, err error)
 
-// stateInitial represents the initial state of the state machine.
-func stateInitial(runtime *StateMachineRuntime) (bool, StateFunc, error) {
-	return false, runtime.initialState, nil
+// InitialState defines the initial state of the state machine.
+func InitialState(runtime *StateMachineExecutionContext) (bool, StateTransitionFunc, error) {
+    return false, runtime.InitialState, nil
 }
 
-// stateFInal represents the final state of the state machine.
-func stateFinal(runtime *StateMachineRuntime) (bool, StateFunc, error) {
-	return true, nil, nil
+// FinalState defines the final state of the state machine.
+func FinalState(runtime *StateMachineExecutionContext) (bool, StateTransitionFunc, error) {
+    return true, nil, nil
 }
 
-// StateMachineRuntime represents the runtime of a state machine.
-type StateMachineRuntime struct {
-	initialState StateFunc
+// StateMachineExecutionContext holds the execution context of the state machine.
+type StateMachineExecutionContext struct {
+    InitialState StateTransitionFunc
 }
 
-// StateMachine represents a state machine.
+// StateMachine orchestrates the execution of state transitions.
 type StateMachine struct {
-	runtime *StateMachineRuntime
+    executionContext *StateMachineExecutionContext
 }
 
-// Run runs the state machine.
-func (m *StateMachine) Run() error {
-    state := m.runtime.initialState
+// Execute starts and runs the state machine through its states until termination.
+func (m *StateMachine) Execute() error {
+    state := m.executionContext.InitialState
     var err error
-	var final bool
+    var isFinal bool
     for state != nil {
-        final, state, err = state(m.runtime)
+        isFinal, state, err = state(m.executionContext)
         if err != nil {
             return err
-        } else if final {
-			break
-		}
+        } else if isFinal {
+            break
+        }
     }
     return nil
 }
 
-// NewStateMachine creates a new state machine.
-func NewStateMachine(initialState StateFunc) (*StateMachine, error) {
-	if initialState == nil {
-		return nil, errors.New("notp: initial state cannot be nil")
-	}
-	return &StateMachine{
-		runtime: &StateMachineRuntime{
-			initialState: initialState,
-		},
-	}, nil
+// NewStateMachine creates and initializes a new state machine with the given initial state.
+func NewStateMachine(initialState StateTransitionFunc) (*StateMachine, error) {
+    if initialState == nil {
+        return nil, errors.New("notp: initial state cannot be nil")
+    }
+    return &StateMachine{
+        executionContext: &StateMachineExecutionContext{
+            InitialState: initialState,
+        },
+    }, nil
 }

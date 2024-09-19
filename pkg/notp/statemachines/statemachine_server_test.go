@@ -22,12 +22,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestClientStateMachineExecution verifies the correct execution of the client state machine.
-func TestClientStateMachineExecution(t *testing.T) {
+// TestServerStateMachineExecution verifies the correct execution of the server state machine.
+func TestServerStateMachineExecution(t *testing.T) {
     assert := assert.New(t)
 
     // Create a new state machine starting at the advertising state
-    stateMachine, err := NewStateMachine(ClientAdvertisingState)
+    stateMachine, err := NewStateMachine(ServerAdvertisingState)
     assert.Nil(err, "Failed to initialize the state machine")
 
     // Execute the state machine
@@ -36,3 +36,4 @@ func TestClientStateMachineExecution(t *testing.T) {
 
     // assert.Equal(expectedFinalState, stateMachine.CurrentState(), "State machine did not reach the expected final state")
 }
+
