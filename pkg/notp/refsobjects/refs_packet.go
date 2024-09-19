@@ -19,12 +19,12 @@ package refsobjects
 import (
 	"bytes"
 
-	azpackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
+	notppackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
 )
 
 // RefsObjPacket represents a reference object packet.
 type RefsObjPacket struct {
-	azpackets.Packet
+	notppackets.Packet
 }
 
 // GetType returns the type of the packet.

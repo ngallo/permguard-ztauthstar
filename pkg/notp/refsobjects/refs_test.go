@@ -14,14 +14,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package statemachines
+package refsobjects
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
+	notppackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
 	notptransport "github.com/permguard/permguard-abs-language/pkg/notp/transport"
+	notpsmachine "github.com/permguard/permguard-abs-language/pkg/notp/statemachines"
 )
 
 // TestClientServerStateMachineExecution verifies the state machine execution for both client and server.
@@ -35,19 +37,39 @@ func TestClientServerStateMachineExecution(t *testing.T) {
     assert.Nil(err, "Failed to initialize the server transport stream")
 
     // Create transport layers for both client and server
-    clientTransport, err := notptransport.NewTransportLayer(serverStream.TransmitPacket, clientStream.ReceivePacket, nil)
+	clientSent := []notppackets.Packet{}
+	onClientSent := func(packet *notppackets.Packet) {
+		clientSent = append(clientSent, *packet)
+	}
+	clientReceived := []notppackets.Packet{}
+	onClientReceived := func(packet *notppackets.Packet) {
+		clientReceived = append(clientReceived, *packet)
+	}
+	clientPacketLogger, err := notptransport.NewPacketLogger(onClientSent, onClientReceived)
+	assert.Nil(err, "Failed to initialize the packet logger")
+    clientTransport, err := notptransport.NewTransportLayer(serverStream.TransmitPacket, clientStream.ReceivePacket, clientPacketLogger)
     assert.Nil(err, "Failed to initialize the client transport layer")
-    serverTransport, err := notptransport.NewTransportLayer(clientStream.TransmitPacket, serverStream.ReceivePacket, nil)
+	serverSent := []notppackets.Packet{}
+	onServerSent := func(packet *notppackets.Packet) {
+		serverSent = append(serverSent, *packet)
+	}
+	serverReceived := []notppackets.Packet{}
+	onServerReceived := func(packet *notppackets.Packet) {
+		serverReceived = append(serverReceived, *packet)
+	}
+	serverPacketLogger, err := notptransport.NewPacketLogger(onServerSent, onServerReceived)
+	assert.Nil(err, "Failed to initialize the packet logger")
+    serverTransport, err := notptransport.NewTransportLayer(clientStream.TransmitPacket, serverStream.ReceivePacket, serverPacketLogger)
     assert.Nil(err, "Failed to initialize the server transport layer")
 
     // Initialize and run client state machine
-    clientSMachine, err := NewStateMachine(FinalState, clientTransport)
+    clientSMachine, err := notpsmachine.NewStateMachine(ClientAdvertisingState, clientTransport)
     assert.Nil(err, "Failed to initialize the client state machine")
     err = clientSMachine.Run()
     assert.Nil(err, "Failed to run the client state machine")
 
     // Initialize and run server state machine
-    serverSMachine, err := NewStateMachine(FinalState, serverTransport)
+    serverSMachine, err := notpsmachine.NewStateMachine(ServerAdvertisingState, serverTransport)
     assert.Nil(err, "Failed to initialize the server state machine")
     err = serverSMachine.Run()
     assert.Nil(err, "Failed to run the server state machine")

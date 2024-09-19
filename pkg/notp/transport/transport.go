@@ -23,36 +23,45 @@ import (
 	notppackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
 )
 
-// PacketSender defines the interface for sending packets over the transport layer.
-type PacketSender func(packet *notppackets.Packet) error
-
-// PacketReceiver defines the interface for receiving packets from the transport layer.
-type PacketReceiver func() (*notppackets.Packet, error)
-
 // TransportLayer represents the transport layer responsible for packet transmission in the NOTP protocol.
 type TransportLayer struct {
-	PacketSender   PacketSender
-	PacketReceiver PacketReceiver
+	inspector      PacketInspector
+	packetSender   PacketSender
+	packetReceiver PacketReceiver
 }
 
 // TransmitPacket sends a packet through the transport layer.
 func (t *TransportLayer) TransmitPacket(packet *notppackets.Packet) error {
-	if t.PacketSender == nil {
+	if t.packetSender == nil {
 		return errors.New("notp: transport layer does not have a defined packet sender")
 	}
-	return t.PacketSender(packet)
+	err := t.packetSender(packet)
+	if err != nil {
+		return err
+	}
+	if t.inspector != nil {
+        t.inspector.InspectSent(packet)
+    }
+	return nil
 }
 
 // ReceivePacket retrieves a packet from the transport layer.
 func (t *TransportLayer) ReceivePacket() (*notppackets.Packet, error) {
-	if t.PacketReceiver == nil {
+	if t.packetReceiver == nil {
 		return nil, errors.New("notp: transport layer does not have a defined packet receiver")
 	}
-	return t.PacketReceiver()
+	packet, err := t.packetReceiver()
+	if err != nil {
+		return nil, err
+	}
+	if t.inspector != nil {
+        t.inspector.InspectReceived(packet)
+    }
+	return packet, nil
 }
 
 // NewTransportLayer creates and initializes a new transport layer.
-func NewTransportLayer(packetSender PacketSender, packetReceiver PacketReceiver) (*TransportLayer, error) {
+func NewTransportLayer(packetSender PacketSender, packetReceiver PacketReceiver, inspector PacketInspector) (*TransportLayer, error) {
 	if packetSender == nil {
 		return nil, errors.New("notp: PacketSender cannot be nil")
 	}
@@ -60,7 +69,8 @@ func NewTransportLayer(packetSender PacketSender, packetReceiver PacketReceiver)
 		return nil, errors.New("notp: PacketReceiver cannot be nil")
 	}
 	return &TransportLayer{
-		PacketSender:   packetSender,
-		PacketReceiver: packetReceiver,
+		inspector: 	inspector,
+		packetSender:   packetSender,
+		packetReceiver: packetReceiver,
 	}, nil
 }
