@@ -35,6 +35,9 @@ func (t *TransportLayer) TransmitPacket(packet *notppackets.Packet) error {
 	if t.packetSender == nil {
 		return errors.New("notp: transport layer does not have a defined packet sender")
 	}
+	if packet == nil {
+		return errors.New("notp: cannot transmit a nil packet")
+	}
 	err := t.packetSender(packet)
 	if err != nil {
 		return err
@@ -53,6 +56,9 @@ func (t *TransportLayer) ReceivePacket() (*notppackets.Packet, error) {
 	packet, err := t.packetReceiver()
 	if err != nil {
 		return nil, err
+	}
+	if packet == nil {
+		return nil, errors.New("notp: received a nil packet")
 	}
 	if t.inspector != nil {
         t.inspector.InspectReceived(packet)

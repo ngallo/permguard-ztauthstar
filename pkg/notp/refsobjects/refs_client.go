@@ -22,6 +22,7 @@ import (
 
 // ClientAdvertisingState handles the client's actions during the advertising phase.
 func ClientAdvertisingState(runtime *notpsmachine.StateMachineRuntimeContext) (isFinal bool, nextState notpsmachine.StateTransitionFunc, err error) {
+	runtime.TransmitPacket(&RefsObjPacket{})
 	return false, ClientNegotiatingState, nil
 }
 
