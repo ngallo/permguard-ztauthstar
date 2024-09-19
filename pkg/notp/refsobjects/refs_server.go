@@ -14,19 +14,23 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package statemachines
+package refsobjects
+
+import (
+	notpsmachine "github.com/permguard/permguard-abs-language/pkg/notp/statemachines"
+)
 
 // ServerAdvertisingState handles the server's actions during the advertising phase.
-func ServerAdvertisingState(runtime *StateMachineExecutionContext) (bool, StateTransitionFunc, error) {
-    return false, ServerNegotiatingState, nil
+func ServerAdvertisingState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
+	return false, ServerNegotiatingState, nil
 }
 
 // ServerNegotiatingState handles the server's actions during the negotiation phase.
-func ServerNegotiatingState(runtime *StateMachineExecutionContext) (bool, StateTransitionFunc, error) {
-    return false, ServerObjectExchangeState, nil
+func ServerNegotiatingState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
+	return false, ServerObjectExchangeState, nil
 }
 
 // ServerObjectExchangeState handles the server's actions during the object exchange phase.
-func ServerObjectExchangeState(runtime *StateMachineExecutionContext) (bool, StateTransitionFunc, error) {
-    return false, FinalState, nil
+func ServerObjectExchangeState(runtime *notpsmachine.StateMachineRuntimeContext) (bool, notpsmachine.StateTransitionFunc, error) {
+	return false, notpsmachine.FinalState, nil
 }

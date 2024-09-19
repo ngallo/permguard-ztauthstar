@@ -18,55 +18,73 @@ package statemachines
 
 import (
 	"errors"
+
+	notptransport "github.com/permguard/permguard-abs-language/pkg/notp/transport"
+	notppackets "github.com/permguard/permguard-abs-language/pkg/notp/packets"
 )
 
 // StateTransitionFunc defines a function responsible for transitioning to the next state in the state machine.
-type StateTransitionFunc func(runtime *StateMachineExecutionContext) (isFinal bool, nextState StateTransitionFunc, err error)
+type StateTransitionFunc func(runtime *StateMachineRuntimeContext) (isFinal bool, nextState StateTransitionFunc, err error)
 
 // InitialState defines the initial state of the state machine.
-func InitialState(runtime *StateMachineExecutionContext) (bool, StateTransitionFunc, error) {
-    return false, runtime.InitialState, nil
+func InitialState(runtime *StateMachineRuntimeContext) (bool, StateTransitionFunc, error) {
+	return false, runtime.initialState, nil
 }
 
 // FinalState defines the final state of the state machine.
-func FinalState(runtime *StateMachineExecutionContext) (bool, StateTransitionFunc, error) {
-    return true, nil, nil
+func FinalState(runtime *StateMachineRuntimeContext) (bool, StateTransitionFunc, error) {
+	return true, nil, nil
 }
 
-// StateMachineExecutionContext holds the execution context of the state machine.
-type StateMachineExecutionContext struct {
-    InitialState StateTransitionFunc
+// StateMachineRuntimeContext holds the runtime context of the state machine.
+type StateMachineRuntimeContext struct {
+	transportLayer *notptransport.TransportLayer
+	initialState   StateTransitionFunc
+}
+
+// TransmitPacket sends a packet through the transport layer.
+func (t *StateMachineRuntimeContext) TransmitPacket(packet *notppackets.Packet) error {
+	return t.transportLayer.TransmitPacket(packet)
+}
+
+// ReceivePacket retrieves a packet from the transport layer.
+func (t *StateMachineRuntimeContext) ReceivePacket() (*notppackets.Packet, error) {
+	return t.transportLayer.ReceivePacket()
 }
 
 // StateMachine orchestrates the execution of state transitions.
 type StateMachine struct {
-    executionContext *StateMachineExecutionContext
+	runtime *StateMachineRuntimeContext
 }
 
-// Execute starts and runs the state machine through its states until termination.
-func (m *StateMachine) Execute() error {
-    state := m.executionContext.InitialState
-    var err error
-    var isFinal bool
-    for state != nil {
-        isFinal, state, err = state(m.executionContext)
-        if err != nil {
-            return err
-        } else if isFinal {
-            break
-        }
-    }
-    return nil
+// Run starts and runs the state machine through its states until termination.
+func (m *StateMachine) Run() error {
+	state := m.runtime.initialState
+	for state != nil {
+		isFinal, nextState, err := state(m.runtime)
+		if err != nil {
+			return err
+		}
+		if isFinal {
+			break
+		}
+		state = nextState
+	}
+	return nil
 }
 
-// NewStateMachine creates and initializes a new state machine with the given initial state.
-func NewStateMachine(initialState StateTransitionFunc) (*StateMachine, error) {
-    if initialState == nil {
-        return nil, errors.New("notp: initial state cannot be nil")
-    }
-    return &StateMachine{
-        executionContext: &StateMachineExecutionContext{
-            InitialState: initialState,
-        },
-    }, nil
+// NewStateMachine creates and initializes a new state machine with the given initial state and transport layer.
+func NewStateMachine(initialState StateTransitionFunc, transportLayer *notptransport.TransportLayer) (*StateMachine, error) {
+	if initialState == nil {
+		return nil, errors.New("notp: initial state cannot be nil")
+	}
+	if transportLayer == nil {
+		return nil, errors.New("notp: transport layer cannot be nil")
+	}
+	return &StateMachine{
+		runtime: &StateMachineRuntimeContext{
+			transportLayer: transportLayer,
+			initialState:   initialState,
+		},
+	}, nil
 }

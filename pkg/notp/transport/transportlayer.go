@@ -29,24 +29,38 @@ type PacketSender func(packet *notppackets.Packet) error
 // PacketReceiver defines the interface for receiving packets from the transport layer.
 type PacketReceiver func() (*notppackets.Packet, error)
 
-// NetworkTransportLayer represents the transport layer responsible for packet transmission in the NOTP protocol.
-type NetworkTransportLayer struct {
-    PacketSender   PacketSender
-    PacketReceiver PacketReceiver
+// TransportLayer represents the transport layer responsible for packet transmission in the NOTP protocol.
+type TransportLayer struct {
+	PacketSender   PacketSender
+	PacketReceiver PacketReceiver
 }
 
 // TransmitPacket sends a packet through the transport layer.
-func (t *NetworkTransportLayer) TransmitPacket(packet *notppackets.Packet) error {
-    if t.PacketSender == nil {
-        return errors.New("notp: transport layer does not have a defined packet sender")
-    }
-    return t.PacketSender(packet)
+func (t *TransportLayer) TransmitPacket(packet *notppackets.Packet) error {
+	if t.PacketSender == nil {
+		return errors.New("notp: transport layer does not have a defined packet sender")
+	}
+	return t.PacketSender(packet)
 }
 
 // ReceivePacket retrieves a packet from the transport layer.
-func (t *NetworkTransportLayer) ReceivePacket() (*notppackets.Packet, error) {
-    if t.PacketReceiver == nil {
-        return nil, errors.New("notp: transport layer does not have a defined packet receiver")
-    }
-    return t.PacketReceiver()
+func (t *TransportLayer) ReceivePacket() (*notppackets.Packet, error) {
+	if t.PacketReceiver == nil {
+		return nil, errors.New("notp: transport layer does not have a defined packet receiver")
+	}
+	return t.PacketReceiver()
+}
+
+// NewTransportLayer creates and initializes a new transport layer.
+func NewTransportLayer(packetSender PacketSender, packetReceiver PacketReceiver) (*TransportLayer, error) {
+	if packetSender == nil {
+		return nil, errors.New("notp: PacketSender cannot be nil")
+	}
+	if packetReceiver == nil {
+		return nil, errors.New("notp: PacketReceiver cannot be nil")
+	}
+	return &TransportLayer{
+		PacketSender:   packetSender,
+		PacketReceiver: packetReceiver,
+	}, nil
 }
