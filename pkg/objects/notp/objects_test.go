@@ -26,56 +26,63 @@ import (
 	notpsmachine "github.com/permguard/permguard-notp-protocol/pkg/notp/statemachines"
 )
 
-type statesMachinesInfo struct {
-	follower 		 *notpsmachine.StateMachine
-	followerSent     []notppackets.Packet
+// stateMachinesInfo represents the state machines and their respective packet logs.
+type stateMachinesInfo struct {
+	follower        *notpsmachine.StateMachine
+	followerSent    []notppackets.Packet
 	followerReceived []notppackets.Packet
 
-	leader 			 *notpsmachine.StateMachine
-	leaderSent     	 []notppackets.Packet
-	leaderReceived 	 []notppackets.Packet
+	leader          *notpsmachine.StateMachine
+	leaderSent      []notppackets.Packet
+	leaderReceived  []notppackets.Packet
 }
 
-// buildCommitStateMachines initializes the follower and leader state machines.
-func buildCommitStateMachines(assert *assert.Assertions, operationType OperationType) *statesMachinesInfo {
-	sMInfo := &statesMachinesInfo{
+// buildCommitStateMachines initializes and returns the follower and leader state machines.
+func buildCommitStateMachines(assert *assert.Assertions, operationType OperationType) *stateMachinesInfo {
+	sMInfo := &stateMachinesInfo{
 		followerSent:     []notppackets.Packet{},
 		followerReceived: []notppackets.Packet{},
-		leaderSent:     []notppackets.Packet{},
-		leaderReceived: []notppackets.Packet{},
+		leaderSent:       []notppackets.Packet{},
+		leaderReceived:   []notppackets.Packet{},
 	}
+
 	onFollowerSent := func(packet *notppackets.Packet) {
 		sMInfo.followerSent = append(sMInfo.followerSent, *packet)
 	}
 	onFollowerReceived := func(packet *notppackets.Packet) {
 		sMInfo.followerReceived = append(sMInfo.followerReceived, *packet)
 	}
-	followerStream, err := notptransport.NewInMemoryStream()
-	assert.Nil(err, "Failed to initialize the follower transport stream")
-	leaderStream, err := notptransport.NewInMemoryStream()
-	assert.Nil(err, "Failed to initialize the leader transport stream")
 
-	followerPacketLogger, err := notptransport.NewPacketInspector(onFollowerSent, onFollowerReceived)
-	assert.Nil(err, "Failed to initialize the packet logger")
-	followerTransport, err := notptransport.NewTransportLayer(leaderStream.TransmitPacket, followerStream.ReceivePacket, followerPacketLogger)
-	assert.Nil(err, "Failed to initialize the follower transport layer")
 	onLeaderSent := func(packet *notppackets.Packet) {
 		sMInfo.leaderSent = append(sMInfo.leaderSent, *packet)
 	}
 	onLeaderReceived := func(packet *notppackets.Packet) {
 		sMInfo.leaderReceived = append(sMInfo.leaderReceived, *packet)
 	}
+
+	followerStream, err := notptransport.NewInMemoryStream()
+	assert.Nil(err, "Failed to initialize the follower transport stream")
+	leaderStream, err := notptransport.NewInMemoryStream()
+	assert.Nil(err, "Failed to initialize the leader transport stream")
+
+	followerPacketLogger, err := notptransport.NewPacketInspector(onFollowerSent, onFollowerReceived)
+	assert.Nil(err, "Failed to initialize the follower packet logger")
+	followerTransport, err := notptransport.NewTransportLayer(leaderStream.TransmitPacket, followerStream.ReceivePacket, followerPacketLogger)
+	assert.Nil(err, "Failed to initialize the follower transport layer")
+
 	leaderPacketLogger, err := notptransport.NewPacketInspector(onLeaderSent, onLeaderReceived)
-	assert.Nil(err, "Failed to initialize the packet logger")
+	assert.Nil(err, "Failed to initialize the leader packet logger")
 	leaderTransport, err := notptransport.NewTransportLayer(followerStream.TransmitPacket, leaderStream.ReceivePacket, leaderPacketLogger)
 	assert.Nil(err, "Failed to initialize the leader transport layer")
 
 	followerSMachine, err := NewFollowerStateMachine(operationType, followerTransport)
 	assert.Nil(err, "Failed to initialize the follower state machine")
 	sMInfo.follower = followerSMachine
+
 	leaderSMachine, err := NewLeaderStateMachine(operationType, leaderTransport)
 	assert.Nil(err, "Failed to initialize the leader state machine")
 	sMInfo.leader = leaderSMachine
+
 	return sMInfo
 }
 
@@ -83,9 +90,10 @@ func buildCommitStateMachines(assert *assert.Assertions, operationType Operation
 func TestPullProtocolExecution(t *testing.T) {
 	assert := assert.New(t)
 	sMInfo := buildCommitStateMachines(assert, PullOperation)
-	var err error
-	err = sMInfo.follower.Run()
+
+	err := sMInfo.follower.Run()
 	assert.Nil(err, "Failed to run the follower state machine")
+
 	err = sMInfo.leader.Run()
 	assert.Nil(err, "Failed to run the leader state machine")
 }
