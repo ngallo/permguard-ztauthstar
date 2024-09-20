@@ -26,63 +26,65 @@ import (
 )
 
 type statesMachinesInfo struct {
-	clientSent     []notppackets.Packet
-	clientReceived []notppackets.Packet
-	serverSent     []notppackets.Packet
-	serverReceived []notppackets.Packet
-	clientSMachine *ClientStateMachine
-	serverSMachine *ServerStateMachine
+	follower 		 *FollowerStateMachine
+	followerSent     []notppackets.Packet
+	followerReceived []notppackets.Packet
+
+	leader 			 *LeaderStateMachine
+	leaderSent     	 []notppackets.Packet
+	leaderReceived 	 []notppackets.Packet
 }
 
-// buildCommitStateMachines initializes the client and server state machines.
+// buildCommitStateMachines initializes the follower and leader state machines.
 func buildCommitStateMachines(assert *assert.Assertions) *statesMachinesInfo {
 	sMInfo := &statesMachinesInfo{
-		clientSent:     []notppackets.Packet{},
-		clientReceived: []notppackets.Packet{},
-		serverSent:     []notppackets.Packet{},
-		serverReceived: []notppackets.Packet{},
+		followerSent:     []notppackets.Packet{},
+		followerReceived: []notppackets.Packet{},
+		leaderSent:     []notppackets.Packet{},
+		leaderReceived: []notppackets.Packet{},
 	}
-	onClientSent := func(packet *notppackets.Packet) {
-		sMInfo.clientSent = append(sMInfo.clientSent, *packet)
+	onFollowerSent := func(packet *notppackets.Packet) {
+		sMInfo.followerSent = append(sMInfo.followerSent, *packet)
 	}
-	onClientReceived := func(packet *notppackets.Packet) {
-		sMInfo.clientReceived = append(sMInfo.clientReceived, *packet)
+	onFollowerReceived := func(packet *notppackets.Packet) {
+		sMInfo.followerReceived = append(sMInfo.followerReceived, *packet)
 	}
-	clientStream, err := notptransport.NewInMemoryStream()
-	assert.Nil(err, "Failed to initialize the client transport stream")
-	serverStream, err := notptransport.NewInMemoryStream()
-	assert.Nil(err, "Failed to initialize the server transport stream")
+	followerStream, err := notptransport.NewInMemoryStream()
+	assert.Nil(err, "Failed to initialize the follower transport stream")
+	leaderStream, err := notptransport.NewInMemoryStream()
+	assert.Nil(err, "Failed to initialize the leader transport stream")
 
-	clientPacketLogger, err := notptransport.NewPacketInspector(onClientSent, onClientReceived)
+	followerPacketLogger, err := notptransport.NewPacketInspector(onFollowerSent, onFollowerReceived)
 	assert.Nil(err, "Failed to initialize the packet logger")
-	clientTransport, err := notptransport.NewTransportLayer(serverStream.TransmitPacket, clientStream.ReceivePacket, clientPacketLogger)
-	assert.Nil(err, "Failed to initialize the client transport layer")
-	onServerSent := func(packet *notppackets.Packet) {
-		sMInfo.serverSent = append(sMInfo.serverSent, *packet)
+	followerTransport, err := notptransport.NewTransportLayer(leaderStream.TransmitPacket, followerStream.ReceivePacket, followerPacketLogger)
+	assert.Nil(err, "Failed to initialize the follower transport layer")
+	onLeaderSent := func(packet *notppackets.Packet) {
+		sMInfo.leaderSent = append(sMInfo.leaderSent, *packet)
 	}
-	onServerReceived := func(packet *notppackets.Packet) {
-		sMInfo.serverReceived = append(sMInfo.serverReceived, *packet)
+	onLeaderReceived := func(packet *notppackets.Packet) {
+		sMInfo.leaderReceived = append(sMInfo.leaderReceived, *packet)
 	}
-	serverPacketLogger, err := notptransport.NewPacketInspector(onServerSent, onServerReceived)
+	leaderPacketLogger, err := notptransport.NewPacketInspector(onLeaderSent, onLeaderReceived)
 	assert.Nil(err, "Failed to initialize the packet logger")
-	serverTransport, err := notptransport.NewTransportLayer(clientStream.TransmitPacket, serverStream.ReceivePacket, serverPacketLogger)
-	assert.Nil(err, "Failed to initialize the server transport layer")
+	leaderTransport, err := notptransport.NewTransportLayer(followerStream.TransmitPacket, leaderStream.ReceivePacket, leaderPacketLogger)
+	assert.Nil(err, "Failed to initialize the leader transport layer")
 
-	clientSMachine, err := NewClientStateMachine(clientTransport)
-	assert.Nil(err, "Failed to initialize the client state machine")
-	sMInfo.clientSMachine = clientSMachine
-	serverSMachine, err := NewServerStateMachine(serverTransport)
-	assert.Nil(err, "Failed to initialize the server state machine")
-	sMInfo.serverSMachine = serverSMachine
+	followerSMachine, err := NewFollowerStateMachine(followerTransport)
+	assert.Nil(err, "Failed to initialize the follower state machine")
+	sMInfo.follower = followerSMachine
+	leaderSMachine, err := NewLeaderStateMachine(leaderTransport)
+	assert.Nil(err, "Failed to initialize the leader state machine")
+	sMInfo.leader = leaderSMachine
 	return sMInfo
 }
 
-// TestClientServerStateMachineExecution verifies the state machine execution for both client and server.
-func TestClientServerStateMachineExecution(t *testing.T) {
+// TestFollowerLeaderStateMachineExecution verifies the state machine execution for both follower and leader.
+func TestFollowerLeaderStateMachineExecution(t *testing.T) {
 	assert := assert.New(t)
 	sMInfo := buildCommitStateMachines(assert)
-	err := sMInfo.clientSMachine.Run()
-	assert.Nil(err, "Failed to run the client state machine")
-	sMInfo.serverSMachine.Run()
-	assert.Nil(err, "Failed to run the server state machine")
+	var err error
+	err = sMInfo.follower.Run()
+	assert.Nil(err, "Failed to run the follower state machine")
+	err = sMInfo.leader.Run()
+	assert.Nil(err, "Failed to run the leader state machine")
 }
