@@ -23,20 +23,21 @@ import (
 
 	notppackets "github.com/permguard/permguard-notp-protocol/pkg/notp/packets"
 	notptransport "github.com/permguard/permguard-notp-protocol/pkg/notp/transport"
+	notpsmachine "github.com/permguard/permguard-notp-protocol/pkg/notp/statemachines"
 )
 
 type statesMachinesInfo struct {
-	follower 		 *FollowerStateMachine
+	follower 		 *notpsmachine.StateMachine
 	followerSent     []notppackets.Packet
 	followerReceived []notppackets.Packet
 
-	leader 			 *LeaderStateMachine
+	leader 			 *notpsmachine.StateMachine
 	leaderSent     	 []notppackets.Packet
 	leaderReceived 	 []notppackets.Packet
 }
 
 // buildCommitStateMachines initializes the follower and leader state machines.
-func buildCommitStateMachines(assert *assert.Assertions) *statesMachinesInfo {
+func buildCommitStateMachines(assert *assert.Assertions, operationType OperationType) *statesMachinesInfo {
 	sMInfo := &statesMachinesInfo{
 		followerSent:     []notppackets.Packet{},
 		followerReceived: []notppackets.Packet{},
@@ -69,19 +70,19 @@ func buildCommitStateMachines(assert *assert.Assertions) *statesMachinesInfo {
 	leaderTransport, err := notptransport.NewTransportLayer(followerStream.TransmitPacket, leaderStream.ReceivePacket, leaderPacketLogger)
 	assert.Nil(err, "Failed to initialize the leader transport layer")
 
-	followerSMachine, err := NewFollowerStateMachine(followerTransport)
+	followerSMachine, err := NewFollowerStateMachine(operationType, followerTransport)
 	assert.Nil(err, "Failed to initialize the follower state machine")
 	sMInfo.follower = followerSMachine
-	leaderSMachine, err := NewLeaderStateMachine(leaderTransport)
+	leaderSMachine, err := NewLeaderStateMachine(operationType, leaderTransport)
 	assert.Nil(err, "Failed to initialize the leader state machine")
 	sMInfo.leader = leaderSMachine
 	return sMInfo
 }
 
-// TestFollowerLeaderStateMachineExecution verifies the state machine execution for both follower and leader.
-func TestFollowerLeaderStateMachineExecution(t *testing.T) {
+// TestPullProtocolExecution verifies the state machine execution for both follower and leader in the context of a pull operation.
+func TestPullProtocolExecution(t *testing.T) {
 	assert := assert.New(t)
-	sMInfo := buildCommitStateMachines(assert)
+	sMInfo := buildCommitStateMachines(assert, PullOperation)
 	var err error
 	err = sMInfo.follower.Run()
 	assert.Nil(err, "Failed to run the follower state machine")

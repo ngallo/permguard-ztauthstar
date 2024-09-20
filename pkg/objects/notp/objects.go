@@ -22,6 +22,15 @@ import (
 	notppackets "github.com/permguard/permguard-notp-protocol/pkg/notp/packets"
 )
 
+// OperationType represents the type of operation that the NOTP protocol is performing.
+type OperationType string
+
+const (
+    PushOperation    OperationType = "push"
+    PullOperation    OperationType = "pull"
+    DefaultOperation OperationType = PushOperation
+)
+
 // CommitPacket represents a reference object packet.
 type CommitPacket struct {
 	notppackets.Packet
