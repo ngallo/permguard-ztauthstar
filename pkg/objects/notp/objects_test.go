@@ -38,7 +38,7 @@ type stateMachinesInfo struct {
 }
 
 // buildCommitStateMachines initializes and returns the follower and leader state machines.
-func buildCommitStateMachines(assert *assert.Assertions, operationType OperationType) *stateMachinesInfo {
+func buildCommitStateMachines(assert *assert.Assertions, operationType OperationType, followerHandler notpsmachine.DecisionHandler, leaderHandler notpsmachine.DecisionHandler) *stateMachinesInfo {
 	sMInfo := &stateMachinesInfo{
 		followerSent:     []notppackets.Packet{},
 		followerReceived: []notppackets.Packet{},
@@ -75,11 +75,11 @@ func buildCommitStateMachines(assert *assert.Assertions, operationType Operation
 	leaderTransport, err := notptransport.NewTransportLayer(followerStream.TransmitPacket, leaderStream.ReceivePacket, leaderPacketLogger)
 	assert.Nil(err, "Failed to initialize the leader transport layer")
 
-	followerSMachine, err := NewFollowerStateMachine(operationType, followerTransport)
+	followerSMachine, err := NewFollowerStateMachine(operationType, followerHandler, followerTransport)
 	assert.Nil(err, "Failed to initialize the follower state machine")
 	sMInfo.follower = followerSMachine
 
-	leaderSMachine, err := NewLeaderStateMachine(operationType, leaderTransport)
+	leaderSMachine, err := NewLeaderStateMachine(operationType, leaderHandler, leaderTransport)
 	assert.Nil(err, "Failed to initialize the leader state machine")
 	sMInfo.leader = leaderSMachine
 
@@ -89,7 +89,14 @@ func buildCommitStateMachines(assert *assert.Assertions, operationType Operation
 // TestPullProtocolExecution verifies the state machine execution for both follower and leader in the context of a pull operation.
 func TestPullProtocolExecution(t *testing.T) {
 	assert := assert.New(t)
-	sMInfo := buildCommitStateMachines(assert, PullOperation)
+
+	followerHandler := func(packet *notppackets.Packet) (*notppackets.Packet, error) {
+		return packet, nil
+	}
+	leaderHandler := func(packet *notppackets.Packet) (*notppackets.Packet, error) {
+		return packet, nil
+	}
+	sMInfo := buildCommitStateMachines(assert, PullOperation, followerHandler, leaderHandler)
 
 	err := sMInfo.follower.Run()
 	assert.Nil(err, "Failed to run the follower state machine")

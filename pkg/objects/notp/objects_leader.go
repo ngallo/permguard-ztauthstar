@@ -19,12 +19,12 @@ package notp
 import (
 	"fmt"
 
-	notpsmachine "github.com/permguard/permguard-notp-protocol/pkg/notp/statemachines"
 	notptransport "github.com/permguard/permguard-notp-protocol/pkg/notp/transport"
+	notpsmachine "github.com/permguard/permguard-notp-protocol/pkg/notp/statemachines"
 )
 
 // NewLeaderStateMachine initializes and returns a new leader state machine for the specified operation.
-func NewLeaderStateMachine(operation OperationType, transportLayer *notptransport.TransportLayer) (*notpsmachine.StateMachine, error) {
+func NewLeaderStateMachine(operation OperationType, decisionHandler notpsmachine.DecisionHandler, transportLayer *notptransport.TransportLayer) (*notpsmachine.StateMachine, error) {
     var initialState notpsmachine.StateTransitionFunc
     if operation == "" {
         operation = DefaultOperation
@@ -38,7 +38,7 @@ func NewLeaderStateMachine(operation OperationType, transportLayer *notptranspor
         return nil, fmt.Errorf("notp: invalid operation: %s", operation)
     }
 
-    stateMachine, err := notpsmachine.NewStateMachine(initialState, transportLayer)
+    stateMachine, err := notpsmachine.NewStateMachine(initialState, decisionHandler, transportLayer)
     if err != nil {
         return nil, fmt.Errorf("notp: failed to create leader state machine: %w", err)
     }
