@@ -53,7 +53,7 @@ func buildCommitStateMachines(assert *assert.Assertions) *statesMachinesInfo {
 	serverStream, err := notptransport.NewInMemoryStream()
 	assert.Nil(err, "Failed to initialize the server transport stream")
 
-	clientPacketLogger, err := notptransport.NewPacketLogger(onClientSent, onClientReceived)
+	clientPacketLogger, err := notptransport.NewPacketInspector(onClientSent, onClientReceived)
 	assert.Nil(err, "Failed to initialize the packet logger")
 	clientTransport, err := notptransport.NewTransportLayer(serverStream.TransmitPacket, clientStream.ReceivePacket, clientPacketLogger)
 	assert.Nil(err, "Failed to initialize the client transport layer")
@@ -63,7 +63,7 @@ func buildCommitStateMachines(assert *assert.Assertions) *statesMachinesInfo {
 	onServerReceived := func(packet *notppackets.Packet) {
 		sMInfo.serverReceived = append(sMInfo.serverReceived, *packet)
 	}
-	serverPacketLogger, err := notptransport.NewPacketLogger(onServerSent, onServerReceived)
+	serverPacketLogger, err := notptransport.NewPacketInspector(onServerSent, onServerReceived)
 	assert.Nil(err, "Failed to initialize the packet logger")
 	serverTransport, err := notptransport.NewTransportLayer(clientStream.TransmitPacket, serverStream.ReceivePacket, serverPacketLogger)
 	assert.Nil(err, "Failed to initialize the server transport layer")
