@@ -30,6 +30,8 @@ const (
 	ObjectTypeTree = "tree"
 	// ObjectTypeBlob is the object type for a blob.
 	ObjectTypeBlob = "blob"
+	// ZeroOID  represents the zero oid
+	ZeroOID = "0000000000000000000000000000000000000000000000000000000000000000"
 )
 
 // Object represents the object.
