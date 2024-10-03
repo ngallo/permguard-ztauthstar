@@ -1,4 +1,4 @@
-# PermGuard Abstraction Language
+# Permguard Abstraction Language
 
 [![Documentation](https://img.shields.io/website?label=Docs&url=https%3A%2F%2Fwww.permguard.com%2F)](https://www.permguard.com/)
 [![Build, test and publish the artifacts](https://github.com/permguard/permguard-abs-language/actions/workflows/permguard-abs-language-ci.yml/badge.svg)](https://github.com/permguard/permguard-abs-language/actions/workflows/permguard-abs-language-ci.yml)
@@ -14,7 +14,7 @@
   <img src="https://raw.githubusercontent.com/permguard/permguard-assets/main/pink-txt//1line.svg" class="center" width="400px" height="auto"/>
 </p>
 
-`PermGuard` is an Open Source Authorization Provider for cloud-native, edge, and multi-tenant apps, decoupled from application code and leveraging `Policy-as-Code` for centralized, scalable permission management.
+`Permguard` is an Open Source Authorization Provider for cloud-native, edge, and multi-tenant apps, decoupled from application code and leveraging `Policy-as-Code` for centralized, scalable permission management.
 
 This repository implements the abstraction for the language.
 
