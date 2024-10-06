@@ -118,6 +118,21 @@ func (c *Commit) GetMessage() string {
 	return c.message
 }
 
+// NewCommit creates a new commit object.
+func NewCommit(tree string, parents []string, timestamp time.Time, message string) *Commit {
+	if timestamp == (time.Time{}) {
+		timestamp = time.Now().UTC()
+	}
+	return &Commit{
+		tree:    tree,
+		parents: parents,
+		info:    CommitInfo{
+			date: timestamp,
+		},
+		message: message,
+	}
+}
+
 // TreeEntry represents a single entry in a tree object.
 type TreeEntry struct {
 	otype string
