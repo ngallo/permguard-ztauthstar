@@ -5,7 +5,7 @@
   "validate": true,
   "optimize": true,
   "input": {
-    "syntax": "permguard1",
+    "syntax": "permcode1",
     "type": "ACPolicy",
     "name": "Manage-Branch-Staff",
     "actions": [
@@ -20,7 +20,7 @@
     "resource": "uur::::pharmacy-branch:staff/id/*"
   },
   "output": {
-    "syntax": "permguard1",
+    "syntax": "permcode1",
     "type": "acpolicy",
     "name": "manage-branch-staff",
     "actions": [

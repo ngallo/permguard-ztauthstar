@@ -5,7 +5,7 @@
   "validate": true,
   "optimize": false,
   "input": {
-    "syntax": "permguard1",
+    "syntax": "permcode1",
     "type": "xxxxxx",
     "name": "manage-branch-staff",
     "actions": [

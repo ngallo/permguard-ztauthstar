@@ -5,7 +5,7 @@
   "validate": false,
   "optimize": false,
   "input": {
-    "syntax": "PERMGUARD1",
+    "syntax": "permcode1",
     "type": "ACPOLICY",
     "name": "MANAGE-BRANCH-STAFF",
     "actions": [
@@ -20,7 +20,7 @@
     "resource": "uur:central:268786704340:*:PHARMACY-BRANCH:STAFF/ID/*"
   },
   "output": {
-    "syntax": "PERMGUARD1",
+    "syntax": "permcode1",
     "type": "ACPOLICY",
     "name": "MANAGE-BRANCH-STAFF",
     "actions": [

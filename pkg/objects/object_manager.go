@@ -26,6 +26,11 @@ import (
 	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 )
 
+const (
+	// PacketNullByte is the null byte used to separate data in the packet.
+	PacketNullByte = 0xFF
+)
+
 // ObjectManager is the manager for policies.
 type ObjectManager struct {
 }
@@ -42,7 +47,7 @@ func (m *ObjectManager) createOject(objectType string, content []byte) (*Object,
 	buffer.WriteString(objectType)
 	buffer.WriteString(" ")
 	buffer.WriteString(fmt.Sprintf("%d", length))
-	buffer.WriteByte(0x01)
+	buffer.WriteByte(PacketNullByte)
 	buffer.Write(content)
 	objContent := buffer.Bytes()
 	return &Object{
@@ -94,7 +99,7 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 		return nil, errors.New("objects: object is nil")
 	}
 	objContent := object.content
-	nulIndex := bytes.IndexByte(objContent, 0x01)
+	nulIndex := bytes.IndexByte(objContent, PacketNullByte)
 	if nulIndex == -1 {
 		return nil, fmt.Errorf("objects: invalid object format: no NUL separator found")
 	}

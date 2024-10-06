@@ -52,7 +52,7 @@ func (o *Object) GetContent() []byte {
 
 // ObjectInfo is the object info.
 type ObjectInfo struct {
-	object 	*Object
+	object   *Object
 	otype    string
 	instance any
 }
@@ -93,7 +93,7 @@ func (c *CommitInfo) GetDate() time.Time {
 // Commit represents a commit object.
 type Commit struct {
 	tree    string
-	parents []string
+	parent  string
 	info    CommitInfo
 	message string
 }
@@ -103,9 +103,9 @@ func (c *Commit) GetTree() string {
 	return c.tree
 }
 
-// GetParents returns the parents of the commit.
-func (c *Commit) GetParents() []string {
-	return azcopier.CopySlice(c.parents)
+// GetParent return the parent of the commit.
+func (c *Commit) GetParent() string {
+	return c.parent
 }
 
 // GetInfo returns the info of the commit.
@@ -119,14 +119,14 @@ func (c *Commit) GetMessage() string {
 }
 
 // NewCommit creates a new commit object.
-func NewCommit(tree string, parents []string, timestamp time.Time, message string) *Commit {
+func NewCommit(tree string, parents string, timestamp time.Time, message string) *Commit {
 	if timestamp == (time.Time{}) {
 		timestamp = time.Now().UTC()
 	}
 	return &Commit{
-		tree:    tree,
-		parents: parents,
-		info:    CommitInfo{
+		tree:   tree,
+		parent: parents,
+		info: CommitInfo{
 			date: timestamp,
 		},
 		message: message,
@@ -182,7 +182,7 @@ func (t *Tree) GetEntries() []TreeEntry {
 }
 
 // AddEntry adds an entry to the tree.
-func (t *Tree) AddEntry(entry *TreeEntry) (error) {
+func (t *Tree) AddEntry(entry *TreeEntry) error {
 	if entry == nil {
 		return errors.New("objects: tree entry is nil")
 	}

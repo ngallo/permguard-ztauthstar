@@ -31,9 +31,7 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 	}
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("tree %s\n", commit.tree))
-	if len(commit.parents) > 0 {
-		sb.WriteString(fmt.Sprintf("parent %s\n", strings.Join(commit.parents, " ")))
-	}
+	sb.WriteString(fmt.Sprintf("parent %s\n", commit.parent))
 	sb.WriteString(fmt.Sprintf("info %d %s\n", commit.info.date.Unix(), commit.info.date.Format("-0700")))
 	sb.WriteString(commit.message)
 	return []byte(sb.String()), nil
@@ -52,7 +50,7 @@ func (m *ObjectManager) DeserializeCommit(data []byte) (*Commit, error) {
 		if strings.HasPrefix(line, "tree ") {
 			commit.tree = strings.TrimPrefix(line, "tree ")
 		} else if strings.HasPrefix(line, "parent ") {
-			commit.parents = strings.Split(strings.TrimPrefix(line, "parent "), " ")
+			commit.parent = strings.TrimPrefix(line, "parent ")
 		} else if strings.HasPrefix(line, "info ") {
 			parts := strings.Split(line, " ")
 			if len(parts) >= 3 {

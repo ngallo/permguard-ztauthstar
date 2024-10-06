@@ -30,8 +30,8 @@ func TestObjectManager(t *testing.T) {
 	t.Run("Test CreateCommitObject and GetObjectInfo", func(t *testing.T) {
 		assert := assert.New(t)
 		commit := &Commit{
-			tree:    "3b18e17a0e8664d3dffab99ebf6d730ddc6e8649",
-			parents: []string{"a1b2c3d4e5f678901234567890abcdef12345678"},
+			tree:   "3b18e17a0e8664d3dffab99ebf6d730ddc6e8649",
+			parent: "a1b2c3d4e5f678901234567890abcdef12345678",
 			info: CommitInfo{
 				date: time.Unix(1628704800, 0), // Example Unix timestamp
 			},
@@ -53,7 +53,7 @@ func TestObjectManager(t *testing.T) {
 		// Cast to commit and validate fields
 		retrievedCommit := objectInfo.instance.(*Commit)
 		assert.Equal(commit.tree, retrievedCommit.tree, "Tree mismatch")
-		assert.Equal(commit.parents, retrievedCommit.parents, "Parents mismatch")
+		assert.Equal(commit.parent, retrievedCommit.parent, "Parents mismatch")
 		assert.Equal(commit.info.date.Unix(), retrievedCommit.info.date.Unix(), "Commit date mismatch")
 		assert.Equal(commit.message, retrievedCommit.message, "Message mismatch")
 	})
@@ -63,9 +63,9 @@ func TestObjectManager(t *testing.T) {
 		assert := assert.New(t)
 		tree := &Tree{
 			entries: []TreeEntry{
-				{ otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", oname: "name1" },
-				{ otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", oname: "name2" },
-				{ otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", oname: "name3" },
+				{otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", oname: "name1"},
+				{otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", oname: "name2"},
+				{otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", oname: "name3"},
 			},
 		}
 
@@ -124,6 +124,6 @@ func TestObjectManager(t *testing.T) {
 		invalidObj.content = []byte("xx 12\000some content")
 		_, err = objectManager.GetObjectInfo(invalidObj)
 		assert.NotNil(err, "Expected error for wrong object type")
-		assert.Contains(err.Error(), "objects: unsupported object type ", "Expected objects: unsupported object type ")
+		assert.Contains(err.Error(), "objects: invalid object format: no NUL separator found", "Expected objects: unsupported object type ")
 	})
 }

@@ -5,7 +5,7 @@
   "validate": true,
   "optimize": false,
   "input": {
-    "syntax": "Permguard1",
+    "syntax": "permcode1",
     "type": "ACPermission",
     "name": "Branch-auditor",
     "permit": [
@@ -22,7 +22,7 @@
     ]
   },
   "output": {
-    "syntax": "permguard1",
+    "syntax": "permcode1",
     "type": "acpermission",
     "name": "branch-auditor",
     "permit": [

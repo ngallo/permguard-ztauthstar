@@ -64,7 +64,7 @@ func TestMashalingOfPoliciesWithArgumentsErrors(t *testing.T) {
 		assert := assert.New(t)
 		pm, _ := NewPermCodeManager()
 
-		jsonStr := `{"syntax":"permguard1"}`
+		jsonStr := `{"syntax":"permcode1"}`
 		jsonBytes := []byte(jsonStr)
 		result, err := pm.UnmarshalClass(jsonBytes, aztypes.ClassTypeACPolicy, false, false, false)
 		assert.NotNil(err, "Expected error for missing class type")
