@@ -144,3 +144,39 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 		instance: instance,
 	}, nil
 }
+
+// buildCommitHistory builds the commit history.
+func (m *ObjectManager) buildCommitHistory(fromCommitID string, toCommitID string, match bool, history []Commit, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
+	commitObj, err := objFunc(fromCommitID)
+	if err != nil {
+		return false, nil, err
+	}
+	var commit *Commit
+	if commitObj != nil {
+		objInfo, err := m.GetObjectInfo(commitObj)
+		if err != nil {
+			return false, nil, err
+		}
+		var ok bool
+		commit, ok = objInfo.GetInstance().(*Commit)
+		if !ok {
+			return false, nil, fmt.Errorf("objects: invalid object type")
+		}
+	}
+	if commitObj == nil || commit == nil || commitObj.GetOID() == toCommitID {
+		match = commitObj.GetOID() == toCommitID
+		return match, history, nil
+	}
+	return m.buildCommitHistory(commit.GetParent(), toCommitID, true, append(history, *commit), objFunc)
+}
+
+// BuildCommitHistory builds the commit history.
+func (m *ObjectManager) BuildCommitHistory(fromCommitID string, toCommitID string, reverse bool, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
+	match, history, err := m.buildCommitHistory(fromCommitID, toCommitID, false, []Commit{}, objFunc)
+	if err != nil && reverse {
+		for i, j := 0, len(history)-1; i < j; i, j = i+1, j-1 {
+			history[i], history[j] = history[j], history[i]
+		}
+	}
+	return match, history, err
+}
