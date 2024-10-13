@@ -177,6 +177,9 @@ func (m *ObjectManager) BuildCommitHistory(fromCommitID string, toCommitID strin
 	if fromCommitID == ZeroOID && toCommitID != ZeroOID {
 		return false, nil, fmt.Errorf("objects: invalid from commit ID")
 	}
+	if fromCommitID == ZeroOID && toCommitID == ZeroOID {
+		return true, []Commit{}, nil
+	}
 	match, history, err := m.buildCommitHistory(fromCommitID, toCommitID, false, []Commit{}, objFunc)
 	if err != nil && reverse {
 		for i, j := 0, len(history)-1; i < j; i, j = i+1, j-1 {
