@@ -155,7 +155,10 @@ func (m *ObjectManager) buildCommitHistory(fromCommitID string, toCommitID strin
 			return false, nil, fmt.Errorf("objects: invalid object type")
 		}
 	}
-	if commitObj == nil || commit == nil || commitObj.GetOID() == toCommitID {
+	if commitObj == nil || commit == nil {
+		return match, history, nil
+	}
+	if commitObj.GetOID() == toCommitID {
 		match = commitObj.GetOID() == toCommitID
 		return match, history, nil
 	}
