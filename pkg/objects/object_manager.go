@@ -139,6 +139,10 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 
 // buildCommitHistory builds the commit history.
 func (m *ObjectManager) buildCommitHistory(fromCommitID string, toCommitID string, match bool, history []Commit, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
+	if fromCommitID == ZeroOID && toCommitID != ZeroOID {
+		match = true
+		return match, history, nil
+	}
 	var commitObj *Object
 	var err error
 	if fromCommitID != ZeroOID {
@@ -176,9 +180,6 @@ func (m *ObjectManager) buildCommitHistory(fromCommitID string, toCommitID strin
 func (m *ObjectManager) BuildCommitHistory(fromCommitID string, toCommitID string, reverse bool, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
 	if fromCommitID == ZeroOID && toCommitID != ZeroOID {
 		return false, nil, fmt.Errorf("objects: invalid from commit ID")
-	}
-	if fromCommitID == ZeroOID && toCommitID == ZeroOID {
-		return true, []Commit{}, nil
 	}
 	match, history, err := m.buildCommitHistory(fromCommitID, toCommitID, false, []Commit{}, objFunc)
 	if err != nil && reverse {
