@@ -22,8 +22,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 )
 
 const (
@@ -50,10 +48,7 @@ func (m *ObjectManager) createOject(objectType string, content []byte) (*Object,
 	buffer.WriteByte(PacketNullByte)
 	buffer.Write(content)
 	objContent := buffer.Bytes()
-	return &Object{
-		oid:     azcrypto.ComputeSHA256(content),
-		content: objContent,
-	}, nil
+	return NewObject(objContent), nil
 }
 
 // CreateCommitObject creates a commit object.
@@ -87,10 +82,7 @@ func (m *ObjectManager) CreateBlobObject(data []byte) (*Object, error) {
 
 // CreateObjectFormData create the object form data.
 func (m *ObjectManager) CreateObjectFormData(binaryData []byte) (*Object, error) {
-	return &Object{
-		oid:     azcrypto.ComputeSHA256(binaryData),
-		content: binaryData,
-	}, nil
+	return NewObject(binaryData), nil
 }
 
 // GetObjectInfo gets the object info.

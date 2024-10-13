@@ -21,6 +21,7 @@ import (
 	"time"
 
 	azcopier "github.com/permguard/permguard-core/pkg/extensions/copier"
+	azcrypto "github.com/permguard/permguard-core/pkg/extensions/crypto"
 )
 
 const (
@@ -48,6 +49,14 @@ func (o *Object) GetOID() string {
 // GetContent returns the content of the object.
 func (o *Object) GetContent() []byte {
 	return o.content
+}
+
+// NewObject creates a new object.
+func NewObject(content []byte) *Object {
+	return &Object{
+		oid:     azcrypto.ComputeSHA256(content),
+		content: content,
+	}
 }
 
 // ObjectInfo is the object info.
