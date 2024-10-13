@@ -139,7 +139,7 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 
 // buildCommitHistory builds the commit history.
 func (m *ObjectManager) buildCommitHistory(fromCommitID string, toCommitID string, match bool, history []Commit, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
-	if fromCommitID == ZeroOID && toCommitID != ZeroOID {
+	if fromCommitID == ZeroOID && toCommitID == ZeroOID {
 		match = true
 		return match, history, nil
 	}
