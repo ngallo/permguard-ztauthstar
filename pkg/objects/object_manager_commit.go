@@ -55,7 +55,7 @@ func (m *ObjectManager) DeserializeCommit(data []byte) (*Commit, error) {
 			parts := strings.Split(line, " ")
 			if len(parts) >= 3 {
 				unixTime, _ := strconv.ParseInt(parts[1], 10, 64)
-				commit.info.date = time.Unix(unixTime, 0)
+				commit.info.date = time.Unix(unixTime, 0).UTC()
 			}
 		} else if i == len(lines)-1 {
 			commit.message = line
