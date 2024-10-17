@@ -18,6 +18,7 @@ package objects
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	azcopier "github.com/permguard/permguard-core/pkg/extensions/copier"
@@ -91,7 +92,13 @@ func (o *ObjectInfo) GetInstance() any {
 
 // CommitInfo represents the author or committer of the commit.
 type CommitInfo struct {
-	date time.Time
+	author 	string
+	date 	time.Time
+}
+
+// GetAuthor returns the author of the commit info.
+func (c *CommitInfo) GetAuthor() string {
+	return c.author
 }
 
 // GetDate returns the date of the commit info.
@@ -128,7 +135,10 @@ func (c *Commit) GetMessage() string {
 }
 
 // NewCommit creates a new commit object.
-func NewCommit(tree string, parents string, timestamp time.Time, message string) *Commit {
+func NewCommit(tree string, parents string, author string, timestamp time.Time, message string) *Commit {
+	if strings.TrimSpace(author) == "" {
+		author = "unknown"
+	}
 	if timestamp == (time.Time{}) {
 		timestamp = time.Now()
 	}
@@ -136,6 +146,7 @@ func NewCommit(tree string, parents string, timestamp time.Time, message string)
 		tree:   tree,
 		parent: parents,
 		info: CommitInfo{
+			author: author,
 			date: timestamp,
 		},
 		message: message,

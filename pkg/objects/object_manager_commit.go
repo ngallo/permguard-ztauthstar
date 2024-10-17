@@ -32,7 +32,8 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("tree %s\n", commit.tree))
 	sb.WriteString(fmt.Sprintf("parent %s\n", commit.parent))
-	sb.WriteString(fmt.Sprintf("info %d %s\n", commit.info.date.Unix(), commit.info.date.Format("-0700")))
+	sb.WriteString(fmt.Sprintf("author %s\n", commit.info.author))
+	sb.WriteString(fmt.Sprintf("timestamp %d %s\n", commit.info.date.Unix(), commit.info.date.Format("-0700")))
 	sb.WriteString(commit.message)
 	return []byte(sb.String()), nil
 }
@@ -51,7 +52,9 @@ func (m *ObjectManager) DeserializeCommit(data []byte) (*Commit, error) {
 			commit.tree = strings.TrimPrefix(line, "tree ")
 		} else if strings.HasPrefix(line, "parent ") {
 			commit.parent = strings.TrimPrefix(line, "parent ")
-		} else if strings.HasPrefix(line, "info ") {
+		} else if strings.HasPrefix(line, "author ") {
+			commit.info.author = strings.TrimPrefix(line, "author ")
+		} else if strings.HasPrefix(line, "timestamp ") {
 			parts := strings.Split(line, " ")
 			if len(parts) >= 3 {
 				unixTime, _ := strconv.ParseInt(parts[1], 10, 64)
