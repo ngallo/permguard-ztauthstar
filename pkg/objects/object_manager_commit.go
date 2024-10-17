@@ -19,7 +19,6 @@ package objects
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -32,8 +31,8 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("tree %s\n", commit.tree))
 	sb.WriteString(fmt.Sprintf("parent %s\n", commit.parent))
-	sb.WriteString(fmt.Sprintf("author %d %s %s\n", commit.info.authorTimestamp.Unix(), commit.info.authorTimestamp.Format("-0700"), commit.info.author))
-	sb.WriteString(fmt.Sprintf("committer %d %s %s\n", commit.info.committerTimestamp.Unix(), commit.info.committerTimestamp.Format("-0700"), commit.info.committer))
+	sb.WriteString(fmt.Sprintf("author %s %s\n", commit.info.authorTimestamp.Format(time.RFC3339), commit.info.author))
+	sb.WriteString(fmt.Sprintf("committer %s %s\n", commit.info.committerTimestamp.Format(time.RFC3339), commit.info.committer))
 	sb.WriteString(commit.message)
 	return []byte(sb.String()), nil
 }
@@ -41,18 +40,14 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 // parseIdentity parses the identity line.
 func (m *ObjectManager) parseIdentity(line string) (string, time.Time) {
 	parts := strings.Split(line, " ")
-	var name string
-	var date time.Time
+	if len(parts) < 2 {
+		return "", time.Time{}
+	}
+	datePart := parts[0]
+	parsedTime, _ := time.Parse(time.RFC3339, datePart)
 
-	if len(parts) >= 2 {
-		unixTime, _ := strconv.ParseInt(parts[0], 10, 64)
-		loc, _ := time.Parse(parts[1], parts[0])
-		date = time.Unix(unixTime, 0).In(loc.Location())
-	}
-	if len(parts) >= 3 {
-		name = strings.Join(parts[2:], " ")
-	}
-	return name, date
+	identityPart := strings.Join(parts[1:], " ")
+	return identityPart, parsedTime
 }
 
 // DeserializeCommit deserializes a commit object.
