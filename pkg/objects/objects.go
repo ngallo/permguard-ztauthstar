@@ -130,7 +130,7 @@ func (c *Commit) GetMessage() string {
 // NewCommit creates a new commit object.
 func NewCommit(tree string, parents string, timestamp time.Time, message string) *Commit {
 	if timestamp == (time.Time{}) {
-		timestamp = time.Now().UTC()
+		timestamp = time.Now()
 	}
 	return &Commit{
 		tree:   tree,
