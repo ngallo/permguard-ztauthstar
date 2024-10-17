@@ -92,8 +92,10 @@ func (o *ObjectInfo) GetInstance() any {
 
 // CommitInfo represents the author or committer of the commit.
 type CommitInfo struct {
-	author 	string
-	date 	time.Time
+	author 		string
+	authorTimestamp	time.Time
+	committer 	string
+	committerTimestamp	time.Time
 }
 
 // GetAuthor returns the author of the commit info.
@@ -101,9 +103,19 @@ func (c *CommitInfo) GetAuthor() string {
 	return c.author
 }
 
-// GetDate returns the date of the commit info.
-func (c *CommitInfo) GetDate() time.Time {
-	return c.date
+// GetAuthorTimestamp returns the author timestamp of the commit info.
+func (c *CommitInfo) GetAuthorTimestamp() time.Time {
+	return c.authorTimestamp
+}
+
+// GetCommitter returns the committer of the commit info.
+func (c *CommitInfo) GetCommitter() string {
+	return c.committer
+}
+
+// GetCommitterTimestamp returns the committer timestamp of the commit info.
+func (c *CommitInfo) GetCommitterTimestamp() time.Time {
+	return c.committerTimestamp
 }
 
 // Commit represents a commit object.
@@ -135,19 +147,27 @@ func (c *Commit) GetMessage() string {
 }
 
 // NewCommit creates a new commit object.
-func NewCommit(tree string, parents string, author string, timestamp time.Time, message string) *Commit {
+func NewCommit(tree string, parents string, author string, authorTimestamp time.Time, committer string, committerTimestamp time.Time, message string) *Commit {
 	if strings.TrimSpace(author) == "" {
 		author = "unknown"
 	}
-	if timestamp == (time.Time{}) {
-		timestamp = time.Now()
+	if authorTimestamp == (time.Time{}) {
+		authorTimestamp = time.Now()
+	}
+	if strings.TrimSpace(committer) == "" {
+		committer = "unknown"
+	}
+	if committerTimestamp == (time.Time{}) {
+		committerTimestamp = time.Now()
 	}
 	return &Commit{
 		tree:   tree,
 		parent: parents,
 		info: CommitInfo{
 			author: author,
-			date: timestamp,
+			authorTimestamp: authorTimestamp,
+			committer: committer,
+			committerTimestamp: committerTimestamp,
 		},
 		message: message,
 	}

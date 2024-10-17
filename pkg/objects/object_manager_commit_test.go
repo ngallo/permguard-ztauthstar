@@ -33,7 +33,9 @@ func TestSerializeDeserializeCommit(t *testing.T) {
 		parent: "a294ba66f45afd23f8bda3892728601bb509989a80dbb54d7b513dacb8099d76",
 		info: CommitInfo{
 			author: "Nicola Gallo",
-			date: time.Unix(1628704800, 0), // Example Unix timestamp
+			authorTimestamp: time.Unix(1628704800, 0),
+			committer: "Nicola Gallo",
+			committerTimestamp: time.Unix(1628704800, 0),
 		},
 		message: "Initial commit",
 	}
@@ -58,7 +60,10 @@ Initial commit`
 	// Check if the deserialized commit matches the original commit
 	assert.Equal(commit.tree, deserializedCommit.tree, "Tree mismatch")
 	assert.Equal(commit.parent, deserializedCommit.parent, "Parents mismatch")
-	assert.Equal(commit.info.date.Unix(), deserializedCommit.info.date.Unix(), "Commit date mismatch")
+	assert.Equal(commit.info.author, deserializedCommit.info.author, "Author mismatch")
+	assert.Equal(commit.info.authorTimestamp.Unix(), deserializedCommit.info.authorTimestamp.Unix(), "Author timestamp mismatch")
+	assert.Equal(commit.info.committer, deserializedCommit.info.committer, "Committer mismatch")
+	assert.Equal(commit.info.committerTimestamp.Unix(), deserializedCommit.info.committerTimestamp.Unix(), "Committer timestamp mismatch")
 	assert.Equal(commit.message, deserializedCommit.message, "Message mismatch")
 
 	// Test deserialization with nil data

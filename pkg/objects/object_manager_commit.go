@@ -32,9 +32,27 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("tree %s\n", commit.tree))
 	sb.WriteString(fmt.Sprintf("parent %s\n", commit.parent))
-	sb.WriteString(fmt.Sprintf("author %d %s %s\n", commit.info.date.Unix(), commit.info.date.Format("-0700"), commit.info.author))
+	sb.WriteString(fmt.Sprintf("author %d %s %s\n", commit.info.authorTimestamp.Unix(), commit.info.authorTimestamp.Format("-0700"), commit.info.author))
+	sb.WriteString(fmt.Sprintf("committer %d %s %s\n", commit.info.committerTimestamp.Unix(), commit.info.committerTimestamp.Format("-0700"), commit.info.committer))
 	sb.WriteString(commit.message)
 	return []byte(sb.String()), nil
+}
+
+// parseIdentity parses the identity line.
+func (m *ObjectManager) parseIdentity(line string) (string, time.Time) {
+	parts := strings.Split(line, " ")
+	var name string
+	var date time.Time
+
+	if len(parts) >= 2 {
+		unixTime, _ := strconv.ParseInt(parts[0], 10, 64)
+		loc, _ := time.Parse(parts[1], parts[0])
+		date = time.Unix(unixTime, 0).In(loc.Location())
+	}
+	if len(parts) >= 3 {
+		name = strings.Join(parts[2:], " ")
+	}
+	return name, date
 }
 
 // DeserializeCommit deserializes a commit object.
@@ -52,14 +70,13 @@ func (m *ObjectManager) DeserializeCommit(data []byte) (*Commit, error) {
 		} else if strings.HasPrefix(line, "parent ") {
 			commit.parent = strings.TrimPrefix(line, "parent ")
 		} else if strings.HasPrefix(line, "author ") {
-			parts := strings.Split(strings.TrimPrefix(line, "author "), " ")
-			if len(parts) >= 2 {
-				unixTime, _ := strconv.ParseInt(parts[0], 10, 64)
-				loc, _ := time.Parse(parts[1], parts[0])
-				commit.info.date = time.Unix(unixTime, 0).In(loc.Location())
-			} else if len(parts) >= 3 {
-				commit.info.author = strings.Join(parts[2:], " ")
-			}
+			author, date := m.parseIdentity(strings.TrimPrefix(line, "author "))
+			commit.info.author = author
+			commit.info.authorTimestamp = date
+		} else if strings.HasPrefix(line, "committer ") {
+			committer, date := m.parseIdentity(strings.TrimPrefix(line, "committer "))
+			commit.info.committer = committer
+			commit.info.committerTimestamp = date
 		} else if i == len(lines)-1 {
 			commit.message = line
 		}
