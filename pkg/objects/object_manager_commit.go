@@ -32,8 +32,8 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("tree %s\n", commit.tree))
 	sb.WriteString(fmt.Sprintf("parent %s\n", commit.parent))
-	sb.WriteString(fmt.Sprintf("author %d %s %s\n", commit.info.authorTimestamp.Unix(), commit.info.authorTimestamp.Format("-0700"), commit.info.author))
-	sb.WriteString(fmt.Sprintf("committer %d %s %s\n", commit.info.committerTimestamp.Unix(), commit.info.committerTimestamp.Format("-0700"), commit.info.committer))
+	sb.WriteString(fmt.Sprintf("author %d %s %s\n", commit.info.authorTimestamp.Unix(), commit.info.authorTimestamp.Format(time.RFC822Z), commit.info.author))
+	sb.WriteString(fmt.Sprintf("committer %d %s %s\n", commit.info.committerTimestamp.Unix(), commit.info.committerTimestamp.Format(time.RFC822Z), commit.info.committer))
 	sb.WriteString(commit.message)
 	return []byte(sb.String()), nil
 }
