@@ -45,8 +45,8 @@ func TestSerializeDeserializeCommit(t *testing.T) {
 	assert.Nil(err)
 	expectedSerialized := `tree 4ad3bb52786751f4b6f9839953fe3dcc2278c66648f0d0193f98088b7e4d0c1d
 parent a294ba66f45afd23f8bda3892728601bb509989a80dbb54d7b513dacb8099d76
-author Nicola Gallo
-timestamp 1628704800 +0200
+author 1628704800 +0200 Nicola Gallo
+committer 1628704800 +0200 Nicola Gallo
 Initial commit`
 	assert.Equal(expectedSerialized, string(serialized), "Serialized output mismatch")
 

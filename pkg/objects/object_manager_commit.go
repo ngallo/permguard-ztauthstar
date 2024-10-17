@@ -32,8 +32,7 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("tree %s\n", commit.tree))
 	sb.WriteString(fmt.Sprintf("parent %s\n", commit.parent))
-	sb.WriteString(fmt.Sprintf("author %s\n", commit.info.author))
-	sb.WriteString(fmt.Sprintf("timestamp %d %s\n", commit.info.date.Unix(), commit.info.date.Format("-0700")))
+	sb.WriteString(fmt.Sprintf("author %d %s %s\n", commit.info.date.Unix(), commit.info.date.Format("-0700"), commit.info.author))
 	sb.WriteString(commit.message)
 	return []byte(sb.String()), nil
 }
@@ -53,13 +52,13 @@ func (m *ObjectManager) DeserializeCommit(data []byte) (*Commit, error) {
 		} else if strings.HasPrefix(line, "parent ") {
 			commit.parent = strings.TrimPrefix(line, "parent ")
 		} else if strings.HasPrefix(line, "author ") {
-			commit.info.author = strings.TrimPrefix(line, "author ")
-		} else if strings.HasPrefix(line, "timestamp ") {
-			parts := strings.Split(line, " ")
-			if len(parts) >= 3 {
-				unixTime, _ := strconv.ParseInt(parts[1], 10, 64)
-				loc, _ := time.Parse(parts[2], parts[1])
+			parts := strings.Split(strings.TrimPrefix(line, "author "), " ")
+			if len(parts) >= 2 {
+				unixTime, _ := strconv.ParseInt(parts[0], 10, 64)
+				loc, _ := time.Parse(parts[1], parts[0])
 				commit.info.date = time.Unix(unixTime, 0).In(loc.Location())
+			} else if len(parts) >= 3 {
+				commit.info.author = strings.Join(parts[2:], " ")
 			}
 		} else if i == len(lines)-1 {
 			commit.message = line
