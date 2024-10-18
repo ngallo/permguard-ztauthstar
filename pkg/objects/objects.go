@@ -147,7 +147,7 @@ func (c *Commit) GetMessage() string {
 }
 
 // NewCommit creates a new commit object.
-func NewCommit(tree string, parents string, author string, authorTimestamp time.Time, committer string, committerTimestamp time.Time, message string) *Commit {
+func NewCommit(tree string, parentCommitID string, author string, authorTimestamp time.Time, committer string, committerTimestamp time.Time, message string) *Commit {
 	if strings.TrimSpace(author) == "" {
 		author = "unknown"
 	}
@@ -162,7 +162,7 @@ func NewCommit(tree string, parents string, author string, authorTimestamp time.
 	}
 	return &Commit{
 		tree:   tree,
-		parent: parents,
+		parent: parentCommitID,
 		info: CommitInfo{
 			author: author,
 			authorTimestamp: authorTimestamp,
