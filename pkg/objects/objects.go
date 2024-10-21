@@ -53,11 +53,14 @@ func (o *Object) GetContent() []byte {
 }
 
 // NewObject creates a new object.
-func NewObject(content []byte) *Object {
+func NewObject(content []byte) (*Object, error) {
+	if content == nil {
+		return nil, errors.New("objects: object content is nil")
+	}
 	return &Object{
 		oid:     azcrypto.ComputeSHA256(content),
 		content: content,
-	}
+	}, nil
 }
 
 // ObjectInfo is the object info.
@@ -147,7 +150,12 @@ func (c *Commit) GetMessage() string {
 }
 
 // NewCommit creates a new commit object.
-func NewCommit(tree string, parentCommitID string, author string, authorTimestamp time.Time, committer string, committerTimestamp time.Time, message string) *Commit {
+func NewCommit(tree string, parentCommitID string, author string, authorTimestamp time.Time, committer string, committerTimestamp time.Time, message string) (*Commit, error) {
+	if strings.TrimSpace(tree) == "" {
+		return nil, errors.New("objects: tree is empty")
+	} else if strings.TrimSpace(parentCommitID) == "" {
+		return nil, errors.New("objects: parent commit id is empty")
+	}
 	if strings.TrimSpace(author) == "" {
 		author = "unknown"
 	}
@@ -170,7 +178,7 @@ func NewCommit(tree string, parentCommitID string, author string, authorTimestam
 			committerTimestamp: committerTimestamp,
 		},
 		message: message,
-	}
+	}, nil
 }
 
 // TreeEntry represents a single entry in a tree object.
@@ -181,12 +189,19 @@ type TreeEntry struct {
 }
 
 // NewTreeEntry creates a new tree entry.
-func NewTreeEntry(otype, oid, oname string) *TreeEntry {
+func NewTreeEntry(otype, oid, oname string) (*TreeEntry, error) {
+	if strings.TrimSpace(otype) == "" {
+		return nil, errors.New("objects: object type is empty")
+	} else if strings.TrimSpace(oid) == "" {
+		return nil, errors.New("objects: object id is empty")
+	} else if strings.TrimSpace(oname) == "" {
+		return nil, errors.New("objects: object name is empty")
+	}
 	return &TreeEntry{
 		otype: otype,
 		oid:   oid,
 		oname: oname,
-	}
+	}, nil
 }
 
 // GetType returns the type of the tree entry.
@@ -210,10 +225,10 @@ type Tree struct {
 }
 
 // NewTree creates a new tree object.
-func NewTree() *Tree {
+func NewTree() (*Tree, error) {
 	return &Tree{
 		entries: make([]TreeEntry, 0),
-	}
+	}, nil
 }
 
 // GetEntries returns the entries of the tree.
