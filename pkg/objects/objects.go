@@ -204,9 +204,11 @@ func NewTreeEntry(otype, oid, oname, codeID, codeType string) (*TreeEntry, error
 		return nil, errors.New("objects: code name is empty")
 	}
 	return &TreeEntry{
-		otype: otype,
-		oid:   oid,
-		oname: oname,
+		otype: 		otype,
+		oid:   		oid,
+		oname: 		oname,
+		codeID: 	codeID,
+		codeType: 	codeType,
 	}, nil
 }
 
