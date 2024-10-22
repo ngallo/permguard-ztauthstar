@@ -261,6 +261,9 @@ func (t *Tree) AddEntry(entry *TreeEntry) error {
 		if e.GetOName() == entry.GetOName() {
 			return errors.New("objects: tree entry already exists")
 		}
+		if e.GetCodeID() == entry.GetCodeID() && e.GetCodeType() == entry.GetCodeType() {
+			return errors.New("objects: tree entry already exists")
+		}
 	}
 	t.entries = append(t.entries, *entry)
 	return nil
