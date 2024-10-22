@@ -48,6 +48,16 @@ func (s *SectionObject) GetObjectName() string {
 	return s.oname
 }
 
+// GetCodeID returns the code ID.
+func (s *SectionObject) GetCodeID() string {
+	return s.codeID
+}
+
+// GetCodeType returns the code type.
+func (s *SectionObject) GetCodeType() string {
+	return s.codeType
+}
+
 // GetNumberOfSection returns the number section.
 func (s *SectionObject) GetNumberOfSection() int {
 	return s.numOfSect
@@ -126,4 +136,3 @@ func (m *MultiSectionsObject) AddSectionObjectWithParams(obj *Object, objType, o
 	}
 	return m.AddSectionObject(objSect)
 }
-
