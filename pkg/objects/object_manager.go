@@ -48,7 +48,7 @@ func (m *ObjectManager) createOject(objectType string, content []byte) (*Object,
 	buffer.WriteByte(PacketNullByte)
 	buffer.Write(content)
 	objContent := buffer.Bytes()
-	return NewObject(objContent), nil
+	return NewObject(objContent)
 }
 
 // CreateCommitObject creates a commit object.
@@ -82,7 +82,7 @@ func (m *ObjectManager) CreateBlobObject(data []byte) (*Object, error) {
 
 // CreateObjectFormData create the object form data.
 func (m *ObjectManager) CreateObjectFormData(binaryData []byte) (*Object, error) {
-	return NewObject(binaryData), nil
+	return NewObject(binaryData)
 }
 
 // GetObjectInfo gets the object info.

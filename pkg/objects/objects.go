@@ -183,19 +183,25 @@ func NewCommit(tree string, parentCommitID string, author string, authorTimestam
 
 // TreeEntry represents a single entry in a tree object.
 type TreeEntry struct {
-	otype string
-	oid   string
-	oname string
+	otype 	 string
+	oid   	 string
+	oname 	 string
+	codeID	 string
+	codeName string
 }
 
 // NewTreeEntry creates a new tree entry.
-func NewTreeEntry(otype, oid, oname string) (*TreeEntry, error) {
+func NewTreeEntry(otype, oid, oname, codeID, codeName string) (*TreeEntry, error) {
 	if strings.TrimSpace(otype) == "" {
 		return nil, errors.New("objects: object type is empty")
 	} else if strings.TrimSpace(oid) == "" {
 		return nil, errors.New("objects: object id is empty")
 	} else if strings.TrimSpace(oname) == "" {
 		return nil, errors.New("objects: object name is empty")
+	} else if strings.TrimSpace(codeID) == "" {
+		return nil, errors.New("objects: code id is empty")
+	} else if strings.TrimSpace(codeName) == "" {
+		return nil, errors.New("objects: code name is empty")
 	}
 	return &TreeEntry{
 		otype: otype,
@@ -217,6 +223,16 @@ func (t *TreeEntry) GetOID() string {
 // GetOName returns the object name of the tree entry.
 func (t *TreeEntry) GetOName() string {
 	return t.oname
+}
+
+// GetCodeID returns the code ID of the tree entry.
+func (t *TreeEntry) GetCodeID() string {
+	return t.codeID
+}
+
+// GetCodeName returns the code name of the tree entry.
+func (t *TreeEntry) GetCodeName() string {
+	return t.codeName
 }
 
 // Tree represents a tree object.
