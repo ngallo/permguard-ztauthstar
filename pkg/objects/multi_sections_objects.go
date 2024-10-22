@@ -27,6 +27,8 @@ type SectionObject struct {
 	obj			*Object
 	otype 		string
 	oname 		string
+	codeID 		string
+	codeType 	string
 	numOfSect 	int
 	err 		error
 }
@@ -57,12 +59,14 @@ func (s *SectionObject) GetError() error {
 }
 
 // NewSectionObject creates a new section object.
-func NewSectionObject(obj *Object, objType, objName string, section int, err error) (*SectionObject, error) {
+func NewSectionObject(obj *Object, objType, objName, codeID, codeType string, section int, err error) (*SectionObject, error) {
 	return &SectionObject{
 		obj: obj,
-		otype: objType,
-		oname: objName,
-		numOfSect: section,
+		otype: 		objType,
+		oname: 		objName,
+		codeID: 	codeID,
+		codeType: 	codeType,
+		numOfSect:	section,
 		err: err,
 	}, nil
 }
@@ -115,10 +119,11 @@ func (m *MultiSectionsObject) AddSectionObject(obj *SectionObject) error {
 }
 
 // AddSectionObjectWithParams adds a section object with parameters.
-func (m *MultiSectionsObject) AddSectionObjectWithParams(obj *Object, objType, objName string, section int, err error) error {
-	objSect, err := NewSectionObject(obj, objType, objName, section, err)
+func (m *MultiSectionsObject) AddSectionObjectWithParams(obj *Object, objType, objName, codeID, codeType string, section int, err error) error {
+	objSect, err := NewSectionObject(obj, objType, objName, codeID, codeType, section, err)
 	if err != nil {
 		return err
 	}
 	return m.AddSectionObject(objSect)
 }
+
