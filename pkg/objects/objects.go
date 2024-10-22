@@ -187,11 +187,11 @@ type TreeEntry struct {
 	oid   	 string
 	oname 	 string
 	codeID	 string
-	codeName string
+	codeType string
 }
 
 // NewTreeEntry creates a new tree entry.
-func NewTreeEntry(otype, oid, oname, codeID, codeName string) (*TreeEntry, error) {
+func NewTreeEntry(otype, oid, oname, codeID, codeType string) (*TreeEntry, error) {
 	if strings.TrimSpace(otype) == "" {
 		return nil, errors.New("objects: object type is empty")
 	} else if strings.TrimSpace(oid) == "" {
@@ -200,7 +200,7 @@ func NewTreeEntry(otype, oid, oname, codeID, codeName string) (*TreeEntry, error
 		return nil, errors.New("objects: object name is empty")
 	} else if strings.TrimSpace(codeID) == "" {
 		return nil, errors.New("objects: code id is empty")
-	} else if strings.TrimSpace(codeName) == "" {
+	} else if strings.TrimSpace(codeType) == "" {
 		return nil, errors.New("objects: code name is empty")
 	}
 	return &TreeEntry{
@@ -230,9 +230,9 @@ func (t *TreeEntry) GetCodeID() string {
 	return t.codeID
 }
 
-// GetCodeName returns the code name of the tree entry.
-func (t *TreeEntry) GetCodeName() string {
-	return t.codeName
+// GetCodeType returns the code name of the tree entry.
+func (t *TreeEntry) GetCodeType() string {
+	return t.codeType
 }
 
 // Tree represents a tree object.
