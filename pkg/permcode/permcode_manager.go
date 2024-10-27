@@ -67,7 +67,7 @@ func (pm *PermCodeManager) UnmarshalClass(data []byte, classType string, sanitiz
 	}
 	class.SyntaxVersion = azsanitizers.SanitizeString(class.SyntaxVersion)
 	class.Type = azsanitizers.SanitizeString(class.Type)
-	if class.SyntaxVersion != aztypes.PermCodeSyntax {
+	if class.SyntaxVersion != aztypes.PermCodeSyntaxLatest {
 		return nil, fmt.Errorf("permcode: failed to unmarshal type - invalid syntax version %s", class.SyntaxVersion)
 	}
 	if class.Type != classType {
@@ -116,11 +116,11 @@ func (pm *PermCodeManager) MarshalClass(instance any, sanitize bool, validate bo
 	if instance == nil {
 		return nil, errors.New("permcode: class cannot be marshaled from nil instance")
 	}
-	snzPolicy, err := pm.sanitizeValidateOptimize(instance, sanitize, validate, optimize)
+	snzType, err := pm.sanitizeValidateOptimize(instance, sanitize, validate, optimize)
 	if err != nil {
 		return nil, err
 	}
-	data, err := json.Marshal(snzPolicy)
+	data, err := json.Marshal(snzType)
 	if err != nil {
 		return nil, errors.New(errMessageMarshalType)
 	}

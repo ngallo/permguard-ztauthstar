@@ -93,40 +93,56 @@ func (o *ObjectInfo) GetInstance() any {
 	return o.instance
 }
 
-// CommitInfo represents the author or committer of the commit.
-type CommitInfo struct {
-	author 		string
-	authorTimestamp	time.Time
-	committer 	string
-	committerTimestamp	time.Time
+// NewObjectInfo creates a new object info.
+func NewObjectInfo(object *Object, otype string, instance any) (*ObjectInfo, error) {
+	if object == nil {
+		return nil, errors.New("objects: object content is nil")
+	} else if strings.TrimSpace(otype) == "" {
+		return nil, errors.New("objects: object type is empty")
+	} else if instance == nil {
+		return nil, errors.New("objects: object instance is nil")
+	}
+	return &ObjectInfo{
+		object: object,
+		otype: otype,
+		instance: instance,
+	}, nil
+}
+
+// CommitMetaData represents commit's metadata.
+type CommitMetaData struct {
+	author             string
+	authorTimestamp    time.Time
+	committer          string
+	committerTimestamp time.Time
 }
 
 // GetAuthor returns the author of the commit info.
-func (c *CommitInfo) GetAuthor() string {
+func (c *CommitMetaData) GetAuthor() string {
 	return c.author
 }
 
 // GetAuthorTimestamp returns the author timestamp of the commit info.
-func (c *CommitInfo) GetAuthorTimestamp() time.Time {
+func (c *CommitMetaData) GetAuthorTimestamp() time.Time {
 	return c.authorTimestamp
 }
 
 // GetCommitter returns the committer of the commit info.
-func (c *CommitInfo) GetCommitter() string {
+func (c *CommitMetaData) GetCommitter() string {
 	return c.committer
 }
 
 // GetCommitterTimestamp returns the committer timestamp of the commit info.
-func (c *CommitInfo) GetCommitterTimestamp() time.Time {
+func (c *CommitMetaData) GetCommitterTimestamp() time.Time {
 	return c.committerTimestamp
 }
 
 // Commit represents a commit object.
 type Commit struct {
-	tree    string
-	parent  string
-	info    CommitInfo
-	message string
+	tree     string
+	parent   string
+	metaData CommitMetaData
+	message  string
 }
 
 // GetTree returns the tree of the commit.
@@ -139,9 +155,9 @@ func (c *Commit) GetParent() string {
 	return c.parent
 }
 
-// GetInfo returns the info of the commit.
-func (c *Commit) GetInfo() CommitInfo {
-	return c.info
+// GetMetaData returns the metadata of the commit.
+func (c *Commit) GetMetaData() CommitMetaData {
+	return c.metaData
 }
 
 // GetMessage returns the message of the commit.
@@ -171,10 +187,10 @@ func NewCommit(tree string, parentCommitID string, author string, authorTimestam
 	return &Commit{
 		tree:   tree,
 		parent: parentCommitID,
-		info: CommitInfo{
-			author: author,
-			authorTimestamp: authorTimestamp,
-			committer: committer,
+		metaData: CommitMetaData{
+			author:             author,
+			authorTimestamp:    authorTimestamp,
+			committer:          committer,
 			committerTimestamp: committerTimestamp,
 		},
 		message: message,
@@ -183,10 +199,10 @@ func NewCommit(tree string, parentCommitID string, author string, authorTimestam
 
 // TreeEntry represents a single entry in a tree object.
 type TreeEntry struct {
-	otype 	 string
-	oid   	 string
-	oname 	 string
-	codeID	 string
+	otype    string
+	oid      string
+	oname    string
+	codeID   string
 	codeType string
 }
 
@@ -204,11 +220,11 @@ func NewTreeEntry(otype, oid, oname, codeID, codeType string) (*TreeEntry, error
 		return nil, errors.New("objects: code name is empty")
 	}
 	return &TreeEntry{
-		otype: 		otype,
-		oid:   		oid,
-		oname: 		oname,
-		codeID: 	codeID,
-		codeType: 	codeType,
+		otype:    otype,
+		oid:      oid,
+		oname:    oname,
+		codeID:   codeID,
+		codeType: codeType,
 	}, nil
 }
 

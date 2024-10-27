@@ -34,7 +34,7 @@ func TestSerializeDeserializeTree(t *testing.T) {
 			{ otype: "tree", oid: "fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851", oname: "name3", codeID: "code3", codeType: "codeType3"},
 		},
 	}
-	objectManager := &ObjectManager{}
+	objectManager, _ := NewObjectManager()
 	serialized, err := objectManager.SerializeTree(tree)
 	assert.Nil(err)
 	expectedSerialized := `blob 515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe name1 code1 codeType1
@@ -53,7 +53,7 @@ tree fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851 name3 code
 // TestSerializeTreeWithErrors tests the serialization of Tree objects with errors.
 func TestSerializeTreeWithErrors(t *testing.T) {
 	assert := assert.New(t)
-	objectManager := &ObjectManager{}
+	objectManager, _ := NewObjectManager()
 	_, err := objectManager.SerializeTree(nil)
 	assert.NotNil(err, "Expected an error for invalid data")
 }
@@ -61,7 +61,7 @@ func TestSerializeTreeWithErrors(t *testing.T) {
 // TestSerializeDeserializeTreeWithErrors tests the serialization and deserialization of Tree objects with errors.
 func TestDeserializeTreeWithErrors(t *testing.T) {
 	assert := assert.New(t)
-	objectManager := &ObjectManager{}
+	objectManager, _ := NewObjectManager()
 	invalidData := []byte("invalid entry")
 	_, err := objectManager.DeserializeTree(invalidData)
 	assert.NotNil(err, "Expected an error for invalid data")

@@ -89,16 +89,6 @@ type MultiSectionsObject struct {
 	err 			error
 }
 
-// NewMultiSectionsObject creates a new multi section object.
-func NewMultiSectionsObject(path string, numOfSections int, err error) (*MultiSectionsObject, error) {
-	return &MultiSectionsObject{
-		path: path,
-		objSections: make([]*SectionObject, 0),
-		numOfSects: numOfSections,
-		err: err,
-	}, nil
-}
-
 // GetPath returns the path.
 func (m *MultiSectionsObject) GetPath() string {
 	return m.path
@@ -117,6 +107,16 @@ func (m *MultiSectionsObject) GetSections() int {
 // GetError returns the error.
 func (m *MultiSectionsObject) GetError() error {
 	return m.err
+}
+
+// NewMultiSectionsObject creates a new multi section object.
+func NewMultiSectionsObject(path string, numOfSections int, err error) (*MultiSectionsObject, error) {
+	return &MultiSectionsObject{
+		path: path,
+		objSections: make([]*SectionObject, 0),
+		numOfSects: numOfSections,
+		err: err,
+	}, nil
 }
 
 // AddSectionObject adds a section object.

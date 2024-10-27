@@ -90,7 +90,7 @@ func (pm *PermCodeManager) sanitizeSchema(schema *aztypes.Schema) (*aztypes.Sche
 
 // validateSchema validates the schema.
 func (pm *PermCodeManager) validateSchema(schema *aztypes.Schema) (bool, error) {
-	if schema.SyntaxVersion != aztypes.PermCodeSyntax {
+	if schema.SyntaxVersion != aztypes.PermCodeSyntaxLatest {
 		return false, fmt.Errorf(`permcode: unsupported policy syntax version '%s'`, schema.SyntaxVersion)
 	}
 	if schema.Type != aztypes.ClassTypeSchema {

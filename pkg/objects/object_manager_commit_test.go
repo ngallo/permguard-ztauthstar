@@ -31,16 +31,16 @@ func TestSerializeDeserializeCommit(t *testing.T) {
 	commit := &Commit{
 		tree:   "4ad3bb52786751f4b6f9839953fe3dcc2278c66648f0d0193f98088b7e4d0c1d",
 		parent: "a294ba66f45afd23f8bda3892728601bb509989a80dbb54d7b513dacb8099d76",
-		info: CommitInfo{
-			author: "Nicola Gallo",
-			authorTimestamp: time.Unix(1628704800, 0),
-			committer: "Nicola Gallo",
+		metaData: CommitMetaData{
+			author:             "Nicola Gallo",
+			authorTimestamp:    time.Unix(1628704800, 0),
+			committer:          "Nicola Gallo",
 			committerTimestamp: time.Unix(1628704800, 0),
 		},
 		message: "Initial commit",
 	}
 
-	objectManager := &ObjectManager{}
+	objectManager, _ := NewObjectManager()
 
 	// Serialize the commit
 	serialized, err := objectManager.SerializeCommit(commit)
@@ -60,10 +60,10 @@ Initial commit`
 	// Check if the deserialized commit matches the original commit
 	assert.Equal(commit.tree, deserializedCommit.tree, "Tree mismatch")
 	assert.Equal(commit.parent, deserializedCommit.parent, "Parents mismatch")
-	assert.Equal(commit.info.author, deserializedCommit.info.author, "Author mismatch")
-	assert.Equal(commit.info.authorTimestamp.Unix(), deserializedCommit.info.authorTimestamp.Unix(), "Author timestamp mismatch")
-	assert.Equal(commit.info.committer, deserializedCommit.info.committer, "Committer mismatch")
-	assert.Equal(commit.info.committerTimestamp.Unix(), deserializedCommit.info.committerTimestamp.Unix(), "Committer timestamp mismatch")
+	assert.Equal(commit.metaData.author, deserializedCommit.metaData.author, "Author mismatch")
+	assert.Equal(commit.metaData.authorTimestamp.Unix(), deserializedCommit.metaData.authorTimestamp.Unix(), "Author timestamp mismatch")
+	assert.Equal(commit.metaData.committer, deserializedCommit.metaData.committer, "Committer mismatch")
+	assert.Equal(commit.metaData.committerTimestamp.Unix(), deserializedCommit.metaData.committerTimestamp.Unix(), "Committer timestamp mismatch")
 	assert.Equal(commit.message, deserializedCommit.message, "Message mismatch")
 
 	// Test deserialization with nil data
@@ -80,16 +80,15 @@ Initial commit`
 func TestSerializeDeserializeCommitWithOID(t *testing.T) {
 	assert := assert.New(t)
 
-	objectManager := &ObjectManager{}
-
+	objectManager, _ := NewObjectManager()
 
 	commit1 := &Commit{
 		tree:   "4ad3bb52786751f4b6f9839953fe3dcc2278c66648f0d0193f98088b7e4d0c1d",
 		parent: "a294ba66f45afd23f8bda3892728601bb509989a80dbb54d7b513dacb8099d76",
-		info: CommitInfo{
-			author: "Nicola Gallo",
-			authorTimestamp: time.Unix(1628704800, 0),
-			committer: "Nicola Gallo",
+		metaData: CommitMetaData{
+			author:             "Nicola Gallo",
+			authorTimestamp:    time.Unix(1628704800, 0),
+			committer:          "Nicola Gallo",
 			committerTimestamp: time.Unix(1628704800, 0),
 		},
 		message: "Initial commit",

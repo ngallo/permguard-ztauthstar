@@ -31,8 +31,8 @@ func (m *ObjectManager) SerializeCommit(commit *Commit) ([]byte, error) {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("tree %s\n", commit.tree))
 	sb.WriteString(fmt.Sprintf("parent %s\n", commit.parent))
-	sb.WriteString(fmt.Sprintf("author %s %s\n", commit.info.authorTimestamp.Format(time.RFC3339), commit.info.author))
-	sb.WriteString(fmt.Sprintf("committer %s %s\n", commit.info.committerTimestamp.Format(time.RFC3339), commit.info.committer))
+	sb.WriteString(fmt.Sprintf("author %s %s\n", commit.metaData.authorTimestamp.Format(time.RFC3339), commit.metaData.author))
+	sb.WriteString(fmt.Sprintf("committer %s %s\n", commit.metaData.committerTimestamp.Format(time.RFC3339), commit.metaData.committer))
 	sb.WriteString(commit.message)
 	return []byte(sb.String()), nil
 }
@@ -66,15 +66,68 @@ func (m *ObjectManager) DeserializeCommit(data []byte) (*Commit, error) {
 			commit.parent = strings.TrimPrefix(line, "parent ")
 		} else if strings.HasPrefix(line, "author ") {
 			author, date := m.parseIdentity(strings.TrimPrefix(line, "author "))
-			commit.info.author = author
-			commit.info.authorTimestamp = date
+			commit.metaData.author = author
+			commit.metaData.authorTimestamp = date
 		} else if strings.HasPrefix(line, "committer ") {
 			committer, date := m.parseIdentity(strings.TrimPrefix(line, "committer "))
-			commit.info.committer = committer
-			commit.info.committerTimestamp = date
+			commit.metaData.committer = committer
+			commit.metaData.committerTimestamp = date
 		} else if i == len(lines)-1 {
 			commit.message = line
 		}
 	}
 	return commit, nil
+}
+
+// buildCommitHistory builds the commit history.
+func (m *ObjectManager) buildCommitHistory(fromCommitID string, toCommitID string, match bool, history []Commit, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
+	if fromCommitID == ZeroOID && toCommitID == ZeroOID {
+		match = true
+		return match, history, nil
+	}
+	var commitObj *Object
+	var err error
+	if fromCommitID != ZeroOID {
+		commitObj, err = objFunc(fromCommitID)
+		if err != nil {
+			return false, nil, err
+		}
+	}
+	var commit *Commit
+	if commitObj != nil {
+		commitObjInfo, err := m.GetObjectInfo(commitObj)
+		if err != nil {
+			return false, nil, err
+		}
+		var ok bool
+		commit, ok = commitObjInfo.GetInstance().(*Commit)
+		if !ok {
+			return false, nil, fmt.Errorf("objects: invalid object type")
+		}
+		if commit != nil {
+			history = append(history, *commit)
+		}
+	}
+	if commitObj == nil || commit == nil {
+		return match, history, nil
+	}
+	if commitObj.GetOID() == toCommitID {
+		match = true
+		return match, history, nil
+	}
+	return m.buildCommitHistory(commit.GetParent(), toCommitID, match, history, objFunc)
+}
+
+// BuildCommitHistory builds the commit history.
+func (m *ObjectManager) BuildCommitHistory(fromCommitID string, toCommitID string, reverse bool, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
+	if fromCommitID == ZeroOID && toCommitID != ZeroOID {
+		return false, nil, fmt.Errorf("objects: invalid from commit ID")
+	}
+	match, history, err := m.buildCommitHistory(fromCommitID, toCommitID, false, []Commit{}, objFunc)
+	if err != nil && reverse {
+		for i, j := 0, len(history)-1; i < j; i, j = i+1, j-1 {
+			history[i], history[j] = history[j], history[i]
+		}
+	}
+	return match, history, err
 }

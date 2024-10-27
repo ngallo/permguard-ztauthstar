@@ -80,8 +80,8 @@ func (m *ObjectManager) CreateBlobObject(data []byte) (*Object, error) {
 	return m.createOject(ObjectTypeBlob, data)
 }
 
-// CreateObjectFormData create the object form data.
-func (m *ObjectManager) CreateObjectFormData(binaryData []byte) (*Object, error) {
+// DeserializeObjectFromBytes deserializes an object from bytes.
+func (m *ObjectManager) DeserializeObjectFromBytes(binaryData []byte) (*Object, error) {
 	return NewObject(binaryData)
 }
 
@@ -130,62 +130,5 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 	default:
 		return nil, fmt.Errorf("objects: unsupported object type %s", objectType)
 	}
-	return &ObjectInfo{
-		object:   object,
-		otype:    objectType,
-		instance: instance,
-	}, nil
-}
-
-// buildCommitHistory builds the commit history.
-func (m *ObjectManager) buildCommitHistory(fromCommitID string, toCommitID string, match bool, history []Commit, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
-	if fromCommitID == ZeroOID && toCommitID == ZeroOID {
-		match = true
-		return match, history, nil
-	}
-	var commitObj *Object
-	var err error
-	if fromCommitID != ZeroOID {
-		commitObj, err = objFunc(fromCommitID)
-		if err != nil {
-			return false, nil, err
-		}
-	}
-	var commit *Commit
-	if commitObj != nil {
-		commitObjInfo, err := m.GetObjectInfo(commitObj)
-		if err != nil {
-			return false, nil, err
-		}
-		var ok bool
-		commit, ok = commitObjInfo.GetInstance().(*Commit)
-		if !ok {
-			return false, nil, fmt.Errorf("objects: invalid object type")
-		}
-		if commit != nil {
-			history = append(history, *commit)
-		}
-	}
-	if commitObj == nil || commit == nil {
-		return match, history, nil
-	}
-	if commitObj.GetOID() == toCommitID {
-		match = true
-		return match, history, nil
-	}
-	return m.buildCommitHistory(commit.GetParent(), toCommitID, match, history, objFunc)
-}
-
-// BuildCommitHistory builds the commit history.
-func (m *ObjectManager) BuildCommitHistory(fromCommitID string, toCommitID string, reverse bool, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
-	if fromCommitID == ZeroOID && toCommitID != ZeroOID {
-		return false, nil, fmt.Errorf("objects: invalid from commit ID")
-	}
-	match, history, err := m.buildCommitHistory(fromCommitID, toCommitID, false, []Commit{}, objFunc)
-	if err != nil && reverse {
-		for i, j := 0, len(history)-1; i < j; i, j = i+1, j-1 {
-			history[i], history[j] = history[j], history[i]
-		}
-	}
-	return match, history, err
+	return NewObjectInfo(object, objectType, instance)
 }

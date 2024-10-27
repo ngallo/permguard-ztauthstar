@@ -32,10 +32,10 @@ func TestObjectManager(t *testing.T) {
 		commit := &Commit{
 			tree:   "3b18e17a0e8664d3dffab99ebf6d730ddc6e8649",
 			parent: "a1b2c3d4e5f678901234567890abcdef12345678",
-			info: CommitInfo{
-				author: "Nicola Gallo",
-				authorTimestamp: time.Unix(1628704800, 0),
-				committer: "Nicola Gallo",
+			metaData: CommitMetaData{
+				author:             "Nicola Gallo",
+				authorTimestamp:    time.Unix(1628704800, 0),
+				committer:          "Nicola Gallo",
 				committerTimestamp: time.Unix(1628704800, 0),
 			},
 			message: "Initial commit",
@@ -57,10 +57,10 @@ func TestObjectManager(t *testing.T) {
 		retrievedCommit := objectInfo.instance.(*Commit)
 		assert.Equal(commit.tree, retrievedCommit.tree, "Tree mismatch")
 		assert.Equal(commit.parent, retrievedCommit.parent, "Parents mismatch")
-		assert.Equal(commit.info.author, retrievedCommit.info.author, "Author mismatch")
-		assert.Equal(commit.info.authorTimestamp.Unix(), retrievedCommit.info.authorTimestamp.Unix(), "Author timestamp mismatch")
-		assert.Equal(commit.info.committer, retrievedCommit.info.committer, "Committer mismatch")
-		assert.Equal(commit.info.committerTimestamp.Unix(), retrievedCommit.info.committerTimestamp.Unix(), "Committer timestamp mismatch")
+		assert.Equal(commit.metaData.author, retrievedCommit.metaData.author, "Author mismatch")
+		assert.Equal(commit.metaData.authorTimestamp.Unix(), retrievedCommit.metaData.authorTimestamp.Unix(), "Author timestamp mismatch")
+		assert.Equal(commit.metaData.committer, retrievedCommit.metaData.committer, "Committer mismatch")
+		assert.Equal(commit.metaData.committerTimestamp.Unix(), retrievedCommit.metaData.committerTimestamp.Unix(), "Committer timestamp mismatch")
 		assert.Equal(commit.message, retrievedCommit.message, "Message mismatch")
 	})
 
