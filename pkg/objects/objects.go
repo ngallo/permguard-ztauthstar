@@ -36,6 +36,44 @@ const (
 	ZeroOID = "0000000000000000000000000000000000000000000000000000000000000000"
 )
 
+// ObjectHeader represents the object header.
+type ObjectHeader struct {
+	isNativeLanguage 	bool
+	languageID 			uint32
+	languageVersionID 	uint32
+	classID 			uint32
+}
+
+// IsNativeLanguage returns true if the object is in a native language.
+func (o *ObjectHeader) IsNativeLanguage() bool {
+	return o.isNativeLanguage
+}
+
+// GetLanguageID returns the language ID of the object.
+func (o *ObjectHeader) GetLanguageID() uint32 {
+	return o.languageID
+}
+
+// GetLanguageVersionID returns the language version ID of the object.
+func (o *ObjectHeader) GetLanguageVersionID() uint32 {
+	return o.languageVersionID
+}
+
+// GetClassID returns the class ID of the object.
+func (o *ObjectHeader) GetClassID() uint32 {
+	return o.classID
+}
+
+// NewObjectHeader creates a new object header.
+func NewObjectHeader(isNativeLanguage bool, languageID, languageVersionID, classID uint32) (*ObjectHeader, error){
+	return &ObjectHeader{
+		isNativeLanguage: 	isNativeLanguage,
+		languageID: 		languageID,
+		languageVersionID: 	languageVersionID,
+		classID: 			classID,
+	}, nil
+}
+
 // Object represents the object.
 type Object struct {
 	oid     string
@@ -65,6 +103,7 @@ func NewObject(content []byte) (*Object, error) {
 
 // ObjectInfo is the object info.
 type ObjectInfo struct {
+	header 	 *ObjectHeader
 	object   *Object
 	otype    string
 	instance any
@@ -94,7 +133,7 @@ func (o *ObjectInfo) GetInstance() any {
 }
 
 // NewObjectInfo creates a new object info.
-func NewObjectInfo(object *Object, otype string, instance any) (*ObjectInfo, error) {
+func NewObjectInfo(header *ObjectHeader, object *Object, otype string, instance any) (*ObjectInfo, error) {
 	if object == nil {
 		return nil, errors.New("objects: object content is nil")
 	} else if strings.TrimSpace(otype) == "" {
@@ -103,6 +142,7 @@ func NewObjectInfo(object *Object, otype string, instance any) (*ObjectInfo, err
 		return nil, errors.New("objects: object instance is nil")
 	}
 	return &ObjectInfo{
+		header: header,
 		object: object,
 		otype: otype,
 		instance: instance,

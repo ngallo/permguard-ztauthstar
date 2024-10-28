@@ -73,11 +73,15 @@ func (m *ObjectManager) CreateTreeObject(tree *Tree) (*Object, error) {
 }
 
 // CreateBlobObject creates a blob object.
-func (m *ObjectManager) CreateBlobObject(data []byte) (*Object, error) {
+func (m *ObjectManager) CreateBlobObject(header *ObjectHeader, data []byte) (*Object, error) {
 	if len(data) == 0 {
 		return nil, errors.New("objects: data is empty")
 	}
-	return m.createOject(ObjectTypeBlob, data)
+	objData, err := m.SerializeBlob(header, data)
+	if err != nil {
+		return nil, err
+	}
+	return m.createOject(ObjectTypeBlob, objData)
 }
 
 // DeserializeObjectFromBytes deserializes an object from bytes.
@@ -111,6 +115,7 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 	if len(content) != length {
 		return nil, fmt.Errorf("objects: content length mismatch: expected %d, got %d", length, len(content))
 	}
+	var objectHeader *ObjectHeader
 	var instance any
 	switch objectType {
 	case ObjectTypeCommit:
@@ -126,9 +131,14 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 		}
 		instance = tree
 	case ObjectTypeBlob:
-		instance = content
+		header, data, err := m.DeserializeBlob(content)
+		if err != nil {
+			return nil, err
+		}
+		objectHeader = header
+		instance = data
 	default:
 		return nil, fmt.Errorf("objects: unsupported object type %s", objectType)
 	}
-	return NewObjectInfo(object, objectType, instance)
+	return NewObjectInfo(objectHeader, object, objectType, instance)
 }

@@ -103,7 +103,8 @@ func TestObjectManager(t *testing.T) {
 		blobData := []byte("This is the content of the blob object")
 
 		// Create blob object
-		blobObj, err := objectManager.CreateBlobObject(blobData)
+		header, _:= NewObjectHeader(true, 1, 1, 1)
+		blobObj, err := objectManager.CreateBlobObject(header, blobData)
 		assert.Nil(err)
 		assert.NotEmpty(blobObj.oid, "OID should not be empty")
 		assert.NotEmpty(blobObj.content, "Blob content should not be empty")
