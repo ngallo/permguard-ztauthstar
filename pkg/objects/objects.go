@@ -117,6 +117,11 @@ func (o *ObjectInfo) GetOID() string {
 	return o.object.oid
 }
 
+// GetHeader returns the header of the object.
+func (o *ObjectInfo) GetHeader() *ObjectHeader {
+	return o.header
+}
+
 // GetObject returns the object.
 func (o *ObjectInfo) GetObject() *Object {
 	return o.object
