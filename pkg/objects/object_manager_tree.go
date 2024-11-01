@@ -18,6 +18,7 @@ package objects
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -26,6 +27,9 @@ func (m *ObjectManager) SerializeTree(tree *Tree) ([]byte, error) {
 	if tree == nil {
 		return nil, fmt.Errorf("objects: tree is nil")
 	}
+	sort.Slice(tree.entries, func(i, j int) bool {
+		return tree.entries[i].GetOID() < tree.entries[j].GetOID()
+	})
 	var sb strings.Builder
 	for _, entry := range tree.entries {
 		sb.WriteString(fmt.Sprintf("%s %s %s %s %s\n", entry.otype, entry.oid, entry.oname, entry.codeID, entry.codeType))
