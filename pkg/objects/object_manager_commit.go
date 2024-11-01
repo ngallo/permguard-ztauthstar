@@ -124,7 +124,7 @@ func (m *ObjectManager) BuildCommitHistory(fromCommitID string, toCommitID strin
 		return false, nil, fmt.Errorf("objects: invalid from commit ID")
 	}
 	match, history, err := m.buildCommitHistory(fromCommitID, toCommitID, false, []Commit{}, objFunc)
-	if err != nil && reverse {
+	if err == nil && reverse {
 		for i, j := 0, len(history)-1; i < j; i, j = i+1, j-1 {
 			history[i], history[j] = history[j], history[i]
 		}
