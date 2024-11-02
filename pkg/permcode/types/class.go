@@ -21,8 +21,11 @@ const (
 	PermCodeLanguage = "permcode"
 	// PermCodeLanguageID is the permcode language ID.
 	PermCodeLanguageID = uint32(1)
+
 	// PermCodeSyntaxLatest is the latest permcode syntax.
 	PermCodeSyntaxLatest = "permcode1"
+	// PermCodeSyntaxIDLatest is the latest permcode syntax ID.
+	PermCodeSyntaxIDLatest = "permcode1"
 
 	// ClassTypeSchema is the object type for domain schemas.
 	ClassTypeSchema = "schema"
