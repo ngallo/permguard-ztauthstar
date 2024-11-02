@@ -97,6 +97,17 @@ func (pm *PermCodeManager) UnmarshalClass(data []byte, classType string, sanitiz
 		if err != nil {
 			return nil, errors.New(errMessageUnmarshalType)
 		}
+	case aztypes.ClassTypeSchema:
+		var schema aztypes.Schema
+		if err := json.Unmarshal(data, &schema); err != nil {
+			return nil, errors.New(errMessageUnmarshalType)
+		}
+		snzPermission, err := pm.sanitizeValidateOptimize(&schema, sanitize, validate, optimize)
+		classInstance = snzPermission
+		classType = aztypes.ClassTypeSchema
+		if err != nil {
+			return nil, errors.New(errMessageUnmarshalType)
+		}
 	default:
 		return nil, fmt.Errorf("permcode: failed to unmarshal class - invalid type %s", class.Type)
 	}
