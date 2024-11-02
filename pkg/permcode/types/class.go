@@ -25,7 +25,7 @@ const (
 	// PermCodeSyntaxLatest is the latest permcode syntax.
 	PermCodeSyntaxLatest = "permcode1"
 	// PermCodeSyntaxIDLatest is the latest permcode syntax ID.
-	PermCodeSyntaxIDLatest = "permcode1"
+	PermCodeSyntaxIDLatest = uint32(1)
 
 	// ClassTypeSchema is the object type for domain schemas.
 	ClassTypeSchema = "schema"
@@ -42,6 +42,22 @@ const (
 	// ClassTypeIDACPolicy is the object type for an access control policy.
 	ClassTypeIDACPolicy = uint32(3)
 )
+
+// GetClassType returns the language, syntax, and class type.
+func GetClassType(classType string) (uint32, uint32,  uint32) {
+	var classTypeID uint32
+	switch classType {
+	case ClassTypeSchema:
+		classTypeID = ClassTypeIDSchema
+	case ClassTypeACPermission:
+		classTypeID = ClassTypeIDACPermission
+	case ClassTypeACPolicy:
+		classTypeID = ClassTypeIDACPolicy
+	default:
+		classTypeID = 0
+	}
+	return PermCodeLanguageID, PermCodeSyntaxIDLatest, classTypeID
+}
 
 // Class is the base class.
 type Class struct {
