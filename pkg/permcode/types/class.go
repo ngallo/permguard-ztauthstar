@@ -17,14 +17,27 @@
 package types
 
 const (
+	// PermCodeLanguage is the permcode language.
+	PermCodeLanguage = "permcode"
+	// PermCodeLanguageID is the permcode language ID.
+	PermCodeLanguageID = uint32(1)
 	// PermCodeSyntaxLatest is the latest permcode syntax.
 	PermCodeSyntaxLatest = "permcode1"
+
 	// ClassTypeSchema is the object type for domain schemas.
 	ClassTypeSchema = "schema"
+	// ClassTypeObject is the object type for domain objects.
+	ClassTypeIDSchema = uint32(1)
+
 	// ClassTypeACPermission is the class type for an access control permission.
 	ClassTypeACPermission = "acpermission"
+	// ClassTypeIDACPermission is the object type for an access control permission.
+	ClassTypeIDACPermission = uint32(2)
+
 	// ClassTypeACPolicy is the object type for an access control policy.
 	ClassTypeACPolicy = "acpolicy"
+	// ClassTypeIDACPolicy is the object type for an access control policy.
+	ClassTypeIDACPolicy = uint32(3)
 )
 
 // Class is the base class.
