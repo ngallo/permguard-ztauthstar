@@ -16,6 +16,10 @@
 
 package types
 
+import (
+	"fmt"
+)
+
 const (
 	// PermCodeLanguage is the permcode language.
 	PermCodeLanguage = "permcode"
@@ -43,8 +47,8 @@ const (
 	ClassTypeIDACPolicy = uint32(3)
 )
 
-// GetClassType returns the language, syntax, and class type.
-func GetClassType(classType string) (uint32, uint32,  uint32) {
+// GetClassTypeID returns the language id, syntax id, and class type id.
+func GetClassTypeID(classType string) (uint32, uint32,  uint32, error) {
 	var classTypeID uint32
 	switch classType {
 	case ClassTypeSchema:
@@ -54,9 +58,31 @@ func GetClassType(classType string) (uint32, uint32,  uint32) {
 	case ClassTypeACPolicy:
 		classTypeID = ClassTypeIDACPolicy
 	default:
-		classTypeID = 0
+		return 0, 0, 0, fmt.Errorf("permcode: invalid class type %s", classType)
 	}
-	return PermCodeLanguageID, PermCodeSyntaxIDLatest, classTypeID
+	return PermCodeLanguageID, PermCodeSyntaxIDLatest, classTypeID, nil
+}
+
+// GetClassType returns the language, syntax, and class type.
+func GetClassType(langID, syntaxID, classTypeID uint32) (string, string,  string, error) {
+	if langID != PermCodeLanguageID {
+		return "", "", "", fmt.Errorf("permcode: invalid language ID %d", langID)
+	}
+	if syntaxID != PermCodeSyntaxIDLatest {
+		return "", "", "", fmt.Errorf("permcode: invalid syntax ID %d", syntaxID)
+	}
+	var classType string
+	switch classTypeID {
+	case ClassTypeIDSchema:
+		classType = ClassTypeSchema
+	case ClassTypeIDACPermission:
+		classType = ClassTypeACPermission
+	case ClassTypeIDACPolicy:
+		classType = ClassTypeACPolicy
+	default:
+		return "", "", "", fmt.Errorf("permcode: invalid class type %d", classTypeID)
+	}
+	return PermCodeLanguage, PermCodeSyntaxLatest, classType, nil
 }
 
 // Class is the base class.
