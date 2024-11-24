@@ -119,7 +119,7 @@ func (m *ObjectManager) buildCommitHistory(fromCommitID string, toCommitID strin
 }
 
 // BuildCommitHistory builds the commit history.
-func (m *ObjectManager) gma(fromCommitID string, toCommitID string, reverse bool, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
+func (m *ObjectManager) BuildCommitHistory(fromCommitID string, toCommitID string, reverse bool, objFunc func(string) (*Object, error)) (bool, []Commit, error) {
 	if fromCommitID == ZeroOID && toCommitID != ZeroOID {
 		return false, nil, fmt.Errorf("objects: invalid from commit ID")
 	}
