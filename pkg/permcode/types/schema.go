@@ -43,6 +43,6 @@ type Schema struct {
 
 // SchemaInfo is the schema info.
 type SchemaInfo struct {
-	SID		string
+	ID		string
 	Schema	*Schema
 }
