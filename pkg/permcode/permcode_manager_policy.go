@@ -148,7 +148,7 @@ func (pm *PermCodeManager) validatePolicy(policy *aztypes.Policy) (bool, error) 
 			return false, fmt.Errorf(`permcode: invalid account number "%d"`, account)
 
 		}
-		if !azvalidators.ValidateAccountID(account) {
+		if !azvalidators.ValidateCodeID(account) {
 			return false, fmt.Errorf(`permcode: invalid account number "%d"`, account)
 		}
 	}
