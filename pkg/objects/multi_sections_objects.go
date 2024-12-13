@@ -24,13 +24,13 @@ import (
 
 // SectionObject represents a section object.
 type SectionObject struct {
-	obj			*Object
-	otype 		string
-	oname 		string
-	codeID 		string
-	codeType 	string
-	numOfSect 	int
-	err 		error
+	obj       *Object
+	otype     string
+	oname     string
+	codeID    string
+	codeType  string
+	numOfSect int
+	err       error
 }
 
 // GetObject returns the object.
@@ -71,22 +71,22 @@ func (s *SectionObject) GetError() error {
 // NewSectionObject creates a new section object.
 func NewSectionObject(obj *Object, objType, objName, codeID, codeType string, section int, err error) (*SectionObject, error) {
 	return &SectionObject{
-		obj: obj,
-		otype: 		objType,
-		oname: 		objName,
-		codeID: 	codeID,
-		codeType: 	codeType,
-		numOfSect:	section,
-		err: err,
+		obj:       obj,
+		otype:     objType,
+		oname:     objName,
+		codeID:    codeID,
+		codeType:  codeType,
+		numOfSect: section,
+		err:       err,
 	}, nil
 }
 
 // MultiSectionsObject represents a multi section object.
 type MultiSectionsObject struct {
-	path 			string
-	objSections 	[]*SectionObject
-	numOfSects  	int
-	err 			error
+	path        string
+	objSections []*SectionObject
+	numOfSects  int
+	err         error
 }
 
 // GetPath returns the path.
@@ -99,8 +99,8 @@ func (m *MultiSectionsObject) GetSectionObjects() []*SectionObject {
 	return azcopier.CopySlice(m.objSections)
 }
 
-// GetSections returns the number of sections.
-func (m *MultiSectionsObject) GetSections() int {
+// GetNumberOfSections returns the number of sections.
+func (m *MultiSectionsObject) GetNumberOfSections() int {
 	return m.numOfSects
 }
 
@@ -112,10 +112,10 @@ func (m *MultiSectionsObject) GetError() error {
 // NewMultiSectionsObject creates a new multi section object.
 func NewMultiSectionsObject(path string, numOfSections int, err error) (*MultiSectionsObject, error) {
 	return &MultiSectionsObject{
-		path: path,
+		path:        path,
 		objSections: make([]*SectionObject, 0),
-		numOfSects: numOfSections,
-		err: err,
+		numOfSects:  numOfSections,
+		err:         err,
 	}, nil
 }
 
