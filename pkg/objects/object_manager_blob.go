@@ -29,6 +29,9 @@ func (m *ObjectManager) SerializeBlob(header *ObjectHeader, data []byte) ([]byte
 	}
 
 	var buffer bytes.Buffer
+	if err := binary.Write(&buffer, binary.BigEndian, header.typeID); err != nil {
+		return nil, err
+	}
 	if err := binary.Write(&buffer, binary.BigEndian, header.isNativeLanguage); err != nil {
 		return nil, err
 	}
@@ -38,7 +41,7 @@ func (m *ObjectManager) SerializeBlob(header *ObjectHeader, data []byte) ([]byte
 	if err := binary.Write(&buffer, binary.BigEndian, header.languageVersionID); err != nil {
 		return nil, err
 	}
-	if err := binary.Write(&buffer, binary.BigEndian, header.classID); err != nil {
+	if err := binary.Write(&buffer, binary.BigEndian, header.languageTypeID); err != nil {
 		return nil, err
 	}
 	if err := buffer.WriteByte(PacketNullByte); err != nil {
@@ -64,16 +67,19 @@ func (m *ObjectManager) DeserializeBlob(data []byte) (*ObjectHeader, []byte, err
 	}
 
 	header := &ObjectHeader{}
-	if err := binary.Read(bytes.NewReader(data[:delimiterIndex]), binary.BigEndian, &header.isNativeLanguage); err != nil {
+	if err := binary.Read(bytes.NewReader(data[:delimiterIndex]), binary.BigEndian, &header.typeID); err != nil {
 		return nil, nil, err
 	}
-	if err := binary.Read(bytes.NewReader(data[1:delimiterIndex]), binary.BigEndian, &header.languageID); err != nil {
+	if err := binary.Read(bytes.NewReader(data[1:delimiterIndex]), binary.BigEndian, &header.isNativeLanguage); err != nil {
 		return nil, nil, err
 	}
-	if err := binary.Read(bytes.NewReader(data[5:delimiterIndex]), binary.BigEndian, &header.languageVersionID); err != nil {
+	if err := binary.Read(bytes.NewReader(data[5:delimiterIndex]), binary.BigEndian, &header.languageID); err != nil {
 		return nil, nil, err
 	}
-	if err := binary.Read(bytes.NewReader(data[9:delimiterIndex]), binary.BigEndian, &header.classID); err != nil {
+	if err := binary.Read(bytes.NewReader(data[9:delimiterIndex]), binary.BigEndian, &header.languageVersionID); err != nil {
+		return nil, nil, err
+	}
+	if err := binary.Read(bytes.NewReader(data[13:delimiterIndex]), binary.BigEndian, &header.languageTypeID); err != nil {
 		return nil, nil, err
 	}
 

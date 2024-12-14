@@ -38,10 +38,16 @@ const (
 
 // ObjectHeader represents the object header.
 type ObjectHeader struct {
-	isNativeLanguage 	bool
-	languageID 			uint32
-	languageVersionID 	uint32
-	classID 			uint32
+	typeID            uint32
+	isNativeLanguage  bool
+	languageID        uint32
+	languageVersionID uint32
+	languageTypeID    uint32
+}
+
+// GetTypeID returns the type ID of the object.
+func (o *ObjectHeader) GetTypeID() uint32 {
+	return o.typeID
 }
 
 // IsNativeLanguage returns true if the object is in a native language.
@@ -59,18 +65,18 @@ func (o *ObjectHeader) GetLanguageVersionID() uint32 {
 	return o.languageVersionID
 }
 
-// GetClassID returns the class ID of the object.
-func (o *ObjectHeader) GetClassID() uint32 {
-	return o.classID
+// GetLanguageTypeID returns the language type ID of the object.
+func (o *ObjectHeader) GetLanguageTypeID() uint32 {
+	return o.languageTypeID
 }
 
 // NewObjectHeader creates a new object header.
-func NewObjectHeader(isNativeLanguage bool, languageID, languageVersionID, classID uint32) (*ObjectHeader, error){
+func NewObjectHeader(isNativeLanguage bool, languageID, languageVersionID, classID uint32) (*ObjectHeader, error) {
 	return &ObjectHeader{
-		isNativeLanguage: 	isNativeLanguage,
-		languageID: 		languageID,
-		languageVersionID: 	languageVersionID,
-		classID: 			classID,
+		isNativeLanguage:  isNativeLanguage,
+		languageID:        languageID,
+		languageVersionID: languageVersionID,
+		typeID:            classID,
 	}, nil
 }
 
@@ -103,7 +109,7 @@ func NewObject(content []byte) (*Object, error) {
 
 // ObjectInfo is the object info.
 type ObjectInfo struct {
-	header 	 *ObjectHeader
+	header   *ObjectHeader
 	object   *Object
 	otype    string
 	instance any
@@ -147,9 +153,9 @@ func NewObjectInfo(header *ObjectHeader, object *Object, otype string, instance 
 		return nil, errors.New("objects: object instance is nil")
 	}
 	return &ObjectInfo{
-		header: header,
-		object: object,
-		otype: otype,
+		header:   header,
+		object:   object,
+		otype:    otype,
 		instance: instance,
 	}, nil
 }
