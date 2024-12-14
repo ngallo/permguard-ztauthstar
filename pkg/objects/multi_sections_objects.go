@@ -129,8 +129,17 @@ func (m *MultiSectionsObject) AddSectionObject(obj *SectionObject) error {
 }
 
 // AddSectionObjectWithParams adds a section object with parameters.
-func (m *MultiSectionsObject) AddSectionObjectWithParams(obj *Object, objType, objName, codeID, codeType string, section int, err error) error {
-	objSect, err := NewSectionObject(obj, objType, objName, codeID, codeType, section, err)
+func (m *MultiSectionsObject) AddSectionObjectWithParams(obj *Object, objType, objName, codeID, codeType string, section int) error {
+	objSect, err := NewSectionObject(obj, objType, objName, codeID, codeType, section, nil)
+	if err != nil {
+		return err
+	}
+	return m.AddSectionObject(objSect)
+}
+
+// AddSectionObjectWithError adds a section object with an error.
+func (m *MultiSectionsObject) AddSectionObjectWithError(section int, err error) error {
+	objSect, err := NewSectionObject(nil, "", "", "", "", section, err)
 	if err != nil {
 		return err
 	}
