@@ -29,7 +29,7 @@ func (m *ObjectManager) SerializeBlob(header *ObjectHeader, data []byte) ([]byte
 	}
 
 	var buffer bytes.Buffer
-	if err := binary.Write(&buffer, binary.BigEndian, header.typeID); err != nil {
+	if err := binary.Write(&buffer, binary.BigEndian, header.codeTypeID); err != nil {
 		return nil, err
 	}
 	if err := binary.Write(&buffer, binary.BigEndian, header.isNativeLanguage); err != nil {
@@ -67,7 +67,7 @@ func (m *ObjectManager) DeserializeBlob(data []byte) (*ObjectHeader, []byte, err
 	}
 
 	header := &ObjectHeader{}
-	if err := binary.Read(bytes.NewReader(data[:delimiterIndex]), binary.BigEndian, &header.typeID); err != nil {
+	if err := binary.Read(bytes.NewReader(data[:delimiterIndex]), binary.BigEndian, &header.codeTypeID); err != nil {
 		return nil, nil, err
 	}
 	if err := binary.Read(bytes.NewReader(data[1:delimiterIndex]), binary.BigEndian, &header.isNativeLanguage); err != nil {

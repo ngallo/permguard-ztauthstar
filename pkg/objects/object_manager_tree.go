@@ -32,7 +32,7 @@ func (m *ObjectManager) SerializeTree(tree *Tree) ([]byte, error) {
 	})
 	var sb strings.Builder
 	for _, entry := range tree.entries {
-		sb.WriteString(fmt.Sprintf("%s %s %s %s %s\n", entry.otype, entry.oid, entry.oname, entry.codeID, entry.codeType))
+		sb.WriteString(fmt.Sprintf("%s %s %s %s %s %s %s %s\n", entry.otype, entry.oid, entry.oname, entry.codeID, entry.codeType, entry.langaugeID, entry.langaugeVersionID, entry.langaugeTypeID))
 	}
 	return []byte(sb.String()), nil
 }
@@ -46,16 +46,19 @@ func (m *ObjectManager) DeserializeTree(data []byte) (*Tree, error) {
 	lines := strings.Split(strings.TrimSpace(inputStr), "\n")
 	tree := &Tree{}
 	for _, line := range lines {
-		parts := strings.SplitN(line, " ", 5)
+		parts := strings.SplitN(line, " ", 8)
 		if len(parts) != 5 {
 			return nil, fmt.Errorf("objects: invalid entry format: %s", line)
 		}
 		entry := TreeEntry{
-			otype: 		parts[0],
-			oid:   		parts[1],
-			oname: 		parts[2],
-			codeID: 	parts[3],
-			codeType:	parts[4],
+			otype: 				parts[0],
+			oid:   				parts[1],
+			oname: 				parts[2],
+			codeID: 			parts[3],
+			codeType:			parts[4],
+			langaugeID: 		parts[5],
+			langaugeVersionID:	parts[6],
+			langaugeTypeID: 	parts[7],
 		}
 		tree.entries = append(tree.entries, entry)
 	}

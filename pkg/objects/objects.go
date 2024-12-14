@@ -38,16 +38,16 @@ const (
 
 // ObjectHeader represents the object header.
 type ObjectHeader struct {
-	typeID            uint32
+	codeTypeID        uint32
 	isNativeLanguage  bool
 	languageID        uint32
 	languageVersionID uint32
 	languageTypeID    uint32
 }
 
-// GetTypeID returns the type ID of the object.
-func (o *ObjectHeader) GetTypeID() uint32 {
-	return o.typeID
+// GetCodeTypeID returns the code type ID of the object.
+func (o *ObjectHeader) GetCodeTypeID() uint32 {
+	return o.codeTypeID
 }
 
 // IsNativeLanguage returns true if the object is in a native language.
@@ -76,7 +76,7 @@ func NewObjectHeader(isNativeLanguage bool, languageID, languageVersionID, class
 		isNativeLanguage:  isNativeLanguage,
 		languageID:        languageID,
 		languageVersionID: languageVersionID,
-		typeID:            classID,
+		codeTypeID:        classID,
 	}, nil
 }
 
@@ -250,15 +250,18 @@ func NewCommit(tree string, parentCommitID string, author string, authorTimestam
 
 // TreeEntry represents a single entry in a tree object.
 type TreeEntry struct {
-	otype    string
-	oid      string
-	oname    string
-	codeID   string
-	codeType string
+	otype             string
+	oid               string
+	oname             string
+	codeID            string
+	codeType          string
+	langaugeID        string
+	langaugeVersionID string
+	langaugeTypeID    string
 }
 
 // NewTreeEntry creates a new tree entry.
-func NewTreeEntry(otype, oid, oname, codeID, codeType string) (*TreeEntry, error) {
+func NewTreeEntry(otype, oid, oname, codeID, codeType, langaugeID, langaugeVersionID, langaugeTypeID string) (*TreeEntry, error) {
 	if strings.TrimSpace(otype) == "" {
 		return nil, errors.New("objects: object type is empty")
 	} else if strings.TrimSpace(oid) == "" {
@@ -269,13 +272,22 @@ func NewTreeEntry(otype, oid, oname, codeID, codeType string) (*TreeEntry, error
 		return nil, errors.New("objects: code id is empty")
 	} else if strings.TrimSpace(codeType) == "" {
 		return nil, errors.New("objects: code name is empty")
+	} else if strings.TrimSpace(langaugeID) == "" {
+		return nil, errors.New("objects: language id is empty")
+	} else if strings.TrimSpace(langaugeVersionID) == "" {
+		return nil, errors.New("objects: language version id is empty")
+	} else if strings.TrimSpace(langaugeTypeID) == "" {
+		return nil, errors.New("objects: language type id is empty")
 	}
 	return &TreeEntry{
-		otype:    otype,
-		oid:      oid,
-		oname:    oname,
-		codeID:   codeID,
-		codeType: codeType,
+		otype:             otype,
+		oid:               oid,
+		oname:             oname,
+		codeID:            codeID,
+		codeType:          codeType,
+		langaugeID:        langaugeID,
+		langaugeVersionID: langaugeVersionID,
+		langaugeTypeID:    langaugeTypeID,
 	}, nil
 }
 
@@ -302,6 +314,21 @@ func (t *TreeEntry) GetCodeID() string {
 // GetCodeType returns the code name of the tree entry.
 func (t *TreeEntry) GetCodeType() string {
 	return t.codeType
+}
+
+// GetLanguageID returns the language ID of the tree entry.
+func (t *TreeEntry) GetLanguageID() string {
+	return t.langaugeID
+}
+
+// GetLanguageVersionID returns the language version ID of the tree entry.
+func (t *TreeEntry) GetLanguageVersionID() string {
+	return t.langaugeVersionID
+}
+
+// GetLanguageTypeID returns the language type ID of the tree entry.
+func (t *TreeEntry) GetLanguageTypeID() string {
+	return t.langaugeTypeID
 }
 
 // Tree represents a tree object.
