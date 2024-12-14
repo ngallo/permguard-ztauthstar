@@ -250,14 +250,14 @@ func NewCommit(tree string, parentCommitID string, author string, authorTimestam
 
 // TreeEntry represents a single entry in a tree object.
 type TreeEntry struct {
-	otype             string
-	oid               string
-	oname             string
-	codeID            string
-	codeType          string
-	langaugeID        string
-	langaugeVersionID string
-	langaugeTypeID    string
+	otype           string
+	oid             string
+	oname           string
+	codeID          string
+	codeType        string
+	langauge        string
+	langaugeVersion string
+	langaugeType    string
 }
 
 // NewTreeEntry creates a new tree entry.
@@ -280,14 +280,14 @@ func NewTreeEntry(otype, oid, oname, codeID, codeType, langaugeID, langaugeVersi
 		return nil, errors.New("objects: language type id is empty")
 	}
 	return &TreeEntry{
-		otype:             otype,
-		oid:               oid,
-		oname:             oname,
-		codeID:            codeID,
-		codeType:          codeType,
-		langaugeID:        langaugeID,
-		langaugeVersionID: langaugeVersionID,
-		langaugeTypeID:    langaugeTypeID,
+		otype:           otype,
+		oid:             oid,
+		oname:           oname,
+		codeID:          codeID,
+		codeType:        codeType,
+		langauge:        langaugeID,
+		langaugeVersion: langaugeVersionID,
+		langaugeType:    langaugeTypeID,
 	}, nil
 }
 
@@ -316,19 +316,19 @@ func (t *TreeEntry) GetCodeType() string {
 	return t.codeType
 }
 
-// GetLanguageID returns the language ID of the tree entry.
-func (t *TreeEntry) GetLanguageID() string {
-	return t.langaugeID
+// GetLanguage returns the language of the tree entry.
+func (t *TreeEntry) GetLanguage() string {
+	return t.langauge
 }
 
-// GetLanguageVersionID returns the language version ID of the tree entry.
-func (t *TreeEntry) GetLanguageVersionID() string {
-	return t.langaugeVersionID
+// GetLanguageVersion returns the language version of the tree entry.
+func (t *TreeEntry) GetLanguageVersion() string {
+	return t.langaugeVersion
 }
 
-// GetLanguageTypeID returns the language type ID of the tree entry.
-func (t *TreeEntry) GetLanguageTypeID() string {
-	return t.langaugeTypeID
+// GetLanguageType returns the language type of the tree entry.
+func (t *TreeEntry) GetLanguageType() string {
+	return t.langaugeType
 }
 
 // Tree represents a tree object.
