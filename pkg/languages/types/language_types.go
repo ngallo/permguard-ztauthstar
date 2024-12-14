@@ -17,13 +17,13 @@
 package types
 
 const (
-	// ClassTypeSchema is the object type for domain schemas.
+	// ClassTypeSchema is the type for schemas.
 	ClassTypeSchema = "schema"
-	// ClassTypeObject is the object type for domain objects.
+	// ClassTypeIDSchema is the type id for schemas.
 	ClassTypeIDSchema = uint32(1)
 
-	// ClassTypeACPolicy is the object type for an access control policy.
-	ClassTypeACPolicy = "acpolicy"
-	// ClassTypeIDACPolicy is the object type for an access control policy.
-	ClassTypeIDACPolicy = uint32(1)
+	// ClassTypePolicy is the type for policies.
+	ClassTypePolicy = "policy"
+	// ClassTypeIDPolicy is the type id for policies.
+	ClassTypeIDPolicy = uint32(2)
 )
