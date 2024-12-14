@@ -261,7 +261,7 @@ type TreeEntry struct {
 }
 
 // NewTreeEntry creates a new tree entry.
-func NewTreeEntry(otype, oid, oname, codeID, codeType, langaugeID, langaugeVersionID, langaugeTypeID string) (*TreeEntry, error) {
+func NewTreeEntry(otype, oid, oname, codeID, codeType, langauge, langaugeVersion, langaugeType string) (*TreeEntry, error) {
 	if strings.TrimSpace(otype) == "" {
 		return nil, errors.New("objects: object type is empty")
 	} else if strings.TrimSpace(oid) == "" {
@@ -272,12 +272,12 @@ func NewTreeEntry(otype, oid, oname, codeID, codeType, langaugeID, langaugeVersi
 		return nil, errors.New("objects: code id is empty")
 	} else if strings.TrimSpace(codeType) == "" {
 		return nil, errors.New("objects: code name is empty")
-	} else if strings.TrimSpace(langaugeID) == "" {
-		return nil, errors.New("objects: language id is empty")
-	} else if strings.TrimSpace(langaugeVersionID) == "" {
-		return nil, errors.New("objects: language version id is empty")
-	} else if strings.TrimSpace(langaugeTypeID) == "" {
-		return nil, errors.New("objects: language type id is empty")
+	} else if strings.TrimSpace(langauge) == "" {
+		return nil, errors.New("objects: language is empty")
+	} else if strings.TrimSpace(langaugeVersion) == "" {
+		return nil, errors.New("objects: language version is empty")
+	} else if strings.TrimSpace(langaugeType) == "" {
+		return nil, errors.New("objects: language type is empty")
 	}
 	return &TreeEntry{
 		otype:           otype,
@@ -285,9 +285,9 @@ func NewTreeEntry(otype, oid, oname, codeID, codeType, langaugeID, langaugeVersi
 		oname:           oname,
 		codeID:          codeID,
 		codeType:        codeType,
-		langauge:        langaugeID,
-		langaugeVersion: langaugeVersionID,
-		langaugeType:    langaugeTypeID,
+		langauge:        langauge,
+		langaugeVersion: langaugeVersion,
+		langaugeType:    langaugeType,
 	}, nil
 }
 
