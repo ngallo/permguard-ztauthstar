@@ -47,7 +47,7 @@ func (m *ObjectManager) DeserializeTree(data []byte) (*Tree, error) {
 	tree := &Tree{}
 	for _, line := range lines {
 		parts := strings.SplitN(line, " ", 8)
-		if len(parts) != 5 {
+		if len(parts) != 8 {
 			return nil, fmt.Errorf("objects: invalid entry format: %s", line)
 		}
 		entry := TreeEntry{
