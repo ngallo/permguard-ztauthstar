@@ -24,6 +24,6 @@ const (
 
 	// ClassTypePolicy is the type for policies.
 	ClassTypePolicy = "policy"
-	// ClassTypeIDPolicy is the type id for policies.
-	ClassTypeIDPolicy = uint32(2)
+	// ClassTypePolicyID is the type id for policies.
+	ClassTypePolicyID = uint32(2)
 )
