@@ -18,6 +18,7 @@ package objects
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/binary"
 	"errors"
 )
@@ -29,9 +30,6 @@ func (m *ObjectManager) SerializeBlob(header *ObjectHeader, data []byte) ([]byte
 	}
 
 	var buffer bytes.Buffer
-	if err := binary.Write(&buffer, binary.BigEndian, header.codeTypeID); err != nil {
-		return nil, err
-	}
 	if err := binary.Write(&buffer, binary.BigEndian, header.isNativeLanguage); err != nil {
 		return nil, err
 	}
@@ -42,6 +40,18 @@ func (m *ObjectManager) SerializeBlob(header *ObjectHeader, data []byte) ([]byte
 		return nil, err
 	}
 	if err := binary.Write(&buffer, binary.BigEndian, header.languageTypeID); err != nil {
+		return nil, err
+	}
+	if err := binary.Write(&buffer, binary.BigEndian, header.codeTypeID); err != nil {
+		return nil, err
+	}
+	encodedCodeID := base64.StdEncoding.EncodeToString([]byte(header.codeID))
+	codeIDBytes := []byte(encodedCodeID)
+	codeIDBytesLength := uint16(len(codeIDBytes))
+	if err := binary.Write(&buffer, binary.BigEndian, codeIDBytesLength); err != nil {
+		return nil, err
+	}
+	if _, err := buffer.Write(codeIDBytes); err != nil {
 		return nil, err
 	}
 	if err := buffer.WriteByte(PacketNullByte); err != nil {
@@ -67,22 +77,32 @@ func (m *ObjectManager) DeserializeBlob(data []byte) (*ObjectHeader, []byte, err
 	}
 
 	header := &ObjectHeader{}
-	if err := binary.Read(bytes.NewReader(data[:delimiterIndex]), binary.BigEndian, &header.codeTypeID); err != nil {
+	if err := binary.Read(bytes.NewReader(data[:delimiterIndex]), binary.BigEndian, &header.isNativeLanguage); err != nil {
 		return nil, nil, err
 	}
-	if err := binary.Read(bytes.NewReader(data[1:delimiterIndex]), binary.BigEndian, &header.isNativeLanguage); err != nil {
+	if err := binary.Read(bytes.NewReader(data[1:delimiterIndex]), binary.BigEndian, &header.languageID); err != nil {
 		return nil, nil, err
 	}
-	if err := binary.Read(bytes.NewReader(data[5:delimiterIndex]), binary.BigEndian, &header.languageID); err != nil {
+	if err := binary.Read(bytes.NewReader(data[5:delimiterIndex]), binary.BigEndian, &header.languageVersionID); err != nil {
 		return nil, nil, err
 	}
-	if err := binary.Read(bytes.NewReader(data[9:delimiterIndex]), binary.BigEndian, &header.languageVersionID); err != nil {
+	if err := binary.Read(bytes.NewReader(data[9:delimiterIndex]), binary.BigEndian, &header.languageTypeID); err != nil {
 		return nil, nil, err
 	}
-	if err := binary.Read(bytes.NewReader(data[13:delimiterIndex]), binary.BigEndian, &header.languageTypeID); err != nil {
+	if err := binary.Read(bytes.NewReader(data[13:delimiterIndex]), binary.BigEndian, &header.codeTypeID); err != nil {
 		return nil, nil, err
 	}
-
+	var length uint16
+	if err := binary.Read(bytes.NewReader(data[17:19]), binary.BigEndian, &length); err != nil {
+		return nil, nil, errors.New("objects: failed to read codeID length")
+	}
+	encodedCodeIDBytes := data[19 : 19+length]
+	header.codeID = string(encodedCodeIDBytes)
+	decodedCodeID, err := base64.StdEncoding.DecodeString(header.codeID)
+	if err != nil {
+		return nil, nil, errors.New("objects: failed to decode codeID")
+	}
+	header.codeID = string(decodedCodeID)
 	remainingData := data[delimiterIndex+1:]
 	return header, remainingData, nil
 }

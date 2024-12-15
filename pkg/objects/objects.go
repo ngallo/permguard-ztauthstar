@@ -38,16 +38,12 @@ const (
 
 // ObjectHeader represents the object header.
 type ObjectHeader struct {
-	codeTypeID        uint32
 	isNativeLanguage  bool
 	languageID        uint32
 	languageVersionID uint32
 	languageTypeID    uint32
-}
-
-// GetCodeTypeID returns the code type ID of the object.
-func (o *ObjectHeader) GetCodeTypeID() uint32 {
-	return o.codeTypeID
+	codeID            string
+	codeTypeID        uint32
 }
 
 // IsNativeLanguage returns true if the object is in a native language.
@@ -70,13 +66,24 @@ func (o *ObjectHeader) GetLanguageTypeID() uint32 {
 	return o.languageTypeID
 }
 
+// GetCodeID returns the code ID of the object.
+func (o *ObjectHeader) GetCodeID() string {
+	return o.codeID
+}
+
+// GetCodeTypeID returns the code type ID of the object.
+func (o *ObjectHeader) GetCodeTypeID() uint32 {
+	return o.codeTypeID
+}
+
 // NewObjectHeader creates a new object header.
-func NewObjectHeader(isNativeLanguage bool, languageID, languageVersionID, classID uint32) (*ObjectHeader, error) {
+func NewObjectHeader(isNativeLanguage bool, languageID, languageVersionID uint32, codeID string, codeTypeID uint32) (*ObjectHeader, error) {
 	return &ObjectHeader{
 		isNativeLanguage:  isNativeLanguage,
 		languageID:        languageID,
 		languageVersionID: languageVersionID,
-		codeTypeID:        classID,
+		codeID:            codeID,
+		codeTypeID:        codeTypeID,
 	}, nil
 }
 
