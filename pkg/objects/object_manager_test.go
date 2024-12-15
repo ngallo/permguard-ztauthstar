@@ -69,9 +69,9 @@ func TestObjectManager(t *testing.T) {
 		assert := assert.New(t)
 		tree := &Tree{
 			entries: []TreeEntry{
-				{otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", oname: "name1", codeID: "code1", codeType: "codeType1"},
-				{otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", oname: "name2", codeID: "code2", codeType: "codeType2"},
-				{otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", oname: "name3", codeID: "code3", codeType: "codeType3"},
+				{otype: "blob", oid: "6eb715b073c6b28e03715129e03a0d52c8e21b73", oname: "name1", codeID: "code1", codeType: "codeType1", langauge: "cedar", langaugeVersion: "*", langaugeType: "policy"},
+				{otype: "blob", oid: "a7fdb22705a5e6145b6a8b1fa947825c5e97a51c", oname: "name2", codeID: "code2", codeType: "codeType2", langauge: "cedar", langaugeVersion: "*", langaugeType: "policy"},
+				{otype: "tree", oid: "a7fdb33705a5e6145b6a8b1fa947825c5e97a51c", oname: "name3", codeID: "code3", codeType: "codeType3", langauge: "cedar", langaugeVersion: "*", langaugeType: "policy"},
 			},
 		}
 
