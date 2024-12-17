@@ -19,8 +19,8 @@ package types
 const (
 	// ClassTypeSchema is the type for schemas.
 	ClassTypeSchema = "schema"
-	// ClassTypeIDSchema is the type id for schemas.
-	ClassTypeIDSchema = uint32(1)
+	// ClassTypeSchemaID is the type id for schemas.
+	ClassTypeSchemaID = uint32(1)
 
 	// ClassTypePolicy is the type for policies.
 	ClassTypePolicy = "policy"
