@@ -39,8 +39,7 @@ func TestSerializeDeserializeTree(t *testing.T) {
 	assert.Nil(err)
 	expectedSerialized := `blob 2d8ccd4b8c9331d762c13a0b2824c121baad579f29f9c16d27146ca12d9d6170 name2 code2 codeType2 cedar * policy
 blob 515513cd9200cfe899da7ac17a2293ed23a35674b933010d9736e634d3def5fe name1 code1 codeType1 cedar * policy
-tree fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851 name3 code3 codeType3 cedar * policy
-`
+tree fa9b45a58ed64dd7309484a9a4f736930c78b7cb43e23eea22f297e1bf9ff851 name3 code3 codeType3 cedar * policy`
 	assert.Equal(expectedSerialized, string(serialized), "Serialized output mismatch")
 	expectedLines := strings.Split(expectedSerialized, "\n")
 	serializedLines := strings.Split(string(serialized), "\n")
