@@ -33,7 +33,7 @@ func (m *ObjectManager) SerializeTree(tree *Tree) ([]byte, error) {
 	var sb strings.Builder
 	treeSize := len(tree.entries)
 	for i, entry := range tree.entries {
-		sb.WriteString(fmt.Sprintf("%s %s %s %s %s %s %s %s\n", entry.otype, entry.oid, entry.oname, entry.codeID, entry.codeType, entry.langauge, entry.langaugeVersion, entry.langaugeType))
+		sb.WriteString(fmt.Sprintf("%s %s %s %s %s %s %s %s", entry.otype, entry.oid, entry.oname, entry.codeID, entry.codeType, entry.langauge, entry.langaugeVersion, entry.langaugeType))
 		if i != treeSize-1 {
 			sb.WriteString("\n")
 		}
