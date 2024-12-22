@@ -77,11 +77,12 @@ func (o *ObjectHeader) GetCodeTypeID() uint32 {
 }
 
 // NewObjectHeader creates a new object header.
-func NewObjectHeader(isNativeLanguage bool, languageID, languageVersionID uint32, codeID string, codeTypeID uint32) (*ObjectHeader, error) {
+func NewObjectHeader(isNativeLanguage bool, languageID, languageVersionID, languageTypeID uint32, codeID string, codeTypeID uint32) (*ObjectHeader, error) {
 	return &ObjectHeader{
 		isNativeLanguage:  isNativeLanguage,
 		languageID:        languageID,
 		languageVersionID: languageVersionID,
+		languageTypeID:    languageTypeID,
 		codeID:            codeID,
 		codeTypeID:        codeTypeID,
 	}, nil
