@@ -120,6 +120,7 @@ type ObjectInfo struct {
 	header   *ObjectHeader
 	object   *Object
 	otype    string
+	instanceBytes []byte
 	instance any
 }
 
@@ -146,13 +147,18 @@ func (o *ObjectInfo) GetType() string {
 	return o.otype
 }
 
+// GetInstanceBytes returns the instance bytes of the object.
+func (o *ObjectInfo) GetInstanceBytes() []byte {
+	return o.instanceBytes
+}
+
 // GetInstance returns the instance of the object.
 func (o *ObjectInfo) GetInstance() any {
 	return o.instance
 }
 
 // NewObjectInfo creates a new object info.
-func NewObjectInfo(header *ObjectHeader, object *Object, otype string, instance any) (*ObjectInfo, error) {
+func NewObjectInfo(header *ObjectHeader, object *Object, otype string, instanceBytes []byte, instance any) (*ObjectInfo, error) {
 	if object == nil {
 		return nil, errors.New("objects: object content is nil")
 	} else if strings.TrimSpace(otype) == "" {
@@ -164,6 +170,7 @@ func NewObjectInfo(header *ObjectHeader, object *Object, otype string, instance 
 		header:   header,
 		object:   object,
 		otype:    otype,
+		instanceBytes: instanceBytes,
 		instance: instance,
 	}, nil
 }

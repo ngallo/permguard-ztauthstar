@@ -89,49 +89,58 @@ func (m *ObjectManager) DeserializeObjectFromBytes(binaryData []byte) (*Object, 
 	return NewObject(binaryData)
 }
 
-// GetObjectInfo gets the object info.
-func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
+// GetInstanceBytesFromBytes gets the instance bytes from bytes.
+func (m *ObjectManager) GetInstanceBytesFromBytes(object *Object) (string, []byte, error) {
 	if object == nil {
-		return nil, errors.New("objects: object is nil")
+		return "", nil, errors.New("objects: object is nil")
 	}
 	objContent := object.content
 	nulIndex := bytes.IndexByte(objContent, PacketNullByte)
 	if nulIndex == -1 {
-		return nil, fmt.Errorf("objects: invalid object format: no NUL separator found")
+		return "", nil, fmt.Errorf("objects: invalid object format: no NUL separator found")
 	}
 	header := string(objContent[:nulIndex])
 	headerParts := strings.SplitN(header, " ", 2)
 	if len(headerParts) != 2 {
-		return nil, fmt.Errorf("objects: invalid object header format")
+		return "", nil, fmt.Errorf("objects: invalid object header format")
 	}
 	objectType := headerParts[0]
 	length, err := strconv.Atoi(headerParts[1])
 	if err != nil {
-		return nil, fmt.Errorf("objects: invalid length: %v", err)
+		return "", nil, fmt.Errorf("objects: invalid length: %v", err)
 	}
 	start := nulIndex + 1
 	end := start + length
 	content := objContent[start:end]
 	if len(content) != length {
-		return nil, fmt.Errorf("objects: content length mismatch: expected %d, got %d", length, len(content))
+		return "", nil, fmt.Errorf("objects: content length mismatch: expected %d, got %d", length, len(content))
+	}
+	return objectType, content, nil
+}
+
+// GetObjectInfo gets the object info.
+func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
+	objectType, instanceBytes, err := m.GetInstanceBytesFromBytes(object)
+	if err != nil {
+		return nil, err
 	}
 	var objectHeader *ObjectHeader
 	var instance any
 	switch objectType {
 	case ObjectTypeCommit:
-		commit, err := m.DeserializeCommit(content)
+		commit, err := m.DeserializeCommit(instanceBytes)
 		if err != nil {
 			return nil, err
 		}
 		instance = commit
 	case ObjectTypeTree:
-		tree, err := m.DeserializeTree(content)
+		tree, err := m.DeserializeTree(instanceBytes)
 		if err != nil {
 			return nil, err
 		}
 		instance = tree
 	case ObjectTypeBlob:
-		header, data, err := m.DeserializeBlob(content)
+		header, data, err := m.DeserializeBlob(instanceBytes)
 		if err != nil {
 			return nil, err
 		}
@@ -140,5 +149,5 @@ func (m *ObjectManager) GetObjectInfo(object *Object) (*ObjectInfo, error) {
 	default:
 		return nil, fmt.Errorf("objects: unsupported object type %s", objectType)
 	}
-	return NewObjectInfo(objectHeader, object, objectType, instance)
+	return NewObjectInfo(objectHeader, object, objectType, instanceBytes, instance)
 }
