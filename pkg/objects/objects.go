@@ -117,11 +117,11 @@ func NewObject(content []byte) (*Object, error) {
 
 // ObjectInfo is the object info.
 type ObjectInfo struct {
-	header   *ObjectHeader
-	object   *Object
-	otype    string
+	header        *ObjectHeader
+	object        *Object
+	otype         string
 	instanceBytes []byte
-	instance any
+	instance      any
 }
 
 // GetOID returns the OID of the object.
@@ -167,11 +167,11 @@ func NewObjectInfo(header *ObjectHeader, object *Object, otype string, instanceB
 		return nil, errors.New("objects: object instance is nil")
 	}
 	return &ObjectInfo{
-		header:   header,
-		object:   object,
-		otype:    otype,
+		header:        header,
+		object:        object,
+		otype:         otype,
 		instanceBytes: instanceBytes,
-		instance: instance,
+		instance:      instance,
 	}, nil
 }
 
