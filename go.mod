@@ -3,7 +3,7 @@ module github.com/permguard/permguard-abs-language
 go 1.23.5
 
 require (
-	github.com/permguard/permguard-core v0.0.1-0.20250129184444-f92d68da0fbb
+	github.com/permguard/permguard-core v0.0.1-0.20250307153608-f106161e6def
 	github.com/stretchr/testify v1.9.0
 )
 
@@ -16,6 +16,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/permguard/permguard-notp-protocol v0.0.1-0.20250315232038-72a1e517f882 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
