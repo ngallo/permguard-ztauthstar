@@ -1,0 +1,76 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "description": { "type": "string" },
+                "author": { "type": "string" },
+                "license": { "type": "string" }
+            },
+            "required": ["name", "description", "author", "license"],
+            "additionalProperties": false
+        },
+        "authz": {
+            "type": "object",
+            "properties": {
+                "runtimes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "language": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "version": { "type": "string" }
+                                },
+                                "required": ["name", "version"],
+                                "additionalProperties": false
+                            },
+                            "engine": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "version": { "type": "string" },
+                                    "distribution": { "type": "string" }
+                                },
+                                "required": ["name", "version", "distribution"],
+                                "additionalProperties": false
+                            }
+                        },
+                        "required": ["language", "engine"],
+                        "additionalProperties": false
+                    }
+                },
+                "partitions": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "object",
+                                "properties": {
+                                    "path": { "type": "string" },
+                                    "mode": { "type": "string" }
+                                },
+                                "required": ["path", "mode"],
+                                "additionalProperties": false
+                            },
+                            "runtime": { "type": "string" },
+                            "schema": { "type": "boolean" }
+                        },
+                        "required": ["location", "runtime", "schema"],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": ["runtimes", "partitions"],
+            "additionalProperties": false
+        }
+    },
+    "required": ["metadata", "authz"],
+    "additionalProperties": false
+}
