@@ -1,4 +1,4 @@
-module github.com/permguard/permguard-abs-language
+module github.com/permguard/permguard-ztauthstar
 
 go 1.23.5
 
