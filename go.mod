@@ -3,8 +3,7 @@ module github.com/permguard/permguard-ztauthstar
 go 1.23.5
 
 require (
-	github.com/permguard/permguard-common v0.0.1-0.20250323104919-2b944ac52cd0
-	github.com/permguard/permguard-ztauthstar-ledger v0.0.0-20250323194137-aa6f6f6df48d
+	github.com/permguard/permguard-common v0.0.1-0.20250324093240-cdbc35bbee28
 )
 
 require (
