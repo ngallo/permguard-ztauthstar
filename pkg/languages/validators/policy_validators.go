@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	azvalidators "github.com/permguard/permguard-core/pkg/extensions/validators"
+	azvalidators "github.com/permguard/permguard-common/pkg/extensions/validators"
 )
 
 // ValidatePolicyName validates a policy name.
