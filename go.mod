@@ -1,8 +1,8 @@
 module github.com/permguard/permguard-ztauthstar
 
-go 1.23.5
+go 1.24.1
 
-require github.com/permguard/permguard-common v0.0.1-0.20250324093240-cdbc35bbee28
+require github.com/permguard/permguard-common v0.0.1-0.20250324235958-a7cfb846171e
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
