@@ -18,6 +18,7 @@ package ztauthstar
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // NewManifest creates a new manifest.
@@ -36,7 +37,16 @@ func NewManifest(name string) (*Manifest, error) {
 }
 
 // ValidateManifest validates the manifest.
-func ValidateManifest(data []byte) (bool, *Manifest, error) {
+func ValidateManifest(manifest *Manifest) (bool, *Manifest, error) {
+	data, err := json.Marshal(manifest)
+    if err != nil {
+        return false, nil, fmt.Errorf("[ztas] failed to serialize the manifest: %w", err)
+    }
+    return ValidateManifestData(data)
+}
+
+// ValidateManifestData validates the manifest data.
+func ValidateManifestData(data []byte) (bool, *Manifest, error) {
     var manifest Manifest
     if err := json.Unmarshal([]byte(data), &manifest); err != nil {
         return false, nil, err
