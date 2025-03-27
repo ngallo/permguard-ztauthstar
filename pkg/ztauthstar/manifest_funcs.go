@@ -21,6 +21,11 @@ import (
 	"fmt"
 )
 
+const (
+	// ManifestFileName is the manifest file name.
+	ManifestFileName = "manifest.json"
+)
+
 // NewManifest creates a new manifest.
 func NewManifest(name string) (*Manifest, error) {
 	manifest := &Manifest{
