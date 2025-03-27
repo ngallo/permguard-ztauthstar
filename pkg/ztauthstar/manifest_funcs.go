@@ -37,11 +37,20 @@ func NewManifest(name string) (*Manifest, error) {
 }
 
 // ValidateManifest validates the manifest.
-func ValidateManifest(manifest *Manifest) (bool, []byte, error) {
-	data, err := json.Marshal(manifest)
-    if err != nil {
-        return false, nil, fmt.Errorf("[ztas] failed to serialize the manifest: %w", err)
-    }
+func ValidateManifest(manifest *Manifest, indent bool) (bool, []byte, error) {
+	var data []byte
+	var err error
+	if indent {
+		data, err = json.MarshalIndent(manifest, "", "  ")
+		if err != nil {
+			return false, nil, fmt.Errorf("[ztas] failed to serialize the manifest: %w", err)
+		}
+	} else {
+		data, err = json.Marshal(manifest)
+		if err != nil {
+			return false, nil, fmt.Errorf("[ztas] failed to serialize the manifest: %w", err)
+		}
+	}
     ok, _, err := ValidateManifestData(data)
 	if err != nil {
 		return false, nil, err
