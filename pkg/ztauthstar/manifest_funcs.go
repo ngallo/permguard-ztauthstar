@@ -43,17 +43,17 @@ func NewManifest(name, description string) (*Manifest, error) {
 }
 
 // ValidateManifest validates the input manifest.
-func ValidateManifest(manifest *Manifest) error {
+func ValidateManifest(manifest *Manifest) (bool, error) {
 	if manifest == nil {
-		return fmt.Errorf("[ztas] manifest is nil")
+		return false, fmt.Errorf("[ztas] manifest is nil")
 	}
 	if len(strings.ReplaceAll(manifest.Metadata.Name, " ", "")) == 0 {
-		return fmt.Errorf("[ztas] manifest name is empty")
+		return false, fmt.Errorf("[ztas] manifest name is empty")
 	}
 	if len(strings.ReplaceAll(manifest.Metadata.Description, " ", "")) == 0 {
-		return fmt.Errorf("[ztas] manifest description is empty")
+		return false, fmt.Errorf("[ztas] manifest description is empty")
 	}
-	return nil
+	return true, nil
 }
 
 // ConvertManifestToBytes converts the input  manifest to bytes.
