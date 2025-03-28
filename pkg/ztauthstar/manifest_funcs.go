@@ -76,3 +76,16 @@ func ConvertManifestToBytes(manifest *Manifest, indent bool) ([]byte, error) {
 	}
 	return data, nil
 }
+
+// ConvertBytesToManifest converts the input bytes to a manifest.
+func ConvertBytesToManifest(data []byte) (*Manifest, error) {
+	if len(data) == 0 {
+		return nil, fmt.Errorf("[ztas] manifest data is empty")
+	}
+	manifest := &Manifest{}
+	err := json.Unmarshal(data, manifest)
+	if err != nil {
+		return nil, fmt.Errorf("[ztas] failed to deserialize the manifest: %w", err)
+	}
+	return manifest, nil
+}
