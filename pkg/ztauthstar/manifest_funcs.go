@@ -19,6 +19,7 @@ package ztauthstar
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 const (
@@ -27,11 +28,11 @@ const (
 )
 
 // NewManifest creates a new manifest.
-func NewManifest(name string) (*Manifest, error) {
+func NewManifest(name, description string) (*Manifest, error) {
 	manifest := &Manifest{
 		Metadata: Metadata{
 			Name:        name,
-			Description: "This is a sample manifest",
+			Description: description,
 		},
 		Authz: Authz{
 			Runtimes:   make(map[string]Runtime),
@@ -41,33 +42,37 @@ func NewManifest(name string) (*Manifest, error) {
 	return manifest, nil
 }
 
-// ValidateManifest validates the manifest.
-func ValidateManifest(manifest *Manifest, indent bool) (bool, []byte, error) {
+// ValidateManifest validates the input manifest.
+func ValidateManifest(manifest *Manifest) error {
+	if manifest == nil {
+		return fmt.Errorf("[ztas] manifest is nil")
+	}
+	if len(strings.ReplaceAll(manifest.Metadata.Name, " ", "")) == 0 {
+		return fmt.Errorf("[ztas] manifest name is empty")
+	}
+	if len(strings.ReplaceAll(manifest.Metadata.Description, " ", "")) == 0 {
+		return fmt.Errorf("[ztas] manifest description is empty")
+	}
+	return nil
+}
+
+// ConvertManifestToBytes converts the input  manifest to bytes.
+func ConvertManifestToBytes(manifest *Manifest, indent bool) ([]byte, error) {
+	if manifest == nil {
+		return nil, fmt.Errorf("[ztas] manifest is nil")
+	}
 	var data []byte
 	var err error
 	if indent {
 		data, err = json.MarshalIndent(manifest, "", "  ")
 		if err != nil {
-			return false, nil, fmt.Errorf("[ztas] failed to serialize the manifest: %w", err)
+			return nil, fmt.Errorf("[ztas] failed to serialize the manifest: %w", err)
 		}
 	} else {
 		data, err = json.Marshal(manifest)
 		if err != nil {
-			return false, nil, fmt.Errorf("[ztas] failed to serialize the manifest: %w", err)
+			return nil, fmt.Errorf("[ztas] failed to serialize the manifest: %w", err)
 		}
 	}
-    ok, _, err := ValidateManifestData(data)
-	if err != nil {
-		return false, nil, err
-	}
-	return ok, data, nil
-}
-
-// ValidateManifestData validates the manifest data.
-func ValidateManifestData(data []byte) (bool, *Manifest, error) {
-    var manifest Manifest
-    if err := json.Unmarshal([]byte(data), &manifest); err != nil {
-        return false, nil, err
-    }
-	return true, &manifest, nil
+	return data, nil
 }
