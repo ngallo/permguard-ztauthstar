@@ -14,5 +14,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// Package manifests implement the ztauth* manifests.
-package manifests
+// Package authstarmodels implement the auth* models.
+package authstarmodels

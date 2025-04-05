@@ -14,5 +14,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// Package ztauthstar implement the ztauth* model.
+// Package ztauthstar implement the ztauth* specification.
 package ztauthstar
