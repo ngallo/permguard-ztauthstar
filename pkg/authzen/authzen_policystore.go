@@ -17,7 +17,7 @@
 package authzen
 
 import (
-	azledger "github.com/permguard/permguard-ztauthstar-ledger/pkg/objects"
+	azledger "github.com/permguard/permguard-ztauthstar/pkg/ztauthstar/objects"
 )
 
 // StoreItem represents the store item.
