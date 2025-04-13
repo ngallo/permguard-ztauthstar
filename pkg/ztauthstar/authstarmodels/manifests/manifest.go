@@ -16,46 +16,43 @@
 
 package manifest
 
+// Manifest represnts an Auth* model manifest.
 type Manifest struct {
-	Metadata Metadata `json:"metadata"`
-	Authz    Authz    `json:"authz,omitempty"`
+	Metadata   Metadata             `json:"metadata"`
+	Runtimes   map[string]Runtime   `json:"runtimes"`
+	Partitions map[string]Partition `json:"partitions"`
 }
 
+// Metadata of the manifest.
 type Metadata struct {
+	Kind        string `json:"kind"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Author      string `json:"author"`
 	License     string `json:"license"`
 }
 
+// Language of the runtime.
 type Language struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
 }
 
+// Engine of the runtime.
 type Engine struct {
 	Name         string `json:"name"`
 	Version      string `json:"version"`
 	Distribution string `json:"distribution"`
 }
 
+// Runtime required for the auth* model.
 type Runtime struct {
 	Language Language `json:"language"`
 	Engine   Engine   `json:"engine"`
 }
 
-type Location struct {
-	Path string `json:"path"`
-	Mode string `json:"mode"`
-}
-
+// Partition of the auth* model.
 type Partition struct {
-	Location Location `json:"location"`
-	Runtime  string   `json:"runtime"`
-	Schema   bool     `json:"schema"`
-}
-
-type Authz struct {
-	Runtimes   map[string]Runtime   `json:"runtimes"`
-	Partitions map[string]Partition `json:"partitions"`
+	Runtime string `json:"runtime"`
+	Schema  bool   `json:"schema"`
 }
