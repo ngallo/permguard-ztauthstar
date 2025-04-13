@@ -14,7 +14,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package authstarmodels
+package manifest
 
 type Manifest struct {
 	Metadata Metadata `json:"metadata"`
