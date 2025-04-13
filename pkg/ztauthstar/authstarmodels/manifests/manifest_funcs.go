@@ -28,16 +28,15 @@ const (
 )
 
 // NewManifest creates a new manifest.
-func NewManifest(name, description string) (*Manifest, error) {
+func NewManifest(kind, name, description string) (*Manifest, error) {
 	manifest := &Manifest{
 		Metadata: Metadata{
+			Kind:        kind,
 			Name:        name,
 			Description: description,
 		},
-		Authz: Authz{
-			Runtimes:   make(map[string]Runtime),
-			Partitions: make(map[string]Partition),
-		},
+		Runtimes:   make(map[string]Runtime),
+		Partitions: make(map[string]Partition),
 	}
 	return manifest, nil
 }
