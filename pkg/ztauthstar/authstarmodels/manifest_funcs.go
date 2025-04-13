@@ -24,7 +24,7 @@ import (
 
 const (
 	// ManifestFileName is the manifest file name.
-	ManifestFileName = "manifest.json"
+	ManifestFileName = "manifest-authz.json"
 )
 
 // NewManifest creates a new manifest.
