@@ -23,7 +23,7 @@ import (
 
 // ReadObjectContentBytes reads the object content bytes.
 func ReadObjectContentBytes(obj *Object) (uint32, []byte, error) {
-	objMng, err  := NewObjectManager()
+	objMng, err := NewObjectManager()
 	if err != nil {
 		return 0, nil, err
 	}
@@ -44,7 +44,7 @@ func ReadObjectContentBytes(obj *Object) (uint32, []byte, error) {
 
 // CreateCommitObject creates a commit object.
 func CreateCommitObject(commit *Commit) (*Object, error) {
-	objMng, err  := NewObjectManager()
+	objMng, err := NewObjectManager()
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func CreateCommitObject(commit *Commit) (*Object, error) {
 
 // ConvertObjectToCommit converts an object to a commit.
 func ConvertObjectToCommit(obj *Object) (*Commit, error) {
-	objMng, err  := NewObjectManager()
+	objMng, err := NewObjectManager()
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func ConvertObjectToCommit(obj *Object) (*Commit, error) {
 
 // CreateTreeObject creates a tree object.
 func CreateTreeObject(tree *Tree) (*Object, error) {
-	objMng, err  := NewObjectManager()
+	objMng, err := NewObjectManager()
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func CreateTreeObject(tree *Tree) (*Object, error) {
 
 // ConvertObjectToTree converts an object to a tree.
 func ConvertObjectToTree(obj *Object) (*Tree, error) {
-	objMng, err  := NewObjectManager()
+	objMng, err := NewObjectManager()
 	if err != nil {
 		return nil, err
 	}
