@@ -49,9 +49,6 @@ func ValidateManifest(manifest *Manifest) (bool, error) {
 	if len(strings.ReplaceAll(manifest.Metadata.Name, " ", "")) == 0 {
 		return false, fmt.Errorf("[ztas] manifest name is empty")
 	}
-	if len(strings.ReplaceAll(manifest.Metadata.Description, " ", "")) == 0 {
-		return false, fmt.Errorf("[ztas] manifest description is empty")
-	}
 	return true, nil
 }
 
